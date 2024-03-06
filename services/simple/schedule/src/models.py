@@ -1,16 +1,16 @@
 from db import db
 
-class ScheduleItem(db.Model):
-    __tablename__ = "schedule_item"
+class ScheduleSlot(db.Model):
+    __tablename__ = "schedule_slot"
     id = db.Column(db.Integer, primary_key=True)
     bookerID = db.Column(db.Integer)
     date = db.Column(db.Date)
     slotNo = db.Column(db.Integer)
-    itemType = db.Column(db.String)
+    slotType = db.Column(db.String)
 
     __mapper_args__ = {
-        "polymorphic_identity": "schedule_item",
-        "polymorphic_on": itemType
+        "polymorphic_identity": "schedule_slot",
+        "polymorphic_on": slotType
     }
 
     def json(self):
@@ -19,7 +19,7 @@ class ScheduleItem(db.Model):
             "bookerID": self.bookerID,
             "date": self.date,
             "slotNo": self.slotNo,
-            "itemType": self.itemType
+            "slotType": self.slotType
         }
 
     def __init__(self, bookerID, date, slotNo):
@@ -27,9 +27,9 @@ class ScheduleItem(db.Model):
         self.date = date
         self.slotNo = slotNo
 
-class Booking(ScheduleItem):
+class Booking(ScheduleSlot):
     __tablename__ = "booking"
-    scheduleSlotId = db.Column(db.Integer, db.ForeignKey("schedule_item.id"), primary_key=True)
+    scheduleSlotId = db.Column(db.Integer, db.ForeignKey("schedule_slot.id"), primary_key=True)
     doctorID = db.Column(db.Integer, primary_key=True)
     doctorName = db.Column(db.String)
     name = db.Column(db.String)
@@ -43,7 +43,7 @@ class Booking(ScheduleItem):
     
     def json(self):
         return {
-            "scheduleSlotId": self.scheduleItemId,
+            "scheduleSlotId": self.scheduleSlotId,
             "doctorID": self.doctorID,
             "patientName": self.name,
             "doctorName": self.doctorName,
@@ -52,9 +52,9 @@ class Booking(ScheduleItem):
             "medications": self.medications
         } | super().json()
 
-class BlockedSlot(ScheduleItem):
+class BlockedSlot(ScheduleSlot):
     __tablename__ = "blocked_slot"
-    scheduleSlotId = db.Column(db.Integer, db.ForeignKey("schedule_item.id"), primary_key=True)
+    scheduleSlotId = db.Column(db.Integer, db.ForeignKey("schedule_slot.id"), primary_key=True)
     reason = db.Column(db.String)
 
     __mapper_args__ = {
@@ -63,7 +63,7 @@ class BlockedSlot(ScheduleItem):
     
     def json(self):
         return {
-            "scheduleSlotId": self.scheduleItemId,
+            "scheduleSlotId": self.scheduleSlotId,
             "reason": self.reason
         } | super().json()
     

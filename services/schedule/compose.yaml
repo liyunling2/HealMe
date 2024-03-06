@@ -1,0 +1,34 @@
+# Include python image
+
+services:
+  app:
+    build: 
+      context: ./app
+    depends_on:
+      - db
+    restart: on-failure
+    volumes:
+      - ./app:/app
+    environment:
+      DB_URI: mysql+mysqlconnector://user:password@db:3306/schedule
+      PORT: 5000
+    ports:
+      - "${SCHEDULE_PORT-8000}:5000"
+  
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - db_data:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: schedule
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+    expose:
+      - "3306"
+
+volumes:
+  db_data:
+

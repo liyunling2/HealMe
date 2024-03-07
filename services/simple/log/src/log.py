@@ -3,18 +3,14 @@ import json
 import pika
 # from os import environ
 
-log_queue_name = 'All_Logs'       # queue to be subscribed by Error microservice
-
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# e_queue_name = environ.get('Error') #Error
+log_queue_name = 'All_Logs' 
 
 def receiveLog(channel):
     try:
-        # set up a consumer and start to wait for coming messages
+        
         channel.basic_consume(queue=log_queue_name, on_message_callback=callback, auto_ack=True)
         print('error microservice: Consuming from queue:', log_queue_name)
-        channel.start_consuming() # an implicit loop waiting to receive messages; 
-        #it doesn't exit by default. Use Ctrl+C in the command window to terminate it.
+        channel.start_consuming() 
     
     except pika.exceptions.AMQPError as e:
         print(f"error microservice: Failed to connect: {e}") 
@@ -22,17 +18,17 @@ def receiveLog(channel):
     except KeyboardInterrupt:
         print("error microservice: Program interrupted by user.")
 
-# def callback(channel, method, properties, body): 
+def callback(channel, method, properties, body): 
 
-#     processSuccess(body)
+    processSuccess(body)
 
-#     processError(body)
+    processError(body)
 
 
-# def processSuccess(Msg):
+def processSuccess(Msg):
     
     
-# def processError(Msg):
+def processError(Msg):
 
 
 

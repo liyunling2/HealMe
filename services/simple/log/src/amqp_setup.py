@@ -49,7 +49,7 @@ def create_queues(channel):
     print('amqp_setup:create queues')
     create_log_queue(channel)
 
-# function to create Activity_Log queue  
+  
 def create_log_queue(channel):
     print('amqp_setup:create_activity_log_queue')
     log_queue_name = 'All_Logs'

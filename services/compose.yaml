@@ -11,7 +11,7 @@ services:
       DB_URI: ${DB_BASE_URI}/profile
       PORT: 5000
     ports:
-      - "${PROFILE_PORT-5001}:5000"
+      - "${SCHEDULE_PORT-5001}:5000"
 
   db:
     image: mysql

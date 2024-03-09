@@ -3,7 +3,7 @@ from db import db
 class BlockedSlot(db.Model):
     __tablename__ = 'blocked_slots'
     
-    id = db.Column(db.String(255), primary_key=True)
+    id = db.Column(db.Integer, primary_key=True)
     doctorId = db.Column(db.String(255))
     clinicId = db.Column(db.String(255))
     date = db.Column(db.Date)

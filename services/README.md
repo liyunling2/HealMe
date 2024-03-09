@@ -10,8 +10,8 @@
     - Example:
 
     ```yaml
-    schedule:
+    blocked_slots:
         environment:
-            - DB_URI: ${DB_URI}/schedule
+            - DB_URI: ${DB_URI}/blocked_slots
         # continued
     ```

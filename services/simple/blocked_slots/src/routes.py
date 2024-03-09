@@ -43,10 +43,8 @@ def add_blocked_slot():
 @routes.route("/", methods=["GET"])
 def get_blocked_slots():
     args = request.args
-
     try:
-        slots = get_filtered_query_from_args(args, BlockedSlot)
-
+        slots = BlockedSlot.query.filter_by(**args).all()
     except InvalidRequestError as e:
         return {
             "message": "Bad request: " + str(e)

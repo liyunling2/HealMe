@@ -4,8 +4,8 @@ import json
 class Clinic(db.Model):
     __tablename__ = "clinic"
     clinicID = db.Column(db.String(36), primary_key=True)
-    clinicName = db.Column(db.VARCHAR)
-    location = db.Column(db.VARCHAR)
+    clinicName = db.Column(db.VARCHAR(255))
+    location = db.Column(db.VARCHAR(255))
     services = db.Column(db.Text)  
     
     def __init__(self, clinicID, clinicName, location, services):

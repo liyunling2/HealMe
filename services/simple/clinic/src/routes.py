@@ -6,6 +6,17 @@ import uuid
 
 routes = Blueprint("clinic", __name__)
 
+#remove after testing
+@routes.route("/clinics/all", methods=["DELETE"])
+def delete_all_clinics():
+    try:
+        num_deleted = db.session.query(Clinic).delete()
+        db.session.commit()
+        return jsonify({"message": f"Successfully deleted {num_deleted} clinic(s)."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500
+
 @routes.route("/clinics", methods=["GET"])
 def get_clinics():
     clinic_name = request.args.get('clinicName')
@@ -33,7 +44,7 @@ def add_clinic():
         clinicID=str(uuid.uuid4()),
         clinicName=data['clinicName'],
         location=data['location'],
-        services=json.dumps(data['services'])
+        services=data['services']
     )
     db.session.add(clinic)
     db.session.commit()

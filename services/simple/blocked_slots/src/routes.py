@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from models import BlockedSlot
 from db import db
 from utils import get_filtered_query_from_args
@@ -29,7 +29,12 @@ def add_blocked_slot():
 def get_blocked_slots():
     args = request.args
 
-    slots = get_filtered_query_from_args(args, BlockedSlot)
+    try:
+        slots = get_filtered_query_from_args(args, BlockedSlot)
+    except InvalidRequestError as e:
+        return {
+            "message": "Bad request: " + str(e)
+        }, 400
 
     return {
         "data": [slot.json() for slot in slots]

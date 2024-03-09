@@ -1,17 +1,18 @@
 services:
-  # blocked_slots:
-  #   build:
-  #     context: ./simple/blocked_slots
-  #   depends_on:
-  #     - db
-  #   restart: on-failure
-  #   volumes:
-  #     - ./simple/blocked_slots/src:/src
-  #   environment:
-  #     DB_URI: ${DB_BASE_URI}/blocked_slots
-  #     PORT: 5000
-  #   ports:
-  #     - "${BLOCKED_SLOTS_PORT-5001}:5000"
+  blocked_slots:
+    build:
+      context: ./simple/blocked_slots
+    depends_on:
+      - db
+    restart: on-failure
+    volumes:
+      - ./simple/blocked_slots/src:/src
+    environment:
+      DB_URI: ${DB_BASE_URI}/blocked_slots
+      PORT: 5000
+    ports:
+      - "${BLOCKED_SLOTS_PORT-5001}:5000"
+  
   clinic:
     build:
       context: ./simple/clinic
@@ -24,7 +25,21 @@ services:
       DB_URI: ${DB_BASE_URI}/clinic
       PORT: 5000
     ports:
-      - "${CLINIC_PORT-5001}:5000"
+      - "${CLINIC_PORT-5002}:5000"
+
+  profile:
+    build:
+      context: ./simple/profile
+    depends_on:
+      - db
+    restart: on-failure
+    volumes:
+      - ./simple/profile/src:/src
+    environment:
+      DB_URI: ${DB_BASE_URI}/profile
+      PORT: 5000
+    ports:
+      - "${PROFILE_PORT-5003}:5000"
 
   db:
     image: mysql

@@ -10,6 +10,11 @@ routes = Blueprint("blocked-slots", __name__)
 def add_blocked_slot():
     data = request.get_json()
     slot = BlockedSlot(**data)
+
+    if slot.slotNo < 1 or slot.slotNo > 24:
+        return {
+            "message": "Invalid slot no. Only slot nos betweeen 1 and 24 are allowed."
+        }, 400
     
     try:
         db.session.add(slot)

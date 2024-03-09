@@ -10,5 +10,5 @@ GRANT ALL PRIVILEGES ON profile.* TO 'profile'@'localhost';
 
 CREATE DATABASE IF NOT EXISTS `clinic`;
 
-CREATE USER IF NOT EXISTS 'clinic'@'%' IDENTIFIED BY 'clinic';
+CREATE USER IF NOT EXISTS 'clinic'@'localhost' IDENTIFIED BY 'clinic';
 GRANT ALL PRIVILEGES ON clinic.* TO 'clinic'@'localhost';

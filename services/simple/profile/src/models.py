@@ -4,10 +4,10 @@ import json
 class Patient(db.Model):
     __tablename__ = "patient"
     patientID = db.Column(db.String(36), primary_key=True)
-    patientName = db.Column(db.String(255))
-    contactNum = db.Column(db.Text)
+    patientName = db.Column(db.VARCHAR)
+    contactNum = db.Column(db.Integer)
     allergies = db.Column(db.Text)
-    medications = db.Column(db.String(255))
+    medications = db.Column(db.Text)
 
     def __init__(self, patientID, patientName, contactNum, allergies, medications):
         self.patientID = patientID
@@ -29,9 +29,9 @@ class Doctor(db.Model):
     __tablename__ = 'doctor'
     doctorID = db.Column(db.String(36), primary_key=True)
     clinicID = db.Column(db.String(36))
-    doctorName = db.Column(db.String(255))
-    doctorDesc = db.Column(db.String(255))
-    specialty = db.Column(db.String(255))
+    doctorName = db.Column(db.VARCHAR)
+    doctorDesc = db.Column(db.VARCHAR(255))
+    specialty = db.Column(db.VARCHAR)
     ratings = db.Column(db.Float)
 
     def __init__(self, clinicID, doctorID, doctorName, doctorDesc, specialty, ratings):

@@ -1,17 +1,17 @@
 services:
-  schedule:
+  blocked_slots:
     build: 
-      context: ./simple/schedule
+      context: ./simple/blocked_slots
     depends_on:
       - db
     restart: on-failure
     volumes:
-      - ./simple/schedule/src:/src
+      - ./simple/blocked_slots/src:/src
     environment:
-      DB_URI: ${DB_BASE_URI}/schedule
+      DB_URI: ${DB_BASE_URI}/blocked_slots
       PORT: 5000
     ports:
-      - "${SCHEDULE_PORT-5001}:5000"
+      - "${BLOCKED_SLOTS_PORT-5001}:5000"
   
   db:
     image: mysql
@@ -22,7 +22,7 @@ services:
       - ./db:/docker-entrypoint-initdb.d
     environment:
       MYSQL_ROOT_PASSWORD: root
-      MYSQL_DATABASE: schedule
+      MYSQL_DATABASE: blocked_slots
       MYSQL_USER: user
       MYSQL_PASSWORD: password
     expose:

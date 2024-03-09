@@ -8,7 +8,7 @@ services:
     volumes:
       - ./simple/blocked_slots/src:/src
     environment:
-      DB_URI: ${DB_BASE_URI}/blocked_slots
+      DB_URI: ${BLOCKED_SLOTS_DB_URI}
       PORT: 5000
     ports:
       - "${BLOCKED_SLOTS_PORT-5001}:5000"
@@ -22,7 +22,7 @@ services:
     volumes:
       - ./simple/clinic/src:/src
     environment:
-      DB_URI: ${DB_BASE_URI}/clinic
+      DB_URI: ${CLINIC_DB_URI}
       PORT: 5000
     ports:
       - "${CLINIC_PORT-5002}:5000"
@@ -36,7 +36,7 @@ services:
     volumes:
       - ./simple/profile/src:/src
     environment:
-      DB_URI: ${DB_BASE_URI}/profile
+      DB_URI: ${PROFILE_DB_URI}
       PORT: 5000
     ports:
       - "${PROFILE_PORT-5003}:5000"

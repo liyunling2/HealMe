@@ -8,10 +8,15 @@ routes = Blueprint("blocked-slots", __name__)
 
 @routes.route("/", methods=["POST"])
 def add_blocked_slot():
-    data = request.get_json()
-    slot = BlockedSlot(**data)
-    
     try:
+        data = request.get_json()
+        slot = BlockedSlot(**data)
+
+        if slot.slotNo < 1 or slot.slotNo > 24:
+            return {
+                "message": "Invalid slot no. Only slot nos betweeen 1 and 24 are allowed."
+            }, 400
+    
         db.session.add(slot)
         db.session.commit()
 
@@ -19,6 +24,16 @@ def add_blocked_slot():
         return {
             "message": "Slot already blocked"
         }, 400
+
+    except TypeError as e:
+        return {
+            "message": str(e)
+        }, 400
+
+    except Exception as e:
+        return {
+            "message": str(e)
+        }, 500
     
     return {
         "message": "Slot created",
@@ -28,9 +43,8 @@ def add_blocked_slot():
 @routes.route("/", methods=["GET"])
 def get_blocked_slots():
     args = request.args
-
     try:
-        slots = get_filtered_query_from_args(args, BlockedSlot)
+        slots = BlockedSlot.query.filter_by(**args).all()
     except InvalidRequestError as e:
         return {
             "message": "Bad request: " + str(e)

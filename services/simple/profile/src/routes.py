@@ -47,7 +47,7 @@ def edit_patient_profile(patientID):
         patient.patientName = data.get('patientName', patient.patientName)
         patient.contactNum = data.get('contactNum', patient.contactNum)
         patient.allergies = json.dumps(data.get('allergies', json.loads(patient.allergies)))
-        patient.medications = json.dumps(data.get('medication', json.loads(patient.medications)))
+        patient.medications = json.dumps(data.get('medications', json.loads(patient.medications)))
         db.session.commit()
         return jsonify(patient.json()), 200
     return jsonify({"message": "Patient not found"}), 404
@@ -56,8 +56,8 @@ def edit_patient_profile(patientID):
 def add_patient_profile():
     data = request.get_json()
     new_patient = Patient(patientID=str(uuid.uuid4()), patientName=data.get('patientName'), 
-        contactNum=data.get('contactNum'), allergies=json.dumps(data.get('allergies')), 
-        medications=json.dumps(data.get('medication')))
+        contactNum=data.get('contactNum'), allergies=data.get('allergies'), 
+        medications=data.get('medications'))
     db.session.add(new_patient)
     db.session.commit()
     return jsonify(new_patient.json()), 201

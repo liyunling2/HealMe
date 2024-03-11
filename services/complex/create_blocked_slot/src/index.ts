@@ -38,7 +38,7 @@ app.post("/", async (c) => {
 })
 
 export default {
-  port: process.env.CREATE_BLOCKED_SLOT_PORT! ?? 6666,
+  port: process.env.CREATE_BLOCKED_SLOT_PORT! ?? 5000,
   fetch: app.fetch,
 }
 

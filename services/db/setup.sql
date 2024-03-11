@@ -12,3 +12,7 @@ CREATE DATABASE IF NOT EXISTS `clinic`;
 
 CREATE USER IF NOT EXISTS 'clinic'@'%' IDENTIFIED BY 'clinic';
 GRANT ALL PRIVILEGES ON clinic.* TO 'clinic'@'%';
+
+CREATE DATABASE IF NOT EXISTS `rating`;
+CREATE USER IF NOT EXISTS 'rating'@'localhost' IDENTIFIED BY 'rating';
+GRANT ALL PRIVILEGES ON rating.* TO 'rating'@'localhost';

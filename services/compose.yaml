@@ -41,6 +41,20 @@ services:
     ports:
       - "${PROFILE_PORT-5003}:5000"
 
+  rating:
+    build:
+      context: ./simple/rating
+    depends_on:
+      - db
+    restart: on-failure
+    volumes:
+      - ./simple/rating/src:/src
+    environment:
+      DB_URI: ${RATING_DB_URI}
+      PORT: 5000
+    ports:
+      - "${RATING_PORT-5003}:5000"
+
   db:
     image: mysql
     # command: --default-authentication-plugin=caching_sha2_password

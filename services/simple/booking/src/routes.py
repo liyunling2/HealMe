@@ -11,6 +11,8 @@ def index():
     return "Booking service is running"
 
 #booking routes
+
+#EXTRACT BOOKING, CAN FILTER AS SUCH http://127.0.0.1:5005/bookings?patientID=101&dateOfBooking=2024-03-01
 @routes.route("/bookings", methods=["GET"])
 def get_bookings():
     # Extract parameters from the request
@@ -42,15 +44,19 @@ def get_bookings():
     else:
         bookings = Booking.query.all()
 
-    # Return the result
-    return jsonify([booking.json() for booking in bookings]), 200 if bookings else jsonify({"message": "Booking not found"}), 404
+    # Return the result with appropriate HTTP status code
+    if bookings:
+        return jsonify([booking.json() for booking in bookings]), 200
+    else:
+        return jsonify({"message": "Booking not found"}), 404
 
+#EDIT A BOOKING BY BOOKINGID
 @routes.route("/bookings/<string:bookingID>", methods=["PUT"])
 def edit_booking(bookingID):
     booking = Booking.query.get(bookingID)
     if booking:
         data = request.get_json()
-        booking.patientID = data.get('patientID', booking.patientName)
+        booking.patientID = data.get('patientID', booking.patientID)
         booking.doctorID = data.get('doctorID', booking.doctorID)
         booking.clinicID = data.get('clinicID', booking.clinicID)
         booking.dateOfBooking = data.get('dateOfBooking', booking.dateOfBooking)
@@ -59,6 +65,7 @@ def edit_booking(bookingID):
         return jsonify(booking.json()), 200
     return jsonify({"message": "Booking not found"}), 404
 
+#ADD A BOOKING
 @routes.route("/bookings", methods=["POST"])
 def add_booking():
     data = request.get_json()
@@ -73,6 +80,7 @@ def add_booking():
     db.session.commit()
     return jsonify(new_booking.json()), 201
 
+#DELETE BOOKING BY BOOKINGID
 @routes.route("/bookings/<string:bookingID>", methods=["DELETE"])
 def delete_booking(bookingID):
     booking = Booking.query.get(bookingID)
@@ -82,3 +90,14 @@ def delete_booking(bookingID):
         return jsonify({"message": "Booking deleted successfully"}), 200
     return jsonify({"message": "Booking not found"}), 404
 
+
+#FOR TESTING PURPOSES
+@routes.route("/bookings/all", methods=["DELETE"])
+def delete_all_bookings():
+    try:
+        num_deleted = db.session.query(Booking).delete()
+        db.session.commit()
+        return jsonify({"message": f"Successfully deleted {num_deleted} patient(s)."}), 200
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"error": str(e)}), 500

@@ -1,5 +1,5 @@
 import { expect, test } from "bun:test";
-import { hasNoConflictingSlots } from "../src/utils";
+import { hasNoConflictingBookings } from "../src/utils";
 import exp = require("constants");
 
 const blockedSlot = {
@@ -14,7 +14,7 @@ const noConflicts = {
     data: []
 };
 
-const conflictSlots = [
+const conflictBookings = [
     {
         "doctorID": "123e4567-e89b-12d3-a456-426614174000",
         "clinicID": "123e4567-e89b-12d3-a456-426614174001",
@@ -24,7 +24,7 @@ const conflictSlots = [
     }
 ];
 
-test("no conflict", async () => {
+test("no existing booking", async () => {
 
     //@ts-ignore
     global.fetch = async (url: string) => {
@@ -36,7 +36,7 @@ test("no conflict", async () => {
         } as any;
     }
 
-    const freeOfConflict = await hasNoConflictingSlots(blockedSlot);
+    const freeOfConflict = await hasNoConflictingBookings(blockedSlot);
     expect(freeOfConflict).toBe(true);
 });
 
@@ -46,11 +46,11 @@ test("conflict", async () => {
         return {
             status: 200,
             json: async () => {
-                return conflictSlots;
+                return conflictBookings;
             },
         } as any;
     }
 
-    const hasConflict = await hasNoConflictingSlots(blockedSlot);
+    const hasConflict = await hasNoConflictingBookings(blockedSlot);
     expect(hasConflict).toBe(false);
 })

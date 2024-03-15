@@ -1,6 +1,6 @@
 import { Hono } from 'hono';
-import { createInvalidSlotResponse, isDoctorIDValid, isFreeOfConflict } from './utils';
-import { validateBlockedSlot } from './validation';
+import { createBlockedSlot, createInvalidSlotResponse, isDoctorIDValid, hasNoConflictingSlots, hasNoConflictingBookings, createNormalErrorResponse } from './utils';
+import { validateBlockedSlotSchema, formatValidationErrors } from './validation';
 
 const app = new Hono();
 
@@ -11,31 +11,43 @@ app.get("/", (c) => {
 app.post("/", async (c) => {
   // get blocked Slot from request body
   const blockedSlot = await c.req.json() as BlockedSlotType;
-  const schemaValidationResult = validateBlockedSlot(blockedSlot);
 
-  if (!schemaValidationResult.valid) {
-    return createInvalidSlotResponse(c, schemaValidationResult.errors);
+  try {
+    await checkValidBlockedSlot(blockedSlot);
+    const res = await createBlockedSlot(blockedSlot);
+    const body = await res.json();
+    return c.json(body);
   }
+  catch (error) {
+    if (error instanceof AggregateError)
+      return createInvalidSlotResponse(c, error);
 
-  const doctorID = blockedSlot.doctorID;
-  const doctorIsValid: boolean = await isDoctorIDValid(doctorID);
-
-  if (!doctorIsValid) {
-    c.status(400);
-    return c.json({ message: "Doctor not found" });
+    return createNormalErrorResponse(c, "Something went wrong. Please try again later.");
   }
-
-  const freeOfConflict = await isFreeOfConflict(blockedSlot);
-
-  if (!freeOfConflict) {
-    c.status(400);
-    return c.json({ message: "Slot conflict" })
-  }
-
-//   await createBlockedSlot(blockedSlot);
-
-  return c.json({ wow: "hello" })
 })
+
+async function checkValidBlockedSlot(blockedSlot: BlockedSlotType) {
+  const schemaValidationResult = validateBlockedSlotSchema(blockedSlot);
+  const errors = formatValidationErrors(schemaValidationResult.errors);
+
+  const doctorIsValid = await isDoctorIDValid(blockedSlot.doctorID);
+
+  if (!doctorIsValid)
+    errors.push("Invalid doctorID");
+
+  const noConflictingSlots = await hasNoConflictingSlots(blockedSlot);
+
+  if (!noConflictingSlots)
+    errors.push("Conflicting slot");
+
+  const noConflictingBookings = await hasNoConflictingBookings(blockedSlot);  
+
+  if (!noConflictingBookings)
+    errors.push("Conflicting booking");
+
+  if (errors.length > 0)
+    throw new AggregateError(errors);
+}
 
 export default {
   port: process.env.CREATE_BLOCKED_SLOT_PORT! ?? 50000,

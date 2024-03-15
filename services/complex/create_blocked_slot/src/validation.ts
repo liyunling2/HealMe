@@ -29,7 +29,7 @@ const blockedSlotSchema = {
     "additionalProperties": false
 }
 
-export function validateBlockedSlot(blockedSlot: BlockedSlotType): ValidatorResult {
+export function validateBlockedSlotSchema(blockedSlot: BlockedSlotType): ValidatorResult {
     return validate(blockedSlot, blockedSlotSchema);
 }
 

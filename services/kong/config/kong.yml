@@ -1,13 +1,126 @@
 _format_version: "3.0"
 
-# dummy service
 services:
-- host: httpbin.org
-  name: example_service
-  port: 80
-  protocol: http
+- name: blocked_slots
+  url: http://localhost:5001
   routes:
-  - name: example_route
+  - name: blockedslots_read
+    methods:
+      - GET
     paths:
-    - /mock
-    strip_path: true
+      - /
+  - name: blockedslots_post
+    methods:
+      - POST
+    paths:
+      - /
+
+- name: clinic
+  url: http://localhost:5002
+  routes:
+  - name: clinic_read
+    methods:
+      - GET
+    paths:
+      - /clinics
+  - name: clinic_edit
+    methods:
+      - POST
+      - PUT
+    paths:
+      - /clinics/all
+      - /clinics
+
+- name: profile
+  url: http://localhost:5003
+  routes:
+  - name: profile_read
+    methods:
+      - GET
+    paths:
+      - /patients
+      - /doctors
+  - name: profile_put
+    methods:
+      - PUT
+    paths:
+      - /patients
+  - name: profile_edit
+    methods:
+      - PUT
+      - POST
+    paths:
+      - /doctors
+      - /patients
+
+- name: rating
+  url: http://localhost:5004
+  routes:
+  - name: rating_read
+    methods:
+      - GET
+    paths:
+      - /clinics
+      - /doctors
+  - name: rating_post
+    methods:
+      - POST
+    paths:
+      - /clinics
+      - /doctors
+
+- name: booking
+  url: http://localhost:5005
+  routes:
+  - name: booking_read
+    methods:
+      - GET
+    paths:
+      - /bookings
+  - name: booking_edit
+    methods:
+      - POST
+      - PUT
+      - DELETE
+    paths:
+      - /bookings
+
+consumers:
+- username: admin
+  keyauth_credentials:
+  - key: admin
+
+- username: patient
+  keyauth_credentials:
+    - key: patient
+
+- username: doctor
+  keyauth_credentials:
+  - key: doctor
+
+# global plugins
+plugins:
+- name: key-auth
+  config:
+    key_names:
+    - apikey
+    key_in_body: false
+    key_in_header: true
+    key_in_query: true
+    hide_credentials: false
+    run_on_preflight: true
+
+# - name: acl
+#   route: ROUTE_NAME|ID
+#   config:
+#     allow:
+#     - group1
+#     - group2
+#     hide_groups_header: true
+
+# - name: rate-limiting
+#   config:
+#     second: 2
+#     hour: 10
+#     policy: local
+

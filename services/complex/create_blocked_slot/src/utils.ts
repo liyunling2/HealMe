@@ -31,7 +31,6 @@ export async function createBlockedSlot(blockedSlot: BlockedSlotType): Promise<{
     });
 
     const data = await response.json();
-    console.log("create_blocked_slot response:", response, data);
 
     if (response.ok)
         return await data;
@@ -42,8 +41,6 @@ export async function createBlockedSlot(blockedSlot: BlockedSlotType): Promise<{
 export async function isDoctorIDValid(doctorID: string): Promise<boolean> {
     const response = await fetch((process.env.PROFILE_URL
         ?? "http://localhost:5003") + `/doctors/${doctorID}`);
-
-    console.log("Doctor query:", response.url);
 
     if (response.ok && isResponseJson(response)) {
         const body = await response.json();
@@ -66,7 +63,6 @@ async function hasNoConflictingItems(blockedSlot: BlockedSlotType, getMatchingSl
 
     const matchingItems = await getMatchingSlotFn(params)
 
-    console.log("Matching items: ", matchingItems)
     if (matchingItems && matchingItems.length == 0)
         return true;
 
@@ -97,7 +93,6 @@ async function getMatchingItemsFromParams(params: URLSearchParams, url: string, 
         const body = await response.json();
         const matchingItems = body?.data;
 
-        console.log("matching items returned:", matchingItems)
         return matchingItems;
     }
 

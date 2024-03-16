@@ -1,4 +1,6 @@
-import amqp_connection
+import sys
+sys.path.append("/services/ampq")
+import services.ampq.amqp_connection as amqp_connection
 import json
 import pika
 # from os import environ
@@ -7,7 +9,6 @@ log_queue_name = 'All_Logs'
 
 def receiveLog(channel):
     try:
-        
         channel.basic_consume(queue=log_queue_name, on_message_callback=callback, auto_ack=True)
         print('error microservice: Consuming from queue:', log_queue_name)
         channel.start_consuming() 

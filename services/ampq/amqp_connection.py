@@ -31,7 +31,6 @@ def create_connection(max_retries=12, retry_interval=5):
     
     return connection
 
-
 def check_exchange(channel, exchangename, exchangetype):
     try:    
         channel.exchange_declare(exchangename, exchangetype, durable=True, passive=True) 
@@ -40,7 +39,6 @@ def check_exchange(channel, exchangename, exchangetype):
         print('Exception:', e)
         return False
     return True
-
 
 
 if __name__ == "__main__":

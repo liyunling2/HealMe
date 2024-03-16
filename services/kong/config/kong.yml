@@ -40,14 +40,13 @@ services:
     paths:
       - /patients
       - /doctors
-  - name: profile_put
+   - name: profile_edit
     methods:
       - PUT
     paths:
       - /patients
-  - name: profile_edit
+  - name: profile_create
     methods:
-      - PUT
       - POST
     paths:
       - /doctors

@@ -1,0 +1,30 @@
+services:
+  kong:
+    image: kong
+    volumes:
+      - type: bind
+        source: ./config
+        target: /opt/kong
+    # networks:
+    #   - kong-net
+    environment:
+      KONG_DATABASE: "off"
+      KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yml"
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: 0.0.0.0:8001
+      KONG_ADMIN_GUI_URL: http://localhost:8002
+    ports: 
+      - "8000:8000" # Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.
+      - "8443:8443" # Takes incoming HTTPS traffic from Consumers, and forwards it to upstream Services.
+      - "8001:8001" # Admin API. Listens for calls from the command line over HTTP.
+      - "8444:8444" # Admin API. Listens for calls from the command line over HTTPS.
+      - "8002:8002" # Kong Manager (GUI). Listens for HTTP traffic.
+      - "8445:8445" # Kong Manager (GUI). Listens for HTTPS traffic.
+      - "8003:8003" # Dev Portal. Listens for HTTP traffic, assuming Dev Portal is enabled.
+      - "8446:8446" # Dev Portal. Listens for HTTP traffic, assuming Dev Portal is enabled.
+      - "8004:8004" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
+      - "8447:8447" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
+

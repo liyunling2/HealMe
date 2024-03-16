@@ -40,7 +40,7 @@ services:
     paths:
       - /patients
       - /doctors
-   - name: profile_edit
+  - name: profile_edit
     methods:
       - PUT
     paths:

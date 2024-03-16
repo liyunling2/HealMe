@@ -1,5 +1,6 @@
 include:
   - ./kong/compose.yml
+  - ./simple/log/compose.yml
 
 services:
   blocked_slots:

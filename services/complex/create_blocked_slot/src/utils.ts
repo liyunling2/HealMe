@@ -1,6 +1,7 @@
 import { Context } from "hono";
 import { ValidationError } from "jsonschema";
 import { formatValidationErrors } from "./validation";
+import axios from "axios";
 
 export function createInvalidSlotResponse(c: Context, aggregateError: AggregateError) {
     return c.json({
@@ -20,24 +21,30 @@ export function createSlotSuccessResponse(c: Context, blockedSlot: BlockedSlotTy
     }, 201);
 }
 
-export async function createBlockedSlot(blockedSlot: BlockedSlotType): Promise<{data: BlockedSlotType}> {
-    const response = await fetch(process.env.BLOCKED_SLOTS_URL ?? "localhost:5002", {
+export async function createBlockedSlot(blockedSlot: BlockedSlotType): Promise<{ data: BlockedSlotType }> {
+    const response = await fetch(process.env.BLOCKED_SLOTS_URL ?? "http://localhost:5002", {
         method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify(blockedSlot)
     });
 
+    const data = await response.json();
+    console.log("create_blocked_slot response:", response, data);
+
     if (response.ok)
-        return await response.json();
+        return await data;
 
     throw new Error("Error creating slot");
 }
 
 export async function isDoctorIDValid(doctorID: string): Promise<boolean> {
     const response = await fetch((process.env.PROFILE_URL
-        ?? "localhost:5003") + `/doctors/${doctorID}`);
+        ?? "http://localhost:5003") + `/doctors/${doctorID}`);
 
     console.log("Doctor query:", response.url);
-    
+
     if (response.ok && isResponseJson(response)) {
         const body = await response.json();
         const doctor = body
@@ -45,7 +52,7 @@ export async function isDoctorIDValid(doctorID: string): Promise<boolean> {
         if (doctor)
             return true;
     }
-    
+
     throw new Error("Error fetching doctor");
 }
 
@@ -55,7 +62,7 @@ async function hasNoConflictingItems(blockedSlot: BlockedSlotType, getMatchingSl
         doctorID,
         date: date.toString(),
         slotNo: slotNo.toString()
-    })    
+    })
 
     const matchingItems = await getMatchingSlotFn(params)
 
@@ -71,7 +78,7 @@ export async function hasNoConflictingSlots(blockedSlot: BlockedSlotType): Promi
 }
 
 async function getMatchingSlotsFromParams(params: URLSearchParams): Promise<any[] | null> {
-    return await getMatchingItemsFromParams(params, process.env.BLOCKED_SLOTS_URL ?? "localhost:5001", "Error fetching slots");
+    return await getMatchingItemsFromParams(params, process.env.BLOCKED_SLOTS_URL ?? "http://localhost:5001", "Error fetching slots");
 }
 
 export async function hasNoConflictingBookings(blockedSlot: BlockedSlotType): Promise<boolean> {
@@ -79,17 +86,17 @@ export async function hasNoConflictingBookings(blockedSlot: BlockedSlotType): Pr
 }
 
 async function getMatchingBookingsFromParams(params: URLSearchParams): Promise<any[] | null> {
-    return await getMatchingItemsFromParams(params, process.env.BOOKINGS_URL ?? "localhost:5005/bookings", "Error fetching bookings");
+    return await getMatchingItemsFromParams(params, process.env.BOOKINGS_URL ?? "http://localhost:5005/bookings", "Error fetching bookings");
 }
 
-async function getMatchingItemsFromParams(params: URLSearchParams, url: string, errorMessage:string = "Error fetching items"): Promise<any[] | null> {
-    const fullUrl = url + "?" + params;
+async function getMatchingItemsFromParams(params: URLSearchParams, url: string, errorMessage: string = "Error fetching items"): Promise<any[] | null> {
+    const fullUrl =  url + "?" + params;
     const response = await fetch(fullUrl);
 
     if (response.ok && isResponseJson(response)) {
         const body = await response.json();
         const matchingItems = body?.data;
-        
+
         console.log("matching items returned:", matchingItems)
         return matchingItems;
     }

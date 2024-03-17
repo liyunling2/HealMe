@@ -9,7 +9,7 @@ class ClinicRating(db.Model):
     ratorID = db.Column(db.String(36))
     ratingGiven = db.Column(db.Integer)
     timeStamp = db.Column(db.DateTime)
-    ratingComment = db.Column(db.VARCHAR(255))
+    ratingComment = db.Column(db.String(255))
 
 
     def __init__(self, ratingID, clinicID, ratorID, ratingGiven, timeStamp, ratingComment):
@@ -40,7 +40,7 @@ class DoctorRating(db.Model):
     ratorID = db.Column(db.String(36))
     ratingGiven = db.Column(db.Integer)
     timeStamp = db.Column(db.DateTime)
-    ratingComment = db.Column(db.VARCHAR(255))
+    ratingComment = db.Column(db.String(255))
 
 
     def __init__(self, ratingID, clinicID, doctorID, appointmentID, ratorID, ratingGiven, timeStamp, ratingComment):

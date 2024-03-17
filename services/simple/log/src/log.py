@@ -1,6 +1,6 @@
 import sys
 sys.path.append("/services/ampq")
-import services.ampq.amqp_connection as amqp_connection
+import services.amqp.amqp_connection as amqp_connection
 import json
 import pika
 # from os import environ

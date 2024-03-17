@@ -1,0 +1,34 @@
+{
+	"info": {
+		"_postman_id": "b35ae390-4806-4ed4-a1bc-898381da0152",
+		"name": "ESD",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [{
+    "name": "Place order - correct inputs",
+    "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+            "mode": "raw",
+            "raw": "{\r\n   \"customer_id\": \"Apple TAN\",\r\n   \"cart_item\": [{\r\n      \"book_id\": \"9781434474234\",\r\n      \"quantity\": 1\r\n   },\r\n   {\r\n      \"book_id\": \"9781449474212\",\r\n      \"quantity\": 1\r\n   }]\r\n}\r\n",
+            "options": {
+                "raw": {
+                    "language": "json"
+                }
+            }
+        },
+        "url": {
+            "raw": "localhost:5100/place_order",
+            "host": [
+                "localhost"
+            ],
+            "port": "5100",
+            "path": [
+                "place_order"
+            ]
+        },
+        "description": "To try error conditions (code 500)\r\n- MySQL stopped, order.py running\r\n- order.py stopped"
+    },
+    "response": []
+}]}

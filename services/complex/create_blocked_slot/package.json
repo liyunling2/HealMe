@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --hot src/api/index.ts"
   },
   "dependencies": {
     "@hono/node-server": "^1.8.2",

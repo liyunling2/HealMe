@@ -1,6 +1,6 @@
 include:
-  # - ./kong/compose.yml
-  # - ./ampq/compose.yml
+  - ./kong/compose.yml
+  - ./ampq/compose.yml
   - ./complex/compose.yml
 
 services:

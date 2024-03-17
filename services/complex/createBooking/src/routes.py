@@ -1,35 +1,24 @@
 from flask import Flask, Blueprint, request, jsonify
 import json
 import uuid
-
 from flask_cors import CORS
-
 import os, sys
-
 import requests
-
 from invokes import invoke_http
 
 app = Flask(__name__)
 CORS(app)
 
+booking_URL = "http://localhost:5005/bookings"
 
-blocked_slots_URL = "http://localhost:5001/blocked_slots"
-clinic_URL = "http://localhost:5002/clinic"
-profile_URL = "http://localhost:5003/profile"
-rating_URL = "http://localhost:5004/rating"
-booking_URL = "http://localhost:5005/booking"
-
-routes = Blueprint("createBooking", __name__)
-
-@routes.route("/createBooking")
+@app.route("/createBooking")
 def index():
-    return "createBooking service is running"
+    return "createBooking Comple Microservice is running"
 
 #booking routes
 
 #EXTRACT BOOKING, CAN FILTER AS SUCH http://127.0.0.1:5005/bookings?patientID=101&dateOfBooking=2024-03-01
-@routes.route("/createBooking", methods=["POST"])
+@app.route("/createBooking", methods=["POST"])
 def create_booking():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
@@ -51,7 +40,7 @@ def create_booking():
 
             return jsonify({
                 "code": 500,
-                "message": "place_order.py internal error: " + ex_str
+                "message": "booking.py internal error: " + ex_str
             }), 500
 
     # if reached here, not a JSON request.
@@ -63,13 +52,14 @@ def create_booking():
 def processCreateBooking(createBooking):
     print('\n-----Invoking booking microservice-----')
     booking_result = invoke_http(booking_URL, method='POST', json=createBooking)
+    print("hello")
     print('booking_result:', booking_result)
 
     # Check the order result; if a failure, send it to the error microservice.
     code = booking_result["code"]
     if code not in range(200, 300):
         # Inform the log microservice NOT DONE YET
-        print('\n\n-----Invoking error microservice as order fails-----')
+        print('\n\n-----Invoking log microservice as order fails-----')
         invoke_http(log_URL, method="POST", json=order_result)
         # - reply from the invocation is not used; 
         # continue even if this invocation fails
@@ -117,61 +107,16 @@ def processCreateBooking(createBooking):
     
 }
     
-   
-
-
-
-
-
-
-#EDIT A BOOKING BY BOOKINGID
-@routes.route("/bookings/<string:bookingID>", methods=["PUT"])
-def edit_booking(bookingID):
-    booking = Booking.query.get(bookingID)
-    if booking:
-        data = request.get_json()
-        booking.patientID = data.get('patientID', booking.patientID)
-        booking.doctorID = data.get('doctorID', booking.doctorID)
-        booking.clinicID = data.get('clinicID', booking.clinicID)
-        booking.dateOfBooking = data.get('dateOfBooking', booking.dateOfBooking)
-        booking.bookingStatus = data.get('bookingStatus', booking.bookingStatus)
-        db.session.commit()
-        return jsonify(booking.json()), 200
-    return jsonify({"message": "Booking not found"}), 404
-
-#ADD A BOOKING
-@routes.route("/bookings", methods=["POST"])
-def add_booking():
-    data = request.get_json()
-    new_booking = Booking(bookingID=str(uuid.uuid4()), 
-        patientID=data.get('patientID'), 
-        doctorID=data.get('doctorID'), 
-        clinicID=data.get('clinicID'),
-        dateOfBooking=data.get('dateOfBooking'),
-        bookingStatus=data.get('bookingStatus'),
-        )
-    db.session.add(new_booking)
-    db.session.commit()
-    return jsonify(new_booking.json()), 201
-
-#DELETE BOOKING BY BOOKINGID
-@routes.route("/bookings/<string:bookingID>", methods=["DELETE"])
-def delete_booking(bookingID):
-    booking = Booking.query.get(bookingID)
-    if booking:
-        db.session.delete(booking)
-        db.session.commit()
-        return jsonify({"message": "Booking deleted successfully"}), 200
-    return jsonify({"message": "Booking not found"}), 404
-
-
-#FOR TESTING PURPOSES
-@routes.route("/bookings/all", methods=["DELETE"])
-def delete_all_bookings():
-    try:
-        num_deleted = db.session.query(Booking).delete()
-        db.session.commit()
-        return jsonify({"message": f"Successfully deleted {num_deleted} patient(s)."}), 200
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+# Execute this program if it is run as a main script (not by 'import')
+if __name__ == "__main__":
+    print("This is flask " + os.path.basename(__file__) +
+          " for creating a booking...")
+    app.run(host="0.0.0.0", port=5006, debug=True)
+    # Notes for the parameters:
+    # - debug=True will reload the program automatically if a change is detected;
+    #   -- it in fact starts two instances of the same flask program,
+    #       and uses one of the instances to monitor the program changes;
+    # - host="0.0.0.0" allows the flask program to accept requests sent from any IP/host (in addition to localhost),
+    #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
+    #   -- as long as the hosts can already reach the machine running the flask program along the network;
+    #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.

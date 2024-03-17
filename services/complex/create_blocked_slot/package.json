@@ -4,7 +4,6 @@
   },
   "dependencies": {
     "@hono/node-server": "^1.8.2",
-    "axios": "^1.6.8",
     "hono": "^4.0.10",
     "jsonschema": "^1.4.1"
   },

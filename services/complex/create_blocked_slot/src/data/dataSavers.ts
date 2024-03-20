@@ -1,4 +1,5 @@
 import FetchingError from "../common/FetchingError";
+import isResponseJson from "../common/isResponseJson";
 import ENTITY_PATHS from "./entityPaths";
 
 async function saveData(path: string, body: Object, entityName:string = "data"): Promise<Object> {
@@ -11,8 +12,13 @@ async function saveData(path: string, body: Object, entityName:string = "data"):
         }
     })
 
-    if (!response.ok)
+    if (!response.ok) {
+        if (isResponseJson(response)) {
+            const error = await response.json();
+            throw new FetchingError(error.message);
+        }
         throw new FetchingError("Error saving " + entityName);
+    }
 
     return await response.json();
 }

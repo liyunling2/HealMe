@@ -32,12 +32,7 @@ function checkValidBlockedSlot(blockedSlot: BlockedSlotType): boolean {
 
 const rules: Rule[] = [
     //@ts-ignore
-    new Rule(fetchDoctorWithParams, (body, params) => {
-        const clinicID = params.get("clinicID");
-        //@ts-ignore
-        const res = body?.clinicID == clinicID;
-        return res }
-    , "Not a valid doctor ID"),
+    new Rule(fetchDoctorWithParams, (body, params) => body?.clinicID == params.get("clinicID"), "Not a valid doctor ID"),
     //@ts-ignore
     // new Rule(fetchBlockedSlotsWithParams, (body) => (body?.data as any[]).length == 0, "Blocked slot already exists"),
     //@ts-ignore

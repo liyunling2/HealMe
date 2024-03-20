@@ -11,7 +11,6 @@ class ClinicRating(db.Model):
     timeStamp = db.Column(db.DateTime)
     ratingComment = db.Column(db.VARCHAR(255))
 
-
     def __init__(self, ratingID, clinicID, ratorID, ratingGiven, timeStamp, ratingComment):
         self.ratingID = ratingID
         self.clinicID = clinicID
@@ -19,6 +18,8 @@ class ClinicRating(db.Model):
         self.ratingGiven = ratingGiven
         self.timeStamp = timeStamp
         self.ratingComment = ratingComment
+
+    __table_args__ = (db.UniqueConstraint('ratingID', 'clinicID', 'ratorID' name='unique_clinic_rating'),)
 
     def json(self):
         return {
@@ -42,7 +43,6 @@ class DoctorRating(db.Model):
     timeStamp = db.Column(db.DateTime)
     ratingComment = db.Column(db.VARCHAR(255))
 
-
     def __init__(self, ratingID, clinicID, doctorID, appointmentID, ratorID, ratingGiven, timeStamp, ratingComment):
         self.ratingID = ratingID
         self.clinicID = clinicID
@@ -52,6 +52,8 @@ class DoctorRating(db.Model):
         self.ratingGiven = ratingGiven
         self.timeStamp = timeStamp
         self.ratingComment = ratingComment
+
+    __table_args__ = (db.UniqueConstraint('ratingID', 'clinicID', 'doctorID', 'appointmentID', 'ratorID' name='unique_doctor_rating'),)
 
     def json(self):
         return {

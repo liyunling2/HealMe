@@ -1,5 +1,5 @@
 import FetchingError from "../common/FetchingError";
-import isResponseJson from "../common/isResponseJson";
+import { isResponseJson } from "./dataUtils";
 import ENTITY_PATHS from "./entityPaths";
 
 async function saveData(path: string, body: Object, entityName:string = "data"): Promise<Object> {

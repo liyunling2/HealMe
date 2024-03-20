@@ -5,9 +5,32 @@ from flask_cors import CORS
 import os, sys
 import requests
 from invokes import invoke_http
+import pika
+import json
+import amqp_connection
+
+
+
+
 
 app = Flask(__name__)
 CORS(app)
+
+exchangename = "createBooking_topic" # exchange name
+exchangetype="topic" # use a 'topic' exchange to enable interaction
+
+# Instead of hardcoding the values, we can also get them from the environ as shown below
+# exchangename = environ.get('exchangename') #order_topic
+# exchangetype = environ.get('exchangetype') #topic 
+
+#create a connection and a channel to the broker to publish messages to activity_log, error queues
+connection = amqp_connection.create_connection() 
+channel = connection.channel()
+
+#if the exchange is not yet created, exit the program
+if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
+    print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
+    sys.exit(0)  # Exit with a success status
 
 booking_URL = "http://localhost:5005/bookings"
 
@@ -57,14 +80,21 @@ def processCreateBooking(createBooking):
 
     # Check the order result; if a failure, send it to the error microservice.
     code = booking_result["code"]
+    message = json.dumps(booking_result)
     if code not in range(200, 300):
         # Inform the log microservice NOT DONE YET
-        print('\n\n-----Invoking log microservice as order fails-----')
-        invoke_http(log_URL, method="POST", json=order_result)
-        # - reply from the invocation is not used; 
-        # continue even if this invocation fails
-        print("Order status ({:d}) sent to the log microservice:".format(code), booking_result)
+        print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+        channel.basic_publish(exchange=exchangename, routing_key="#", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+        # make message persistent within the matching queues until it is received by some receiver 
+        # (the matching queues have to exist and be durable and bound to the exchange)
 
+        # - reply from the invocation is not used;
+        # continue even if this invocation fails        
+        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+            code), booking_result)
+        
+        #return error
         return {
             "code": 500,
             "data": {"booking_result": booking_result},

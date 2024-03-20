@@ -13,6 +13,6 @@ export default class Rule {
     }
 
     async check(params: URLSearchParams): Promise<boolean> {
-        return this.checkRulePassedFn(await this.fetcherFn(params));
+        return this.checkRulePassedFn(await this.fetcherFn(params), params);
     }
 }

@@ -26,7 +26,7 @@ def edit_booking(bookingID):
             booking.patientID = data.get('patientID', booking.patientID)
             booking.doctorID = data.get('doctorID', booking.doctorID)
             booking.clinicID = data.get('clinicID', booking.clinicID)
-            booking.date = data.get('date', booking.date)
+            booking.dateofBooking = data.get('dateofBooking', booking.dateofBooking)
             booking.bookingStatus = data.get('bookingStatus', booking.bookingStatus)
             db.session.commit()
             return jsonify(booking.json()), 200
@@ -41,8 +41,8 @@ def edit_booking(bookingID):
 def add_booking():
     try: 
         data = request.get_json()
-        
-        if not all(key in data for key in ['patientID', 'doctorID', 'clinicID', 'date']):
+        print("Request data:", data)
+        if not all(key in data for key in ['patientID', 'doctorID', 'clinicID', 'dateofBooking']):
             return jsonify({"message": "Missing required booking information."}), 400
 
         if data.get("bookingID"):

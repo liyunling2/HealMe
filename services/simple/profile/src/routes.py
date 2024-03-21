@@ -67,8 +67,8 @@ def add_patient_profile():
     try:
         data = request.get_json()
         new_patient = Patient(patientID=str(uuid.uuid4()), patientName=data.get('patientName'), 
-            contactNum=data.get('contactNum'), allergies=json.dumps(data.get('allergies')), 
-            medications=json.dumps(data.get('medications')))
+            contactNum=data.get('contactNum'), allergies=data.get('allergies'), 
+            medications=data.get('medications'))
         db.session.add(new_patient)
         db.session.commit()
         return jsonify(new_patient.json()), 201
@@ -105,11 +105,10 @@ def get_doctor_profile(doctorID):
         return jsonify({"message": "An error occurred retrieving the doctor profile."}), 400
 
 
-@routes.route("/doctors", methods=["PUT"])
-def edit_doctor_profile():
+@routes.route("/doctors/<string:doctorID>", methods=["PUT"])
+def edit_doctor_profile(doctorID):
     try:
-        doctor_id = request.args.get('doctorID')
-        doctor = Doctor.query.get(doctor_id)
+        doctor = Doctor.query.get(doctorID)
         if doctor:
             data = request.get_json()
             doctor.doctorName = data.get('doctorName', doctor.doctorName)

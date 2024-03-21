@@ -45,8 +45,6 @@ class Doctor(db.Model):
         self.specialty = specialty
         self.ratings = ratings
 
-    __table_args__ = (db.UniqueConstraint('doctorID', 'doctorName', name='unique_doctor'),)
-
     def json(self):
         return {
             "clinicID": self.clinicID,

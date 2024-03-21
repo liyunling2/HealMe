@@ -74,7 +74,7 @@ def edit_clinic(clinicID):
     try:
         clinic = Clinic.query.get(clinicID)
         if clinic:
-            data = request.json
+            data = request.get_json()
             clinic.clinicName = data.get('clinicName', clinic.clinicName)
             clinic.location = data.get('location', clinic.location)
             clinic.services = json.dumps(data.get('services', json.loads(clinic.services)))

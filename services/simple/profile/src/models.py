@@ -1,9 +1,10 @@
 from db import db
 import json
+import uuid
 
 class Patient(db.Model):
     __tablename__ = "patient"
-    patientID = db.Column(db.String(36), primary_key=True)
+    patientID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     patientName = db.Column(db.VARCHAR(255))
     contactNum = db.Column(db.Integer)
     allergies = db.Column(db.Text)
@@ -16,6 +17,8 @@ class Patient(db.Model):
         self.allergies = json.dumps(allergies)
         self.medications = json.dumps(medications)
 
+    __table_args__ = (db.UniqueConstraint('patientID', 'contactNum', name='unique_patient'),)
+
     def json(self):
         return {
             "patientID": self.patientID,
@@ -27,7 +30,7 @@ class Patient(db.Model):
 
 class Doctor(db.Model):
     __tablename__ = 'doctor'
-    doctorID = db.Column(db.String(36), primary_key=True)
+    doctorID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     clinicID = db.Column(db.String(36))
     doctorName = db.Column(db.VARCHAR(255))
     doctorDesc = db.Column(db.VARCHAR(255))
@@ -41,6 +44,8 @@ class Doctor(db.Model):
         self.doctorDesc = doctorDesc
         self.specialty = specialty
         self.ratings = ratings
+
+    __table_args__ = (db.UniqueConstraint('doctorID', 'doctorName', name='unique_doctor'),)
 
     def json(self):
         return {

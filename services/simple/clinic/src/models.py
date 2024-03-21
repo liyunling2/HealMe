@@ -1,9 +1,10 @@
 from db import db
 import json
+import uuid
 
 class Clinic(db.Model):
     __tablename__ = "clinic"
-    clinicID = db.Column(db.String(36), primary_key=True)
+    clinicID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     clinicName = db.Column(db.VARCHAR(255))
     location = db.Column(db.VARCHAR(255))
     services = db.Column(db.Text)  
@@ -13,6 +14,9 @@ class Clinic(db.Model):
         self.clinicName = clinicName
         self.location = location
         self.services = json.dumps(services)
+
+    __table_args__ = (db.UniqueConstraint('clinicID', 'location', name='unique_clinic'),)
+
 
     def json(self):
         return {

@@ -1,7 +1,6 @@
 include:
   - ./kong/compose.yml
   - ./ampq/compose.yml
-  - ./complex/compose.yml
 
 services:
   blocked_slots:

@@ -1,6 +1,0 @@
-services:
-  create_blocked_slot:
-    build:
-      context: ./create_blocked_slot
-    ports:
-      - "50000:50000"

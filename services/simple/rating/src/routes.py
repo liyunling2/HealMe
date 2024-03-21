@@ -1,5 +1,5 @@
 from flask import Blueprint, request, jsonify
-from sqlalchemy.exc import IntegrityError, InvalidRequestError
+from sqlalchemy.exc import InvalidRequestError
 from models import DoctorRating, ClinicRating
 from db import db
 from utils import get_filtered_query_from_args

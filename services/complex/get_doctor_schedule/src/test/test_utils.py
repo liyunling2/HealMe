@@ -1,10 +1,10 @@
 import os
 import unittest
 from unittest import mock
-from utils import create_schedule, deep_mask
+from src.utils import create_schedule, deep_mask
 import httpx
 import pytest
-from routes import (get_bookings, get_clinic_blocked_slots,
+from src.routes import (get_bookings, get_clinic_blocked_slots,
                     get_clinic_doctor_ratings, get_doctor_profiles)
 
 test_client = httpx.AsyncClient(

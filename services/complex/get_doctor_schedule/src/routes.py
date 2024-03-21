@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from typing import List
 import httpx
 import asyncio
 import os
@@ -14,19 +15,18 @@ async def get_doctor_schedule():
         return { "message": "no clinicID sent" }, 400
 
     async with httpx.AsyncClient() as client:
-
-        profiles = await get_doctor_profiles(client, clinic_id)
-        blocked_slots = await get_clinic_blocked_slots(client, clinic_id)
-        ratings = await get_clinic_doctor_ratings(client, clinic_id)
-        bookings = await get_bookings(client, clinic_id)
-
-        out = []
-
+        responses = await asyncio.gather(
+            get_doctor_profiles(client, clinic_id),
+            get_clinic_blocked_slots(client, clinic_id),
+            get_clinic_doctor_ratings(client, clinic_id),
+            get_bookings(client, clinic_id)
+        )
+        
         try:
-            for response in [profiles, blocked_slots, ratings, bookings]:
-                out.append(response.raise_for_status().json())
-            
-            return format_response(out), 200
+            # get response data for each or raise error
+            response_data = [response.raise_for_status().json() for response in responses]
+
+            return format_response(response_data), 200
 
         except httpx.HTTPStatusError as err:
             print(err.request.url)
@@ -56,5 +56,7 @@ def get_bookings(client, clinic_id):
     url = os.environ.get("BOOKING_URL")
     return client.get(f"{url}?clinicID={clinic_id}")
 
-def format_response(out):
-    pass
+def format_response(response_data: List[dict]):
+    doctors, blocked_slots, ratings, bookings = response_data
+
+    

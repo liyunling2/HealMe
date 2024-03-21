@@ -2,8 +2,8 @@ import time
 import pika
 from os import environ
 
-hostname = environ.get('hostname') 
-port = environ.get('port')       
+hostname = environ.get('hostname') or "localhost"
+port = environ.get('port')  or 5672
 exchangename = "log_fanout"
 exchangetype = "fanout"
  

@@ -7,7 +7,7 @@ import uuid
 routes = Blueprint("clinic", __name__)
 
 #remove after testing
-@routes.route("/clinics/all", methods=["DELETE"])
+@routes.route("/all", methods=["DELETE"])
 def delete_all_clinics():
     try:
         num_deleted = db.session.query(Clinic).delete()
@@ -17,7 +17,7 @@ def delete_all_clinics():
         db.session.rollback()
         return jsonify({"error": str(e)}), 500
 
-@routes.route("/clinics", methods=["GET"])
+@routes.route("/", methods=["GET"])
 def get_clinics():
     clinic_name = request.args.get('clinicName')
     services = request.args.get('services')
@@ -32,12 +32,12 @@ def get_clinics():
     clinics = query.all()
     return jsonify([clinic.json() for clinic in clinics]), 200
 
-@routes.route("/clinics/<string:clinicID>", methods=["GET"])
+@routes.route("/<string:clinicID>", methods=["GET"])
 def get_clinic_by_id(clinicID):
     clinic = Clinic.query.get(clinicID)
     return jsonify(clinic.json()) if clinic else jsonify({"message": "Clinic not found"}), 404
 
-@routes.route("/clinics", methods=["POST"])
+@routes.route("/", methods=["POST"])
 def add_clinic():
     data = request.json
     clinic = Clinic(
@@ -50,7 +50,7 @@ def add_clinic():
     db.session.commit()
     return jsonify(clinic.json()), 201
 
-@routes.route("/clinics/<string:clinicID>", methods=["PUT"])
+@routes.route("/<string:clinicID>", methods=["PUT"])
 def edit_clinic(clinicID):
     clinic = Clinic.query.get(clinicID)
     if clinic:

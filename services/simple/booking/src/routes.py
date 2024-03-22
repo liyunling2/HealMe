@@ -92,7 +92,7 @@ def edit_booking(bookingID):
             booking.patientID = data.get('patientID', booking.patientID)
             booking.doctorID = data.get('doctorID', booking.doctorID)
             booking.clinicID = data.get('clinicID', booking.clinicID)
-            booking.dateofBooking = data.get('dateofBooking', booking.dateofBooking)
+            booking.date = data.get('date', booking.date)
             booking.bookingStatus = data.get('bookingStatus', booking.bookingStatus)
             db.session.commit()
             return jsonify(booking.json()), 200

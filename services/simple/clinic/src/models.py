@@ -15,9 +15,6 @@ class Clinic(db.Model):
         self.location = location
         self.services = json.dumps(services)
 
-    __table_args__ = (db.UniqueConstraint('clinicID', 'location', name='unique_clinic'),)
-
-
     def json(self):
         return {
             "clinicID": self.clinicID,

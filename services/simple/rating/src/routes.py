@@ -2,7 +2,6 @@ from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from models import DoctorRating, ClinicRating
 from db import db
-from utils import get_filtered_query_from_args
 import traceback
 import uuid
 
@@ -33,11 +32,15 @@ def get_doctor_rating():
         if patientID:
             query = query.filter_by(patientID=patientID)
         ratings = query.all()
-        return jsonify([rating.json() for rating in ratings]), 200
+        return jsonify({"data": [rating.json() for rating in ratings] or [], "message": "Doctor ratings retrieved successfully."}), 200
+    
+    except InvalidRequestError as e:
+        return jsonify({"data": None, "message": "Bad request: " + str(e)}), 400
     
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred retrieving doctor rating."}), 400
+        return jsonify({"data": None, "message": "An error occurred retrieving doctor rating."}), 500
+
 
 # @routes.route("/clinics", methods=["GET"])
 # def get_clinic_rating():
@@ -57,14 +60,14 @@ def get_doctor_rating():
 def get_clinic_rating(clinicID):
     try:
         ratings = ClinicRating.query.filter_by(clinicID=clinicID).all()
-        return jsonify({"data": [rating.json() for rating in ratings]}), 200
+        return jsonify({"data": [rating.json() for rating in ratings] or [], "message": "Clinic ratings retrieved successfully."}), 200
     
     except InvalidRequestError as e:
-        return jsonify({"message": "Bad request: " + str(e)}), 400
-   
+        return jsonify({"data": None, "message": "Bad request: " + str(e)}), 400
+    
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred retrieving clinic ratings."}), 500
+        return jsonify({"data": None, "message": "An error occurred retrieving clinic ratings."}), 500
 
 @routes.route("/doctors/<string:doctorID>", methods=["POST"])
 def rate_doctor(doctorID):
@@ -81,15 +84,15 @@ def rate_doctor(doctorID):
             )
         db.session.add(rating)
         db.session.commit()
-        return jsonify(rating.json()), 201
+        return jsonify({"data": rating.json(), "message": "Doctor rated successfully."}), 201
     
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"message": "Duplicate rating not allowed"}), 400
+        return jsonify({"data": None, "message": "Duplicate rating not allowed"}), 400
     
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred creating the doctor rating."}), 500
+        return jsonify({"data": None, "message": "An error occurred creating the doctor rating."}), 500
 
 @routes.route("/clinics", methods=["POST"])
 def rate_clinic():
@@ -104,12 +107,12 @@ def rate_clinic():
         )
         db.session.add(rating)
         db.session.commit()
-        return jsonify(rating.json()), 201
+        return jsonify({"data": rating.json(), "message": "Clinic rated successfully."}), 201
     
     except IntegrityError:
         db.session.rollback()
-        return jsonify({"message": "Duplicate rating not allowed"}), 400
+        return jsonify({"data": None, "message": "Duplicate rating not allowed"}), 400
     
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred creating the clinic rating."}), 500
+        return jsonify({"data": None, "message": "An error occurred creating the clinic rating."}), 500

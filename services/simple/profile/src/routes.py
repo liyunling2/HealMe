@@ -104,5 +104,4 @@ def add_doctor_profile():
     new_doctor = Doctor(clinicID=data.get('clinicID'), doctorID=str(uuid.uuid4()), doctorName=data.get('doctorName'), 
                     doctorDesc=data.get('doctorDesc'), specialty=data.get('specialty'), ratings=data.get('ratings'))
     db.session.add(new_doctor)
-    db.session.commit()
     return jsonify(new_doctor.json()), 201

@@ -7,11 +7,11 @@ import uuid
 
 import os 
 cdir = os.getcwd()
-path = os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(cdir))), "amqp")
+path = os.path.dirname(os.path.dirname(os.path.dirname(cdir)))
 
 import sys
 sys.path.append(path)
-import amqp_connection
+from amqp import amqp_connection
 
 log_queue_name = 'All_Logs' 
 

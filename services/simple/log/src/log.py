@@ -1,9 +1,11 @@
-import sys
-sys.path.append("/services/ampq")
-import services.ampq.amqp_connection as amqp_connection
 import json
 import pika
-# from os import environ
+from db import db
+from flask import jsonify
+from models import Log
+import uuid
+
+import amqp_connection
 
 log_queue_name = 'All_Logs' 
 
@@ -22,8 +24,21 @@ def receiveLog(channel):
 
 def callback(channel, method, properties, body): 
     print("Received Log From:" + __file__)
-    print(json.loads(body))
+    data = json.loads(body)
+    print(data)
     print()
+
+# create record in database
+    log = Log(
+        logID = str(uuid.uuid4()),
+        timeStamp = data['timeStamp'],
+        logMsg =data['msg']
+    )
+
+    db.session.add(log)
+    db.session.commit()
+    
+    return jsonify(log.json()), 201
 
 # define error and success logs?
 # def processSuccess(Msg): 

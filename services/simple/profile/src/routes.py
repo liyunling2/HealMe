@@ -124,13 +124,8 @@ def edit_doctor_profile(doctorID):
 
 @routes.route("/doctors", methods=["POST"])
 def add_doctor_profile():
-    try:
-        data = request.get_json()
-        new_doctor = Doctor(clinicID=data.get('clinicID'), doctorID=str(uuid.uuid4()), doctorName=data.get('doctorName'), 
-                        doctorDesc=data.get('doctorDesc'), specialty=data.get('specialty'), ratings=data.get('ratings'))
-        db.session.add(new_doctor)
-        db.session.commit()
-        return jsonify(new_doctor.json()), 201
-    except Exception as e:
-        traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred creating the doctor profile."}), 500
+    data = request.get_json()
+    new_doctor = Doctor(clinicID=data.get('clinicID'), doctorID=str(uuid.uuid4()), doctorName=data.get('doctorName'), 
+                    doctorDesc=data.get('doctorDesc'), specialty=data.get('specialty'), ratings=data.get('ratings'))
+    db.session.add(new_doctor)
+    return jsonify(new_doctor.json()), 201

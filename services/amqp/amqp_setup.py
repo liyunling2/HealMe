@@ -2,8 +2,8 @@ import time
 import pika
 from os import environ
 
-hostname = environ.get('hostname') 
-port = environ.get('port')       
+hostname = environ.get('hostname') or "localhost"
+port = environ.get('port')  or 5672
 exchangename = "log_fanout"
 exchangetype = "fanout"
  
@@ -44,7 +44,7 @@ def create_channel(connection):
     return channel
 
 
-def create_queues(channel):
+def create_queue(channel):
     print('amqp_setup:create queues')
     create_log_queue(channel)
 
@@ -59,6 +59,6 @@ def create_log_queue(channel):
 if __name__ == "__main__":  
     connection = create_connection()
     channel = create_channel(connection)
-    create_queues(channel)
+    create_queue(channel)
     
     

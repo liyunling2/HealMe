@@ -9,30 +9,24 @@ import pika
 import json
 import amqp_connection
 
-
-
-
-
 app = Flask(__name__)
 CORS(app)
 
-exchangename = "createBooking_topic" # exchange name
-exchangetype="topic" # use a 'topic' exchange to enable interaction
+exchangename = "log_fanout"
+exchangetype= "fanout" 
 
-# Instead of hardcoding the values, we can also get them from the environ as shown below
-# exchangename = environ.get('exchangename') #order_topic
-# exchangetype = environ.get('exchangetype') #topic 
-
-#create a connection and a channel to the broker to publish messages to activity_log, error queues
 connection = amqp_connection.create_connection() 
 channel = connection.channel()
+
+blocked_slots_URL = "http://localhost:50000/"
+# log_URL = 
+# noti_URL =
+booking_URL = "http://localhost:5005/bookings"
 
 #if the exchange is not yet created, exit the program
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
     sys.exit(0)  # Exit with a success status
-
-booking_URL = "http://localhost:5005/bookings"
 
 @app.route("/createBooking")
 def index():
@@ -49,8 +43,7 @@ def create_booking():
             createBooking = request.get_json()
             print("\nReceived a booking in JSON:", createBooking)
 
-            # do the actual work
-            # 1. Send order info {cart items}
+            # create booking
             result = processCreateBooking(createBooking)
             return jsonify(result), result["code"]
 
@@ -78,7 +71,7 @@ def processCreateBooking(createBooking):
     print("hello")
     print('booking_result:', booking_result)
 
-    # Check the order result; if a failure, send it to the error microservice.
+    # Check booking, if not send to log microservice
     code = booking_result["code"]
     message = json.dumps(booking_result)
     if code not in range(200, 300):
@@ -86,12 +79,8 @@ def processCreateBooking(createBooking):
         print('\n\n-----Publishing the (log error) message with routing_key=#-----')
         channel.basic_publish(exchange=exchangename, routing_key="#", 
             body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-        # make message persistent within the matching queues until it is received by some receiver 
-        # (the matching queues have to exist and be durable and bound to the exchange)
-
-        # - reply from the invocation is not used;
-        # continue even if this invocation fails        
-        print("\nOrder status ({:d}) published to the RabbitMQ Exchange:".format(
+     
+        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
             code), booking_result)
         
         #return error
@@ -106,11 +95,11 @@ def processCreateBooking(createBooking):
         blocked_slots_URL, method="POST", json=booking_result['data'])
     print("shipping_result:", booked_slots_result, '\n')
     # Check the booked_slots result;
-    # if a failure, send it to the error microservice.
+    # if a failure, send it to log microservice.
     code = booked_slots_result["code"]
     if code not in range(200, 300):
 
-        # Inform the error microservice
+        # Inform the log microservice
         print('\n\n-----Invoking error microservice as shipping fails-----')
         invoke_http(log_URL, method="POST", json=booked_slots_result)
         print("Shipping status ({:d}) sent to the error microservice:".format(
@@ -125,7 +114,6 @@ def processCreateBooking(createBooking):
             },
             "message": "Simulated booked_slots record error sent for error handling."
         }
-    
 
 
     # 7. Return created booking, booked_slots record
@@ -137,6 +125,13 @@ def processCreateBooking(createBooking):
     
 }
     
+# @app.route("/deleteBooking", methods=["POST"])
+# def delete_booking():
+ 
+
+# def processDeleteBooking(deleteBooking):
+   
+
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +

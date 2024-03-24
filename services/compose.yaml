@@ -1,6 +1,7 @@
 include:
   - ./kong/compose.yml
-  - ./ampq/compose.yml
+  - ./amqp/compose.yml
+  - ./complex/compose.yml
 
 services:
   blocked_slots:
@@ -72,6 +73,21 @@ services:
       PORT: 5000
     ports:
       - "${BOOKING_PORT-5005}:5000"
+
+  log:
+    build:
+      context: ./simple/log
+    depends_on:
+      - db
+    restart: on-failure
+    volumes:
+      - ./simple/log/src:/src
+    environment:
+      # DB_URI: ${BOOKING_DB_URI}
+      PORT: 5000
+    ports:
+      - "${LOG_PORT-5006}:5000"
+
   db:
     image: mysql
     # command: --default-authentication-plugin=caching_sha2_password

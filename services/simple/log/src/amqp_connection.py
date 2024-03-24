@@ -3,7 +3,7 @@ import pika
 from os import environ
 
 hostname = environ.get('hostname') or "localhost"
-port = environ.get('port')  or 5672
+port = environ.get('port') or 5672
 
 def create_connection(max_retries=12, retry_interval=5):
     print('amqp_connection: Create_connection')

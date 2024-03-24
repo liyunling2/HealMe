@@ -5,13 +5,7 @@ from flask import jsonify
 from models import Log
 import uuid
 
-import os 
-cdir = os.getcwd()
-path = os.path.dirname(os.path.dirname(os.path.dirname(cdir)))
-
-import sys
-sys.path.append(path)
-from amqp import amqp_connection
+import amqp_connection
 
 log_queue_name = 'All_Logs' 
 

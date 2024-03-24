@@ -12,7 +12,6 @@ import amqp_connection
 
 
 
-
 app = Flask(__name__)
 CORS(app)
 

@@ -12,6 +12,6 @@
     ```yaml
     blocked_slots:
         environment:
-            - DB_URI: ${DB_URI}/blocked_slots
-        # continued
+           - DB_URI: ${DB_URI}/blocked_slots
+        #  continued
     ```

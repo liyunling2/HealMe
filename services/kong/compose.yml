@@ -16,8 +16,8 @@ services:
       KONG_ADMIN_ERROR_LOG: /dev/stderr
       KONG_ADMIN_LISTEN: 0.0.0.0:8001
       KONG_ADMIN_GUI_URL: http://localhost:8002
-    ports: 
-      - "8000:8000" # Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.
+    ports:
+      - "8100:8000" # Takes incoming HTTP traffic from Consumers, and forwards it to upstream Services.
       - "8443:8443" # Takes incoming HTTPS traffic from Consumers, and forwards it to upstream Services.
       - "8001:8001" # Admin API. Listens for calls from the command line over HTTP.
       - "8444:8444" # Admin API. Listens for calls from the command line over HTTPS.

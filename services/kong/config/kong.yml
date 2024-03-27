@@ -20,7 +20,7 @@ services:
     methods:
       - POST
     paths:
-      - /blockedslots/edit
+      - /blockedslots/new
 
 - name: clinic
   url: http://clinic:5000

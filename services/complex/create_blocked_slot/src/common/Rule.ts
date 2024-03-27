@@ -13,6 +13,9 @@ export default class Rule {
     }
 
     async check(params: URLSearchParams): Promise<boolean> {
-        return this.checkRulePassedFn(await this.fetcherFn(params), params);
+        console.log("Checking using params", params.toString());
+        const body = await this.fetcherFn(params);
+        console.log("THE BODY", body);
+        return this.checkRulePassedFn(body, params);
     }
 }

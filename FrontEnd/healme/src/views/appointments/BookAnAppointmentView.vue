@@ -11,12 +11,12 @@
                 Showing: {{ filteredClinics.length }} Clinics
             </h2>
             <v-list-item-group v-model="selectedClinic" color="primary">
-            <v-list-item v-for="clinic in filteredClinics" :key="clinic.id" @click="selectClinic(clinic)" :value="clinic" >
-                <v-list-item-content>
-                <v-list-item-title>{{ clinic.clinicName }}</v-list-item-title>
-                <v-list-item-subtitle>{{ clinic.location }}</v-list-item-subtitle>
-                </v-list-item-content>
-            </v-list-item>
+                <v-list-item v-for="clinic in filteredClinics" :key="clinic.id" @click="selectClinic(clinic)" :value="clinic" >
+                    <v-list-item-content>
+                        <v-list-item-title>{{ clinic.clinicName }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ clinic.location }}</v-list-item-subtitle>
+                    </v-list-item-content>
+                </v-list-item>
             </v-list-item-group>
         </v-stepper-step>
     </template>
@@ -46,24 +46,24 @@
       <h3 class="text-h6">Showing Dr {{ selectedDoctor.doctorName }} timeslot availability</h3>
       <br>
       <v-stepper-step>
-        <h3 class="text-h6"></h3>
-        <br>
-        <v-container>
-            <v-row justify="center">
-            <v-date-picker width="1000" v-model="selectedDate" :min="minDate"></v-date-picker>
-            </v-row>
-        </v-container>
-        <br>
-        <h2 class="text-red-darken-1 centered">
-            Showing all available timeslots
-        </h2>
-        <v-list-item-group v-model="selectedDoctor" color="primary">
-        <v-list-item v-for="timeslot in filteredTimeslots" :key="timeslot.id" @click="selectTimeslot(timeslot)" :value="timeslot" >
-            <v-list-item-content>
-            <v-list-item-title>{{ timeslot.timeslot }}</v-list-item-title>
-            </v-list-item-content>
-        </v-list-item>
-        </v-list-item-group>
+            <h3 class="text-h6"></h3>
+            <br>
+            <v-container>
+                <v-row justify="center">
+                <v-date-picker width="1000" v-model="selectedDate" :min="minDate"></v-date-picker>
+                </v-row>
+            </v-container>
+            <br>
+            <h2 class="text-red-darken-1 centered">
+                Showing all available timeslots
+            </h2>
+            <v-list-item-group v-model="selectedDoctor" color="primary">
+                <v-list-item v-for="timeslot in filteredTimeslots" :key="timeslot.id" @click="selectTimeslot(timeslot)" :value="timeslot" >
+                    <v-list-item-content>
+                    <v-list-item-title>{{ timeslot.timeslot }}</v-list-item-title>
+                    </v-list-item-content>
+                </v-list-item>
+            </v-list-item-group>
         </v-stepper-step>
     </template>
 
@@ -76,12 +76,12 @@
         <br>
         <v-card>
             {{ selectedClinic.clinicName }}
-        {{ selectedClinic.location }}
+            {{ selectedClinic.location }}
         <br>
-        {{ selectedDoctor.doctorName }}
-        {{ selectedDoctor.ratings }}
+            {{ selectedDoctor.doctorName }}
+            {{ selectedDoctor.ratings }}
         <br>
-        {{ moment(selectedTimeslot.date).format("MMM Do YY") }}
+            {{ moment(selectedTimeslot.date).format("MMM Do YY") }}
         <v-card-actions>
             <v-btn @click = "goBack()">
                 previous
@@ -104,6 +104,7 @@
 
 <script>
 import moment from 'moment';
+import { useStore, mapGetters, mapActions, mapState } from "vuex";
 
 // function call all clinics first on life cycle hook
 // on select clinic, generate the doctors
@@ -161,12 +162,8 @@ import moment from 'moment';
         ],
     }),
     created() {
-        this.getClinicData();
     },
     methods: {
-        getClinicData() {
-            this.clinics = []
-        }, 
         selectClinic(clinic) {
             this.selectedClinic = clinic;
             this.step++; // Move to the next step in the stepper
@@ -185,10 +182,26 @@ import moment from 'moment';
             this.step--;
         },
         makeAnAppointment() {
-            console.log("this works");
+            const payload = {
+                patientID: this.userDetails.patientID,
+                doctorID: this.selectedDoctor.doctorID,
+                doctorName: this.selectedDoctor.doctorName,
+                patientID: this.userDetails.patientName,
+                clinicID: this.selectedClinic.clinicID,
+                clinicName: this.selectedClinic.clinicName,
+                clinicLocation: this.selectedClinic.location,
+                date: new Date(),
+                slotNo: this.selectedTimeslot.slotID,
+                bookingStatus: "confirmed"
+            }
+            console.log(payload)
+            // this.$store.dispatch("appointmentModule/getAllClinics", payload);
         }
     },
     computed: {
+        ...mapGetters({
+            userDetails: "authModule/getUserDetails",
+        }),
         filteredTimeslots() {
             return this.timeslots.filter(timeslot => {
                 // Ensure 'timeslot.date' is a Moment.js object

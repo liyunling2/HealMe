@@ -2,18 +2,19 @@ import axios from 'axios';
 import router from "../../router";
 import { msgError, msgSuccess } from "../../Tools/tools";
 
-
-
 const appointmentModule = {
     namespaced: true,
     state: {
         clinics: [],
         appointment: [],
         userAppointments: [],
-        doctorClinic: [],
+        clinicDoctors: [],
     },
     getters: {
         getClinics(state) {
+            return state.clinics;
+        },
+        getAppointment(state) {
             return state.clinics;
         },
     },
@@ -22,37 +23,98 @@ const appointmentModule = {
             state.clinics = payload
         },
         setDoctors(state,payload) {
-            state.doctorClinic = payload
+            state.clinicDoctors = payload
         },
-        clearUser(state) {
-            state.user = DEFAULT_USER;
-            state.auth = false;
+        setAppointments(state,payload) {
+            state.availableAppointment = payload
         },
-        cleanUsers(state) {
-            state.users = [];
-        },
-        addAllUsers(state, payload) {
-            state.users.push(payload);
-        }
     },
     actions: {
-        async getClinicsService({commit}, payload) {
+        async getAllClinics({commit}, payload) {
             try {
                 commit("notificationModule/setLoading", true, { root: true });
                 axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
                     .then(response => {
-                        console.log(response)
-                        //commit("setClinics", response.data);
+                        commit("setClinics", response.data);
                     })
                     .catch(error => {
                         console.error(error);
                         // Handle login failure here (e.g., show error message)
                     });
-                } finally {
-                    commit("notificationModule/setLoading", false, { root: true });
-                }
+                } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
         },
-        async getDoctorsService({commit}, payload) {
+        async getAllDoctorsInClinic({commit}, payload) {
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async getDoctorAvailableAppointment({commit}, payload){
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async createAppointment({commit}, payload) {
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                }     
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async getAllUserAppointments({commit}, payload) {
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async getAppointmentDetails({commit}, payload) {
             try {
                 commit("notificationModule/setLoading", true, { root: true });
                 axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
@@ -67,6 +129,40 @@ const appointmentModule = {
                 } finally {
                     commit("notificationModule/setLoading", false, { root: true });
                 }
+        },
+        async editAppointment({commit}, payload) {
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                }     
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async deleteAppointment({commit}, payload) {
+            try {
+                commit("notificationModule/setLoading", true, { root: true });
+                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                    .then(response => {
+                        console.log(response)
+                        //commit("setDoctors", response.data);
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        // Handle login failure here (e.g., show error message)
+                    });
+                } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
         },
     }
 };

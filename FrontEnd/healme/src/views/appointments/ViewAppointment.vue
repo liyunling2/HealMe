@@ -1,6 +1,6 @@
 <template>
     <v-card>
-        {{ id }}
+        
     </v-card>
 </template>
 <script>
@@ -13,7 +13,8 @@
         props: ["id"],
         components: {
         },
-        async beforeCreate() {
+        Created(){
+            
         },
         computed: {
             ...mapGetters({

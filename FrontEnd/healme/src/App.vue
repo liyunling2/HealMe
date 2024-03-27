@@ -14,17 +14,19 @@
     import { onMounted } from "vue";
     import { useStore, mapGetters, mapActions, mapState } from "vuex";
     import Navbar from "./components/NavBar.vue";
-
     import appLoader from "./components/utils/loader.vue";
-
+    import router from "./router/";
     export default {
         name: "App",
         components: {
             Navbar,
             appLoader
         },
+        created(){
+            this.checkLogin()
+        },
         mounted() {
-            this.$store.dispatch("appointmentModule/getClinicsService");
+            this.$store.dispatch("appointmentModule/getAllClinics");
         },
         computed: {
           ...mapGetters({
@@ -41,6 +43,16 @@
                     if (toastMsg[2] === "success") {
                         this.$toast.success(toastMsg[1]);
                     }
+                }
+            }
+        },
+        methods: {
+            checkLogin() {
+                const userData = JSON.parse(localStorage.getItem('userData'));
+                if(userData !== null) {
+                    this.$store.commit("authModule/setUser", userData);
+                    // User is logged in, redirect to /profile
+                    router.push('/profile');
                 }
             }
         },

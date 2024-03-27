@@ -4,8 +4,8 @@ from unittest import mock
 from src.utils import create_schedule, deep_mask
 import httpx
 import pytest
-from src.routes import (get_bookings, get_clinic_blocked_slots,
-                    get_clinic_doctor_ratings, get_doctor_profiles)
+from src.routes import (get_bookings, get_blocked_slots,
+                    get_clinic_doctor_ratings, get_doctor_profile_with_rating)
 
 test_client = httpx.AsyncClient(
     transport=httpx.MockTransport(
@@ -16,7 +16,7 @@ test_client = httpx.AsyncClient(
 @mock.patch.dict(os.environ, {"PROFILE_URL": "http://profile_url", "BLOCKED_SLOTS_URL": "http://blocked_slots_url", "RATING_URL": "http://rating_url", "BOOKING_URL": "http://booking_url"})
 @pytest.mark.asyncio
 async def test_get_doctor_profiles():
-    response = await get_doctor_profiles(test_client, "clinic_id")
+    response = await get_doctor_profile_with_rating(test_client, "clinic_id")
     assert response.status_code == 200
     assert response.json() == {"message": "ok"}
 

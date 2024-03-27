@@ -1,62 +1,88 @@
 from flask import Blueprint, request
 from typing import List
 import httpx
-import asyncio
 import os
+import asyncio
+from utils import create_schedule
 
 routes = Blueprint("get_doctor_schedule", __name__)
+
+@routes.route("/hello", methods=["GET"])
+async def hello():
+    return { "message": "Hello, World!", "env_vars": dict(os.environ) }, 200
 
 @routes.route("/", methods=["GET"])
 async def get_doctor_schedule():
     # At any point 404 error
-    clinic_id = request.args.get("clinicID")
+    args = request.args
+    clinic_id = args.get("clinicID")
 
     if not clinic_id:
         return { "message": "no clinicID sent" }, 400
 
-    async with httpx.AsyncClient() as client:
+    client = httpx.AsyncClient()
+    try:
+        # get response data for each or raise error
         responses = await asyncio.gather(
-            get_doctor_profiles(client, clinic_id),
-            get_clinic_blocked_slots(client, clinic_id),
-            get_clinic_doctor_ratings(client, clinic_id),
-            get_bookings(client, clinic_id)
+            asyncio.create_task(get_doctor_profile_with_rating(client, args)),
+            asyncio.create_task(get_blocked_slots(client, args)),
+            asyncio.create_task(get_bookings(client, args))
         )
-        
-        try:
-            # get response data for each or raise error
-            response_data = [response.raise_for_status().json() for response in responses]
+        response_data = [response.raise_for_status().json() for response in responses]
 
-            return format_response(response_data), 200
+        return response_data
+        return format_response(request.args, response_data), 200
 
-        except httpx.HTTPStatusError as err:
-            print(err.request.url)
-            return { "message": "dumbass" }, 400
+    except httpx.HTTPStatusError as err:
+        print("HTTP STATUS ERROR: ", err)
+        print("Response data: ", err.response.json())
+        print("Request url: ", err.request.url)
+        return { "message": f"Request to {err.request.url} failed" }, 500
+    
+    except httpx.HTTPError as err:
+        # print error
+        print("ERROR: ", err)
+        print("Request url: ", err.request.url)
+        return { "message": f"Request to {err.request.url} failed" }, 500
 
-        except:
-            return { "message": "Something went wrong." }, 500
+    except Exception as err:
+        print(err)
+        return { "message": "Something went wrong." }, 500
 
-# def get_data(client, base_url, url_path_fn, **kwargs):
-#     clinic_id = kwargs.get("clinic_id")
-#     url_path = url_path_fn(base_url, clinic_id)
-#     return client.get(url_path)
+    finally:
+        await client.aclose()
 
-def get_doctor_profiles(client, clinic_id):
+def get_data_from_url(client, url, args):
+    print("fetching from", url)
+    clinic_id = args.get("clinicID")
+    return client.get(f"{url}?clinicID={clinic_id}")
+
+def get_doctor_profile_with_rating(client, args):
     url = os.environ.get("PROFILE_URL")
-    return client.get(f"{url}/doctors?clinicID={clinic_id}")
+    return get_data_from_url(client, url + "/doctors", args)
 
-def get_clinic_blocked_slots(client, clinic_id):
+def get_blocked_slots(client, args):
     url = os.environ.get("BLOCKED_SLOTS_URL")
-    return client.get(f"{url}?clinicID={clinic_id}")
+    return get_data_from_url(client, url, args)
 
-def get_clinic_doctor_ratings(client, clinic_id):
-    url = os.environ.get("RATING_URL")
-    return client.get(f"{url}?clinicID={clinic_id}")
-
-def get_bookings(client, clinic_id):
+def get_bookings(client, args):
     url = os.environ.get("BOOKING_URL")
-    return client.get(f"{url}?clinicID={clinic_id}")
+    return get_data_from_url(client, url, args)
 
-def format_response(response_data: List[dict]):
-    doctors, blocked_slots, ratings, bookings = response_data
+def format_response(args, response_data: List[dict]):
+    print("Response data: ", response_data)
+    doctor_profile, blocked_slots, bookings = (res["data"] for res in response_data)
+    
+    response_data = {
+        "date": args.get("date"),
+        "doctorID": args.get("doctorID"),
+        "clinicID": args.get("clinicID")
+    } \
+    | doctor_profile \
+    | {"schedule": create_schedule(blocked_slots, bookings)}
+    
+    return response_data
+
+    
 
     

@@ -6,9 +6,9 @@ services:
       - "${CREATE_BLOCKED_SLOTS_PORT-50001}:5000"
     restart: always
     environment:
-        BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
-        BOOKING_URL: ${BOOKING_URL}
-        PROFILE_URL: ${PROFILE_URL}
+      BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
+      BOOKING_URL: ${BOOKING_URL}
+      PROFILE_URL: ${PROFILE_URL}
 
   get_doctor_schedule:
     build:
@@ -22,4 +22,16 @@ services:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       PROFILE_URL: ${PROFILE_URL}
       BOOKING_URL: ${BOOKING_URL}
+      RATING_URL: ${RATING_URL}
+
+  get_doctor_profile_with_rating:
+    build:
+      context: ./get_doctor_profile_with_rating
+    volumes:
+      - ./get_doctor_profile_with_rating/src:/src
+    ports:
+      - "${GET_DOCTOR_PROFILE_WITH_RATING_PORT-50003}:5000"
+    restart: always
+    environment:
+      PROFILE_URL: ${PROFILE_URL}
       RATING_URL: ${RATING_URL}

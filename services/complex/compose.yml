@@ -3,4 +3,23 @@ services:
     build:
       context: ./create_blocked_slot
     ports:
-      - "50000:50000"
+      - "${CREATE_BLOCKED_SLOTS_PORT-50001}:5000"
+    restart: always
+    environment:
+        BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
+        BOOKING_URL: ${BOOKING_URL}
+        PROFILE_URL: ${PROFILE_URL}
+
+  get_doctor_schedule:
+    build:
+      context: ./get_doctor_schedule
+    volumes:
+      - ./get_doctor_schedule/src:/src
+    ports:
+      - "${GET_DOCTOR_SCHEDULE_PORT-50002}:5000"
+    restart: always
+    environment:
+      BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
+      PROFILE_URL: ${PROFILE_URL}
+      BOOKING_URL: ${BOOKING_URL}
+      RATING_URL: ${RATING_URL}

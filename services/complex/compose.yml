@@ -4,3 +4,13 @@ services:
       context: ./create_blocked_slot
     ports:
       - "50000:50000"
+
+
+  manage_booking:
+    build:
+      context: ./manageBooking
+    depends_on:
+      - rabbitmq
+    restart: on-failure
+    ports:
+      - "5007:5000"

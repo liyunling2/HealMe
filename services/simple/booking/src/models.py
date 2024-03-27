@@ -7,8 +7,12 @@ class Booking(db.Model):
     
     bookingID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     patientID = db.Column(db.String(36))
+    patientName = db.Column(db.String(36))
     clinicID = db.Column(db.String(36))
+    clinicName = db.Column(db.String(36))
+    clinicLocation = db.Column(db.String(36))
     doctorID = db.Column(db.String(36))
+    doctorName = db.Column(db.String(36))
     date = db.Column(db.Date)
     slotNo = db.Column(db.Integer)
     bookingStatus = db.Column(db.VARCHAR(255))
@@ -20,8 +24,12 @@ class Booking(db.Model):
         return {
             "bookingID": self.bookingID,
             "patientID": self.patientID,
+            "patientName": self.patientName,
             "clinicID": self.clinicID,
+            "clinicName": self.clinicName,
+            "clinicLocation": self.clinicLocation,
             "doctorID": self.doctorID,
+            "doctorName": self.doctorName,
             "date": self.date,
             "slotNo": self.slotNo,
             "bookingStatus": self.bookingStatus,

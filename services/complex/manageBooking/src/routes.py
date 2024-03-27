@@ -18,10 +18,8 @@ exchangetype= "fanout"
 connection = amqp_connection.create_connection() 
 channel = connection.channel()
 
-blocked_slots_URL = "http://localhost:50000/"
-# log_URL = 
-# noti_URL =
-booking_URL = "http://localhost:5005/bookings"
+blocked_slots_URL = "http://localhost:5001/"
+booking_URL = "http://localhost:5005/"
 
 #if the exchange is not yet created, exit the program
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
@@ -66,64 +64,71 @@ def create_booking():
     }), 400
 
 def processCreateBooking(createBooking):
-    print('\n-----Invoking booking microservice-----')
-    booking_result = invoke_http(booking_URL, method='POST', json=createBooking)
-    print("hello")
-    print('booking_result:', booking_result)
-
-    # Check booking, if not send to log microservice
-    code = booking_result["code"]
-    message = json.dumps(booking_result)
-    if code not in range(200, 300):
-        # Inform the log microservice NOT DONE YET
-        print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-        channel.basic_publish(exchange=exchangename, routing_key="#", 
-            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), booking_result)
+    global blocked_slots_URL
+    print('\n\n-----Invoking blocked_slots microservice to check if slot exist-----')
+    blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
+    blocked_slots_result = invoke_http(
+        blocked_slots_URL, method="GET", json=createBooking)
+    print("Blocked slots result is ")
+    print(blocked_slots_result)
+    if blocked_slots_result['message'] == "No slots found.":
         
-        #return error
-        return {
-            "code": 500,
-            "data": {"booking_result": booking_result},
-            "message": "Booking creation failure sent for error handling."
-        }
+        print('\n-----Invoking booking microservice-----')
+        booking_result = invoke_http(booking_URL, method='POST', json=createBooking)
+        print('booking_result:', booking_result)
+        code = booking_result["code"]
+        message = json.dumps(booking_result)
+        if code not in range(200, 300):
+            # Inform the log microservice NOT DONE YET
+            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+                code), booking_result)
+            
+            #return error
+            return {
+                "code": 500,
+                "data": {"booking_result": booking_result},
+                "message": "Booking creation failure sent for error handling."
+            }
+        
+        # Check the booked_slots result;
+        # if a failure, send it to log microservice.
+        #code = booked_slots_result["code"]
+        #if code not in range(200, 300):
+
+            # Inform the log microservice
+            #print('\n\n-----Invoking error microservice as shipping fails-----')
+            #invoke_http(log_URL, method="POST", json=booked_slots_result)
+            #print("Shipping status ({:d}) sent to the error microservice:".format(
+                #code), booked_slots_result)
+
+        # 7. Return error
+            #return {
+                #"code": 400,
+                #"data": {
+                    #"order_result": booking_result,
+                    #"shipping_result": booked_slots_result
+                #},
+                #"message": "Simulated booked_slots record error sent for error handling."
+            #}
+
+
+        # 7. Return created booking, booked_slots record
+        #return {"code": 201,
+            #"data": {
+                #"order_result": booking_result,
+                #"shipping_result": booked_slots_result
+            #}
+        #}
+    return {
+            "data": None,
+            "message": "Slot already blocked",
+        }, 400
+        
     
-    print('\n\n-----Invoking blocked_slots microservice-----')
-    booked_slots_result = invoke_http(
-        blocked_slots_URL, method="POST", json=booking_result['data'])
-    print("shipping_result:", booked_slots_result, '\n')
-    # Check the booked_slots result;
-    # if a failure, send it to log microservice.
-    code = booked_slots_result["code"]
-    if code not in range(200, 300):
-
-        # Inform the log microservice
-        print('\n\n-----Invoking error microservice as shipping fails-----')
-        invoke_http(log_URL, method="POST", json=booked_slots_result)
-        print("Shipping status ({:d}) sent to the error microservice:".format(
-            code), booked_slots_result)
-
-    # 7. Return error
-        return {
-            "code": 400,
-            "data": {
-                "order_result": booking_result,
-                "shipping_result": booked_slots_result
-            },
-            "message": "Simulated booked_slots record error sent for error handling."
-        }
-
-
-    # 7. Return created booking, booked_slots record
-    return {"code": 201,
-        "data": {
-            "order_result": booking_result,
-            "shipping_result": booked_slots_result
-        }
-    
-}
     
 # @app.route("/deleteBooking", methods=["POST"])
 # def delete_booking():
@@ -136,7 +141,7 @@ def processCreateBooking(createBooking):
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for creating a booking...")
-    app.run(host="0.0.0.0", port=5006, debug=True)
+    app.run(host="0.0.0.0", port=5007, debug=True)
     # Notes for the parameters:
     # - debug=True will reload the program automatically if a change is detected;
     #   -- it in fact starts two instances of the same flask program,

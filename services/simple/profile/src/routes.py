@@ -20,6 +20,21 @@ def delete_all_patients():
         return jsonify({"data": None, "message": "An error occurred deleting the patients."}), 500
 
 #patient routes
+
+@routes.route("/patients/login", methods=["POST"])
+def patient_login():
+    try:
+        data = request.get_json()
+        patient = Patient.query.filter_by(email=data.get('email')).first()
+        if patient and patient.password == data.get('password'):
+            return jsonify({"data": patient.json(), "message": "Patient logged in successfully."}), 200
+        else:
+            return jsonify({"data": None, "message": "Invalid email or password."}), 401
+    
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred logging in the patient."}), 500
+
 @routes.route("/patients", methods=["GET"])
 def get_patients():
     try:
@@ -53,8 +68,10 @@ def edit_patient_profile(patientID):
             data = request.get_json()
             patient.patientName = data.get('patientName', patient.patientName)
             patient.contactNum = data.get('contactNum', patient.contactNum)
-            patient.allergies = json.dumps(data.get('allergies', json.loads(patient.allergies)))
-            patient.medications = json.dumps(data.get('medications', json.loads(patient.medications)))
+            patient.email = data.get('email', patient.email)
+            patient.password = data.get('password', patient.password)
+            # patient.allergies = json.dumps(data.get('allergies', json.loads(patient.allergies)))
+            # patient.medications = json.dumps(data.get('medications', json.loads(patient.medications)))
             db.session.commit()
             return jsonify({"data": patient.json(), "message": "Patient profile updated successfully."}), 200
         else:
@@ -68,14 +85,15 @@ def edit_patient_profile(patientID):
         traceback.print_exception(type(e), e, e.__traceback__)
         return jsonify({"data": None, "message": "An error occurred updating the patient profile."}), 500
 
-
 @routes.route("/patients", methods=["POST"])
 def add_patient_profile():
     try:
         data = request.get_json()
-        new_patient = Patient(patientID=str(uuid.uuid4()), patientName=data.get('patientName'), 
-            contactNum=data.get('contactNum'), allergies=data.get('allergies'), 
-            medications=data.get('medications'))
+        new_patient = Patient(patientID=str(uuid.uuid4()),
+            email=data.get('email'),
+            password=data.get('password'),
+            patientName=data.get('patientName'), 
+            contactNum=data.get('contactNum'))
         db.session.add(new_patient)
         db.session.commit()
         return jsonify({"data": new_patient.json(), "message": "Patient profile added successfully."}), 201
@@ -90,6 +108,21 @@ def add_patient_profile():
 
 
 #doctor routes
+
+@routes.route("/doctors/login", methods=["POST"])
+def doctor_login():
+    try:
+        data = request.get_json()
+        doctor = Doctor.query.filter_by(email=data.get('email')).first()
+        if doctor and doctor.password == data.get('password'):
+            return jsonify({"data": doctor.json(), "message": "Doctor logged in successfully."}), 200
+        else:
+            return jsonify({"data": None, "message": "Invalid email or password."}), 401
+    
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred logging in the doctor."}), 500
+
 @routes.route("/doctors", methods=["GET"])
 def get_doctors():
     try:
@@ -127,7 +160,6 @@ def edit_doctor_profile(doctorID):
             doctor.doctorName = data.get('doctorName', doctor.doctorName)
             doctor.doctorDesc = data.get('doctorDesc', doctor.doctorDesc)
             doctor.specialty = data.get('specialty', doctor.specialty)
-            doctor.ratings = data.get('ratings', doctor.ratings)
             db.session.commit()
             return jsonify({"data": doctor.json(), "message": "Doctor profile updated successfully."}), 200
         
@@ -145,8 +177,9 @@ def edit_doctor_profile(doctorID):
 def add_doctor_profile():
     try:
         data = request.get_json()
-        new_doctor = Doctor(clinicID=data.get('clinicID'), doctorID=str(uuid.uuid4()), doctorName=data.get('doctorName'), 
-                        doctorDesc=data.get('doctorDesc'), specialty=data.get('specialty'), ratings=data.get('ratings'))
+        new_doctor = Doctor(clinicID=data.get('clinicID'), email=data.get('email'), password=data.get('password'),
+                        doctorID=str(uuid.uuid4()), doctorName=data.get('doctorName'), 
+                        doctorDesc=data.get('doctorDesc'), specialty=data.get('specialty'))
         db.session.add(new_doctor)
         db.session.commit()
         return jsonify({"data": new_doctor.json(), "message": "Doctor profile added successfully."}), 201

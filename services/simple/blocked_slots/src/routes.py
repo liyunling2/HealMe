@@ -67,4 +67,4 @@ def get_blocked_slots():
         return {
             "data": [],
             "message": "No slots found.",
-        }, 404
+        }, 200

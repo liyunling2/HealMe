@@ -17,6 +17,7 @@ async function checkAllowedBlockedSlot(blockedSlot: BlockedSlotType): Promise<bo
 
     const params = new URLSearchParams({
         doctorID: blockedSlot.doctorID,
+        clinicID: blockedSlot.clinicID,
         date: blockedSlot.date,
         slotNo: blockedSlot.slotNo.toString()
     });
@@ -31,9 +32,9 @@ function checkValidBlockedSlot(blockedSlot: BlockedSlotType): boolean {
 
 const rules: Rule[] = [
     //@ts-ignore
-    new Rule(fetchDoctorWithParams, (body) => body?.doctorID !== null, "Not a valid doctor ID"),
+    new Rule(fetchDoctorWithParams, (body, params) => body?.data?.clinicID == params.get("clinicID"), "Not a valid doctor ID"),
     //@ts-ignore
-    new Rule(fetchBlockedSlotsWithParams, (body) => (body?.data as any[]).length == 0, "Blocked slot already exists"),
+    // new Rule(fetchBlockedSlotsWithParams, (body) => (body?.data as any[]).length == 0, "Blocked slot already exists"),
     //@ts-ignore
-    new Rule(fetchBookingsWithParams, (body) => (body?.data as any[]).length == 0, "There is an existing booking at the time slot"),
+    new Rule(fetchBookingsWithParams, (body, params) => (body?.data as any[]).length == 0, "There is an existing booking at the time slot"),
 ]

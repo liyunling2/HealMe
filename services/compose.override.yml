@@ -1,0 +1,9 @@
+services:
+  create_blocked_slot:
+    environment:
+      BLOCKED_SLOTS_URL: "http://blocked_slots:5000"
+      BOOKING_URL: "http://booking:5000"
+      PROFILE_URL: "http://profile:5000"
+
+    ports:
+      - "${CREATE_BLOCKED_SLOT_PORT-50000}:50000"

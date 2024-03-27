@@ -1,7 +1,11 @@
-// Query
+import { Hono } from 'hono';
+import Query from './common/Query';
 
-// Query contains schema or primitive getter function
-// Schema contains other queries recursively
+const app = new Hono();
 
-// Queries are resolved as a tree
-// resolving means primitive return or return tree
+app.get("/", (c) => {
+
+    return c.json({})
+})
+
+const doctorProfileQuery = new Query(async (doctorID))

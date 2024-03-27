@@ -4,16 +4,18 @@ export class Query {
 
     join(query: Query): Query {
         // Joining the expectation (object) as well as the context object containing query params
-        if (typeof query.expectation == "function")
-            throw new Error("queries can only be joined if their expectations are objects")
-
-        const joined =  new Query({
-            ...this.expectation,
-            ...query.expectation
-        },
+        // Base object with empty expectation
+        const joined = new Query(
+        {},
         {
             ...this.context,
             ...query.context
+        })
+
+
+        joined.resolve = async (additionalContext: Context) => ({
+            ...await this.resolve(additionalContext),
+            ...await query.resolve(additionalContext)
         });
 
         return joined;
@@ -25,6 +27,7 @@ export class Query {
         if (additionalContext)
             this.context = {...this.context, ...additionalContext};
 
+        // Base case
         if (typeof this.expectation === "function") {
             return await this.expectation(this.context);
         }

@@ -1,9 +1,10 @@
 from db import db
 import json
+import uuid
 
 class Clinic(db.Model):
     __tablename__ = "clinic"
-    clinicID = db.Column(db.String(36), primary_key=True)
+    clinicID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     clinicName = db.Column(db.VARCHAR(255))
     location = db.Column(db.VARCHAR(255))
     services = db.Column(db.Text)  

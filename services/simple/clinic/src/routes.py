@@ -1,4 +1,5 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from models import Clinic
 from db import db
 import traceback
@@ -13,11 +14,11 @@ def delete_all_clinics():
     try:
         num_deleted = db.session.query(Clinic).delete()
         db.session.commit()
-        return jsonify({"message": f"Successfully deleted {num_deleted} clinic(s)."}), 200
+        return jsonify({"data": None, "message": f"Successfully deleted {num_deleted} clinic(s)."}), 200
     
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"data": None, "message": "An error occurred deleting the clinics."}), 500
 
 @routes.route("/", methods=["GET"])
 def get_clinics():
@@ -33,21 +34,27 @@ def get_clinics():
         if location:
             query = query.filter(Clinic.location.ilike(f"%{location}%"))
         clinics = query.all()
-        return jsonify([clinic.json() for clinic in clinics]), 200
+        return jsonify({"data": [clinic.json() for clinic in clinics] or [], "message": "Clinics retrieved successfully."}), 200
     
+    except InvalidRequestError as e:
+        return jsonify({"data": None, "message": "Invalid query parameters."}), 400
+
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred retrieving the clinics."}), 400
+        return jsonify({"data": None, "message": "An error occurred retrieving the clinics."}), 500
 
 @routes.route("/<string:clinicID>", methods=["GET"])
 def get_clinic_by_id(clinicID):
     try:
         clinic = Clinic.query.get(clinicID)
-        return jsonify(clinic.json()) if clinic else jsonify({"message": "Clinic not found"}), 404
-    
+        if clinic:
+            return jsonify({"data": clinic.json(), "message": "Clinic retrieved successfully."}), 200
+        else:
+            return jsonify({"data": None, "message": "Clinic not found"}), 404
+
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred retrieving the clinic."}), 400
+        return jsonify({"message": "An error occurred retrieving the clinic."}), 500
 
 
 @routes.route("/", methods=["POST"])
@@ -62,11 +69,16 @@ def add_clinic():
         )
         db.session.add(clinic)
         db.session.commit()
-        return jsonify(clinic.json()), 201
+        return jsonify({"data": clinic.json(), "message": "Clinic added successfully."}), 201
+    
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"data": None, "message": "Duplicate clinic data or constraint violation."}), 400
     
     except Exception as e:
         traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred creating the clinic."}), 500
+        return jsonify({"data": None, "message": "An error occurred creating the clinic."}), 500
+
 
 
 @routes.route("/<string:clinicID>", methods=["PUT"])
@@ -79,9 +91,13 @@ def edit_clinic(clinicID):
             clinic.location = data.get('location', clinic.location)
             clinic.services = json.dumps(data.get('services', json.loads(clinic.services)))
             db.session.commit()
-            return jsonify(clinic.json()), 200
-        return jsonify({"message": "Clinic not found"}), 404
+            return jsonify({"data": clinic.json(), "message": "Clinic updated successfully."}), 200
+        else:
+            return jsonify({"data": None, "message": "Clinic not found"}), 404
+    
+    except IntegrityError:
+        db.session.rollback()
+        return jsonify({"data": None, "message": "Update failed due to a data conflict or constraint violation."}), 400
     
     except Exception as e:
-        traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"message": "An error occurred updating the clinic."}), 500
+        return jsonify({"data": None, "message": "An error occurred updating the clinic."}), 500

@@ -2,8 +2,10 @@ services:
   create_blocked_slot:
     build:
       context: ./create_blocked_slot
+    volumes:
+      - ./create_blocked_slot/src:/app/src
     ports:
-      - "${CREATE_BLOCKED_SLOTS_PORT-50001}:5000"
+      - "${CREATE_BLOCKED_SLOT_PORT-50000}:50000"
     restart: always
     environment:
         BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}

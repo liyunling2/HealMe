@@ -7,15 +7,17 @@ class Booking(db.Model):
     patientID = db.Column(db.String(36))
     doctorID = db.Column(db.String(36))
     clinicID = db.Column(db.String(36))
-    dateOfBooking = db.Column(db.DateTime)
+    date = db.Column(db.Date)
+    slotNo = db.Column(db.Integer)
     bookingStatus = db.Column(db.VARCHAR(255))
 
-    def __init__(self, bookingID, patientID, doctorID, clinicID, dateOfBooking, bookingStatus):
+    def __init__(self, bookingID, patientID, doctorID, clinicID, date, slotNo, bookingStatus):
         self.bookingID = bookingID
         self.patientID = patientID
         self.doctorID = doctorID
         self.clinicID = clinicID
-        self.dateOfBooking = dateOfBooking
+        self.date = date
+        self.slotNo = slotNo
         self.bookingStatus = bookingStatus
 
     def json(self):
@@ -24,7 +26,8 @@ class Booking(db.Model):
             "patientID": self.patientID,
             "doctorID": self.doctorID,
             "clinicID": self.clinicID,
-            "dateOfBooking": self.dateOfBooking,
+            'date': self.date,
+            'slotNo': self.slotNo,
             "bookingStatus": self.bookingStatus,
             
         }

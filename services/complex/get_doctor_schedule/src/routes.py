@@ -3,7 +3,7 @@ from typing import List
 import httpx
 import os
 import asyncio
-from utils import create_schedule
+from utils import create_schedule, deep_mask
 
 routes = Blueprint("get_doctor_schedule", __name__)
 
@@ -15,10 +15,10 @@ async def hello():
 async def get_doctor_schedule():
     # At any point 404 error
     args = request.args
-    clinic_id = args.get("clinicID")
-
-    if not clinic_id:
-        return { "message": "no clinicID sent" }, 400
+    
+    for key in ["date", "doctorID", "clinicID"]:
+        if key not in args:
+            return { "message": f"Missing {key}" }, 400
 
     client = httpx.AsyncClient()
     try:
@@ -30,12 +30,12 @@ async def get_doctor_schedule():
         )
         response_data = [response.raise_for_status().json() for response in responses]
 
-        return response_data
+        # return response_data
         return format_response(request.args, response_data), 200
 
     except httpx.HTTPStatusError as err:
         print("HTTP STATUS ERROR: ", err)
-        print("Response data: ", err.response.json())
+        print("Response data: ", err.response.content)
         print("Request url: ", err.request.url)
         return { "message": f"Request to {err.request.url} failed" }, 500
     
@@ -52,37 +52,49 @@ async def get_doctor_schedule():
     finally:
         await client.aclose()
 
-def get_data_from_url(client, url, args):
-    print("fetching from", url)
-    clinic_id = args.get("clinicID")
-    return client.get(f"{url}?clinicID={clinic_id}")
 
 def get_doctor_profile_with_rating(client, args):
     url = os.environ.get("PROFILE_URL")
-    return get_data_from_url(client, url + "/doctors", args)
+    return get_data_from_url(client, url + f"/doctors/{args.get('doctorID')}", {})
+
 
 def get_blocked_slots(client, args):
     url = os.environ.get("BLOCKED_SLOTS_URL")
+    args = { "date": args.get("date"), "doctorID": args.get("doctorID"), "clinicID": args.get("clinicID")}
     return get_data_from_url(client, url, args)
+
 
 def get_bookings(client, args):
     url = os.environ.get("BOOKING_URL")
+    args = { "date": args.get("date"), "doctorID": args.get("doctorID"), "clinicID": args.get("clinicID")}
     return get_data_from_url(client, url, args)
+
+
+def get_data_from_url(client, url, args):
+    print("fetching from", url)
+    return client.get(f"{url}?{format_query_params(args)}")
+
+
+def format_query_params(args):
+    return "&".join([f"{key}={value}" for key, value in args.items()])
 
 def format_response(args, response_data: List[dict]):
     print("Response data: ", response_data)
     doctor_profile, blocked_slots, bookings = (res["data"] for res in response_data)
     
+    # Join responses
     response_data = {
         "date": args.get("date"),
         "doctorID": args.get("doctorID"),
         "clinicID": args.get("clinicID")
     } \
-    | doctor_profile \
+    | format_doctor_profile(doctor_profile) \
     | {"schedule": create_schedule(blocked_slots, bookings)}
     
     return response_data
 
-    
-
-    
+def format_doctor_profile(doctor_profile: dict):
+    formatted_profile = doctor_profile.copy()
+    formatted_profile["doctorEmail"] = formatted_profile["email"]
+    del formatted_profile["email"]
+    return formatted_profile

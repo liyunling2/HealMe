@@ -1,6 +1,6 @@
 from flask import Blueprint, request, jsonify
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
-from models import DoctorRating, ClinicRating
+from models import DoctorRating
 from db import db
 import traceback
 import uuid
@@ -21,7 +21,7 @@ routes = Blueprint("rating", __name__)
 #         traceback.print_exception(type(e), e, e.__traceback__)
 #         return jsonify({"message": "An error occurred retrieving doctor ratings."}), 500
 
-@routes.route("/doctors/", methods=["GET"])
+@routes.route("/", methods=["GET"])
 def get_doctor_rating():
     doctorID = request.args.get('doctorID')
     patientID = request.args.get('patientID')
@@ -56,20 +56,20 @@ def get_doctor_rating():
 #         traceback.print_exception(type(e), e, e.__traceback__)
 #         return jsonify({"message": "An error occurred retrieving clinic ratings."}), 500
 
-@routes.route("/clinics/<string:clinicID>", methods=["GET"])
-def get_clinic_rating(clinicID):
-    try:
-        ratings = ClinicRating.query.filter_by(clinicID=clinicID).all()
-        return jsonify({"data": [rating.json() for rating in ratings] or [], "message": "Clinic ratings retrieved successfully."}), 200
+# @routes.route("/clinics/<string:clinicID>", methods=["GET"])
+# def get_clinic_rating(clinicID):
+#     try:
+#         ratings = ClinicRating.query.filter_by(clinicID=clinicID).all()
+#         return jsonify({"data": [rating.json() for rating in ratings] or [], "message": "Clinic ratings retrieved successfully."}), 200
     
-    except InvalidRequestError as e:
-        return jsonify({"data": None, "message": "Bad request: " + str(e)}), 400
+#     except InvalidRequestError as e:
+#         return jsonify({"data": None, "message": "Bad request: " + str(e)}), 400
     
-    except Exception as e:
-        traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"data": None, "message": "An error occurred retrieving clinic ratings."}), 500
+#     except Exception as e:
+#         traceback.print_exception(type(e), e, e.__traceback__)
+#         return jsonify({"data": None, "message": "An error occurred retrieving clinic ratings."}), 500
 
-@routes.route("/doctors/<string:doctorID>", methods=["POST"])
+@routes.route("/<string:doctorID>", methods=["POST"])
 def rate_doctor(doctorID):
     try:
         data = request.json
@@ -94,25 +94,25 @@ def rate_doctor(doctorID):
         traceback.print_exception(type(e), e, e.__traceback__)
         return jsonify({"data": None, "message": "An error occurred creating the doctor rating."}), 500
 
-@routes.route("/clinics", methods=["POST"])
-def rate_clinic():
-    try:
-        data = request.json
-        rating = ClinicRating(
-            ratingID=str(uuid.uuid4()),
-            clinicID=data['clinicID'],
-            patientID=data['patientID'],
-            ratingGiven=data['ratingGiven'],
-            comments=data['comments']
-        )
-        db.session.add(rating)
-        db.session.commit()
-        return jsonify({"data": rating.json(), "message": "Clinic rated successfully."}), 201
+# @routes.route("/clinics", methods=["POST"])
+# def rate_clinic():
+#     try:
+#         data = request.json
+#         rating = ClinicRating(
+#             ratingID=str(uuid.uuid4()),
+#             clinicID=data['clinicID'],
+#             patientID=data['patientID'],
+#             ratingGiven=data['ratingGiven'],
+#             comments=data['comments']
+#         )
+#         db.session.add(rating)
+#         db.session.commit()
+#         return jsonify({"data": rating.json(), "message": "Clinic rated successfully."}), 201
     
-    except IntegrityError:
-        db.session.rollback()
-        return jsonify({"data": None, "message": "Duplicate rating not allowed"}), 400
+#     except IntegrityError:
+#         db.session.rollback()
+#         return jsonify({"data": None, "message": "Duplicate rating not allowed"}), 400
     
-    except Exception as e:
-        traceback.print_exception(type(e), e, e.__traceback__)
-        return jsonify({"data": None, "message": "An error occurred creating the clinic rating."}), 500
+#     except Exception as e:
+#         traceback.print_exception(type(e), e, e.__traceback__)
+#         return jsonify({"data": None, "message": "An error occurred creating the clinic rating."}), 500

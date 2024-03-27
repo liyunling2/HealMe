@@ -9,8 +9,6 @@ services:
   manage_booking:
     build:
       context: ./manageBooking
-    depends_on:
-      - rabbitmq
     restart: on-failure
     ports:
       - "5007:5000"

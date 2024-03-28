@@ -69,7 +69,7 @@ def create_booking():
 
 
 def processCreateBooking(createBooking):
-    global blocked_slots_URL
+    blocked_slots_URL = "http://localhost:5001/"
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
     blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
@@ -122,23 +122,31 @@ def processCreateBooking(createBooking):
     
 @app.route("/deleteBooking", methods=["DELETE"])
 def delete_booking():
-    deleteBooking = request.args.get('patientID')
-    # Simple check of input format and data of the request are JSON
+    deleteBooking = request.args.get('bookingID')
     
     print("\nReceived a delete booking request in URL:", deleteBooking)
-
+    print("result")
     result = processDeleteBooking(deleteBooking)
-
     #if result['code'] == 200:
-        #processed_result[] = result[]
+        #processed_result = []
+        #processed_result['doctorEmail'] = result['doctorEmail']
+        #processed_result['doctorName'] = result['doctorName']
+        #processed_result['patientEmail'] = result['patientEmail']
+        #processed_result['patientName'] = result['patientName']
+        #processed_result['code'] = result['code']
+        #result = processed_result
+        #print("NEW RESULT IS")
+        #print(result)
     print('\n------------------------')
     print('\nresult: ', result)
     return jsonify(result), result["code"]
 
 
 def processDeleteBooking(deleteBooking):
-    global booking_URL
+    booking_URL = "http://localhost:5005/"
     print('\n-----Invoking booking microservice-----')
+    booking_URL = booking_URL + "?bookingID=" + str(deleteBooking)
+    print(booking_URL)
     retrieve_booking_result, retrieve_booking_response_code = invoke_http(booking_URL, method="GET", json=deleteBooking)
     print('retrieve_booking_result', retrieve_booking_result)
     message = json.dumps(retrieve_booking_result)

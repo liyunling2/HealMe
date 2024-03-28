@@ -5,7 +5,7 @@
         <v-stepper-step step="1">
             <h3 class="text-h6">Select Your Clinic</h3>
             <br>
-            <v-text-field v-model="search" label="Search by name or address" append-icon="mdi-magnify" single-line hide-details clearable ></v-text-field>
+            <v-text-field v-model="searchClinic" label="Search by name or address" append-icon="mdi-magnify" single-line hide-details clearable ></v-text-field>
             <br>
             <h2 class="text-red-darken-1 centered">
                 Showing: {{ filteredClinics.length }} Clinics
@@ -50,19 +50,23 @@
             <br>
             <v-container>
                 <v-row justify="center">
-                <v-date-picker width="1000" v-model="selectedDate" :min="minDate"></v-date-picker>
+                <v-date-picker width="1000" v-model="selectedDate" :min="minDate" @input="dateChanged"></v-date-picker>
                 </v-row>
             </v-container>
             <br>
             <h2 class="text-red-darken-1 centered">
                 Showing all available timeslots
             </h2>
-            <v-list-item-group v-model="selectedDoctor" color="primary">
-                <v-list-item v-for="timeslot in filteredTimeslots" :key="timeslot.id" @click="selectTimeslot(timeslot)" :value="timeslot" >
-                    <v-list-item-content>
-                    <v-list-item-title>{{ timeslot.timeslot }}</v-list-item-title>
-                    </v-list-item-content>
-                </v-list-item>
+            <v-list-item-group v-model="selectedTimeslot" color="primary">
+                <v-row>
+                    <v-col cols="12" md="6" v-for="timeslot in filteredTimeslots" :key="timeslot.id">
+                    <v-list-item @click="selectTimeslot(timeslot)" :value="timeslot">
+                        <v-list-item-content>
+                        <v-list-item-title>{{ timeslot.timeslot }}</v-list-item-title>
+                        </v-list-item-content>
+                    </v-list-item>
+                    </v-col>
+                </v-row>
             </v-list-item-group>
         </v-stepper-step>
     </template>
@@ -75,13 +79,16 @@
         </v-stepper-step>
         <br>
         <v-card>
-            {{ selectedClinic.clinicName }}
-            {{ selectedClinic.location }}
+            Clinic: {{ selectedClinic.clinicName }}
+            <br>
+            Location: {{ selectedClinic.location }}
         <br>
-            {{ selectedDoctor.doctorName }}
-            {{ selectedDoctor.ratings }}
+            Selected Doctor: {{ selectedDoctor.doctorName }}
+            <br>
+            Doctor Ratings: {{ selectedDoctor.ratings }}
         <br>
-            {{ moment(selectedTimeslot.date).format("MMM Do YY") }}
+            Appointment Date: {{ moment(this.selectedDate).format("MMM Do YYYY") }} {{ selectedTimeslot.timeslot }}
+
         <v-card-actions>
             <v-btn @click = "goBack()">
                 previous
@@ -119,7 +126,7 @@ import { useStore, mapGetters, mapActions, mapState } from "vuex";
         selectedTimeslot: null,
         selectedDate: new Date(), // today's date in YYYY-MM-DD format
         minDate: new Date(Date.now()-86400000), // today's date for the min attribute
-        search: '',
+        searchClinic: '',
         menu: false,
         date: '', // This will hold the selected date
         selectedSpecialty: [],
@@ -144,39 +151,52 @@ import { useStore, mapGetters, mapActions, mapState } from "vuex";
             'Select Appointment Timing',
             'Confirm Your Appointment',
         ],
-        clinics: [
-            { id: 1, clinicName: 'Aljunied Medical', location: '389 Upper Aljunied Rd, SG367874'},
-            { id: 2, clinicName: 'Aljunied Medical', location: '389 Upper Aljunied Rd, SG367874'},
-        ],
-        doctors: [
-            { id: 1, doctorName: 'Marcus Yap', ratings: '4.7', specialty:["Dermatology"]},
-            { id: 2, doctorName: 'Marcus Yeet', ratings: '4.4', specialty:["General Doctor"]},
-        ],
-        timeslots: [
-            { id: 1, timeslot: '7:30', date: new Date(Date.now()+86400000)},
-            { id: 2, timeslot: '8:00', date: new Date(Date.now()+86400000 * 2)},
-            { id: 3, timeslot: '8:30', date: new Date(Date.now()+86400000 * 3)},
-            { id: 4, timeslot: '9:00', date: new Date(Date.now()+86400000)},
-            { id: 5, timeslot: '9:30', date: new Date(Date.now()+86400000 * 2)},
-            { id: 6, timeslot: '10:00', date: new Date(Date.now()+86400000 * 4)},
-        ],
+        timeslots: [],
     }),
     created() {
+        this.generateTimeslotDictionary()
     },
     methods: {
         selectClinic(clinic) {
             this.selectedClinic = clinic;
-            this.step++; // Move to the next step in the stepper
-            // call for the data
+            this.step++;
+            this.$store.dispatch("appointmentModule/getAllDoctorsInClinic", {clinicID: this.selectedClinic.clinicID});
         },
         selectDoctor(doctor) {
             this.selectedDoctor = doctor;
-            this.step++; // Move to the next step in the stepper
-            // 
+            this.step++; 
+            this.$store.dispatch("appointmentModule/getAllDoctorsInClinic", {clinicID: this.selectedClinic.clinicID});
+        },
+        dateChanged() {
+            console.log("this workslol")
+            console.log('Date selected:', newDate);
+            //this.$store.dispatch("appointmentModule/getBooked", {clinicID: this.selectedClinic.clinicID});
         },
         selectTimeslot(timeslot) {
             this.selectedTimeslot = timeslot;
-            this.step++; // Move to the next step in the stepper
+            this.step++; 
+        },
+        generateTimeslotDictionary() {
+            const timeslots = [];
+            let slotId = 1;
+            const today = new Date(); // Get today's date
+            today.setHours(0, 0, 0, 0); // Reset time to 00:00:00 for consistency
+            for (let hour = 7; hour <= 18; hour++) {
+                for (let minute = 0; minute < 60; minute += 30) {
+                        // Adjusting the condition to skip the slot immediately after the loop condition meets
+                        if (hour === 17 && minute === 30) continue;
+                        const formattedHour = hour.toString().padStart(2, '0');
+                        const formattedMinute = minute.toString().padStart(2, '0');
+                        const timeslotString = `${formattedHour}:${formattedMinute}`;
+                        timeslots.push({
+                            id: slotId,
+                            timeslot: timeslotString,
+                            // date: new Date(today), // Clone today's date for each timeslot
+                        })
+                            slotId++;
+                        }
+                    }
+            this.timeslots = timeslots
         },
         goBack() {
             this.step--;
@@ -186,57 +206,74 @@ import { useStore, mapGetters, mapActions, mapState } from "vuex";
                 patientID: this.userDetails.patientID,
                 doctorID: this.selectedDoctor.doctorID,
                 doctorName: this.selectedDoctor.doctorName,
+                patientEmail: this.userDetails.email,
+                doctorEmail: this.selectedDoctor.email,
                 patientID: this.userDetails.patientName,
                 clinicID: this.selectedClinic.clinicID,
                 clinicName: this.selectedClinic.clinicName,
                 clinicLocation: this.selectedClinic.location,
                 date: new Date(),
-                slotNo: this.selectedTimeslot.slotID,
+                slotNo: this.selectedTimeslot.id,
                 bookingStatus: "confirmed"
             }
             console.log(payload)
             // this.$store.dispatch("appointmentModule/getAllClinics", payload);
         }
     },
+    watch: {
+        selectedDate(newDate, oldDate) {
+            const payload = {
+                clinicID: this.selectedClinic.clinicID, 
+                doctorID:this.selectedDoctor.doctorID,
+                date: newDate
+            }
+            this.$store.dispatch("appointmentModule/getBookedSlots", payload);
+        }
+    },
     computed: {
         ...mapGetters({
             userDetails: "authModule/getUserDetails",
+            clinicsDetails: "appointmentModule/getClinics",
+            clinicDoctorsDetails: "appointmentModule/getDoctorsClinics",
+            bookedSlots: "appointmentModule/getBookedSlots"
         }),
         filteredTimeslots() {
-            return this.timeslots.filter(timeslot => {
-                // Ensure 'timeslot.date' is a Moment.js object
-                let timeslotDate = moment(timeslot.date);
-                // Ensure 'this.selectedDate' is a Moment.js object
-                let selectedDate = moment(this.selectedDate, 'YYYY-MM-DD');
-                // Use Moment.js 'isSame' function to compare the two dates
-                return timeslotDate.isSame(selectedDate, "date");
-            });
+            // Filter out the slots that are booked
+            // const bookedSlots = this.bookedSlots
+            // const availableTimeslots = { ...timeslotDictionary };
+            // bookedSlots.forEach(booking => {
+            //     if (availableTimeslots[booking.slot]) {
+            //         delete availableTimeslots[booking.slot];
+            //     }
+            // });
+            const availableTimeslots = this.timeslots
+            return availableTimeslots;
         },
         filteredClinics() {
-            const searchString = this.search.toLowerCase();
-            return this.clinics.filter(clinic => {
-                return (
-                clinic.clinicName.toLowerCase().includes(searchString) ||
-                clinic.location.toLowerCase().includes(searchString)
-                );
-            });
+            let result = this.clinicsDetails;
+                if (this.searchClinic) {
+                    result = result.filter((clinic) =>
+                        clinic.clinicName.toLowerCase().includes(this.searchClinic.toLowerCase()) || 
+                        clinic.location.toLowerCase().includes(this.searchClinic.toLowerCase())
+                    );
+                }
+            return result;
         },
         filteredDoctors() {
-            let result = this.doctors;
+            let result = this.clinicDoctorsDetails;
             // Filter by name if search string is provided
             if (this.doctorSearch) {
-            const searchString = this.doctorSearch.toLowerCase();
-            result = result.filter(doctor =>
-                doctor.doctorName.toLowerCase().includes(searchString)
+                const searchString = this.doctorSearch.toLowerCase();
+                result = result.filter(doctor =>
+                    doctor.doctorName.toLowerCase().includes(searchString)
             );
             }
             // Further filter by selected category/specialty if any are selected
             if (this.selectedSpecialty.length > 0) {
-            result = result.filter(doctor =>
-                this.selectedSpecialty.some(category =>
-                doctor.specialty.includes(category)
-                )
-            );
+                result = result.filter(doctor =>
+                    this.selectedSpecialty.some(category =>
+                    doctor.specialty.includes(category))
+                );
             }
             return result;
         },

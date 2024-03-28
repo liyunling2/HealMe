@@ -6,7 +6,7 @@
                     <v-col class="text-center">
                         <h1 class="font-weight-bold text-h3">Welcome Back</h1>
                         <h1 class="font-weight-bold text-h3 text-red-darken-1">
-                            {{ this.userDetails.uid }}
+                            {{ this.userDetails.patientId }}
                         </h1>
                     </v-col>
                 </v-row>
@@ -103,7 +103,7 @@
         },
         mounted() {
             // created by
-            const queryGiven = ["createdBy", "==", this.userDetails.uid];
+            const queryGiven = ["createdBy", "==", this.userDetails.patientId];
             let bookMarkappointmentsId = this.userDetails.savedappointments;
         },
         computed: {

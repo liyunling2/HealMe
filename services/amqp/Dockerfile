@@ -1,7 +1,4 @@
-FROM python:3-slim
-WORKDIR /src
-COPY amqp_setup/amqp_setup.py .
-COPY requirements.txt .
-RUN python3 -m pip install -r requirements.txt
-ENTRYPOINT ["python", "amqp_setup.py"]
+FROM rabbitmq:3-management
 
+COPY rabbitmq_definitions.json /etc/rabbitmq/rabbitmq_definitions.json
+COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf

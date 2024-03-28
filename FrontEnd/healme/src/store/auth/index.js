@@ -2,11 +2,10 @@ import axios from 'axios';
 import router from "../../router";
 import { msgError, msgSuccess } from "../../Tools/tools";
 
-
 const authModule = {
     namespaced: true,
     state: {
-        currentUser: localStorage.getItem("currentUser"),
+        currentUser: [],
         auth: false,
     },
     getters: {
@@ -22,12 +21,17 @@ const authModule = {
     },
     mutations: {
         setUser(state, payload) {
-            console.log("payload", payload)
             state.user = payload
             state.auth = true;
         },
         clearUser(state) {
-            state.user = null;
+            state.user = {
+                contactNum: "",
+                email: "",
+                patientID: 0,
+                patientName: "",
+            };
+
             state.auth = false;
         },
         cleanUsers(state) {

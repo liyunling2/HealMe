@@ -1,10 +1,17 @@
+volumes:
+  rabbitmq_data:
+
 services:
   rabbitmq:
     image: rabbitmq:3-management
     container_name: 'rabbitmq'
+    environment:
+      - RABBITMQ_CONFIG_FILE=/etc/rabbitmq/rabbitmq.conf
     restart: always
     ports:
-        - 5672:5672
-        - 15672:15672
-    volumes:
-      - ./amqp_setup:/src
+      - "5672:5672"
+      - "15672:15672"
+    volumes: 
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf
+      - ./rabbitmq_definitions.json:/etc/rabbitmq/rabbitmq_definitions.json
+      - rabbitmq_data:/var/lib/rabbitmq

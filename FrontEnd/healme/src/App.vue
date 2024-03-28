@@ -51,13 +51,11 @@
                 const userData = JSON.parse(localStorage.getItem('userData'));
                 if(userData !== null) {
                     this.$store.commit("authModule/setUser", userData);
-                    // User is logged in, redirect to /profile
                     router.push('/profile');
                 }
             }
         },
         data: () => ({
-            //
         })
     };
 </script>

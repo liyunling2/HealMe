@@ -18,19 +18,19 @@ exchangetype= "fanout"
 connection = amqp_connection.create_connection() 
 channel = connection.channel()
 
-blocked_slots_URL = "http://localhost:50000/"
+blocked_slots_URL = "http://localhost:5001/"
 # log_URL = 
 # noti_URL =
-booking_URL = "http://localhost:5005/bookings"
+booking_URL = "http://localhost:5005/"
 
 #if the exchange is not yet created, exit the program
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
-    sys.exit(0)  # Exit with a success status
+    #sys.exit(0)  # Exit with a success status
 
 @app.route("/createBooking")
 def index():
-    return "createBooking Comple Microservice is running"
+    return "createBooking Complex Microservice is running"
 
 #booking routes
 
@@ -73,6 +73,7 @@ def processCreateBooking(createBooking):
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
     blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
+    message = json.dumps(blocked_slots_result)
     print('blocked_slots_results', blocked_slots_result)
     if blocked_slots_result['message'] != "No slots found.":
         print('\n\n-----Publishing the (log error) message with routing_key=#-----')
@@ -188,7 +189,7 @@ def processDeleteBooking(deleteBooking):
             "code": 200,
             "data": {"retrieve_booking_result": retrieve_booking_result,
                      "delete_booking_result": delete_booking_result},
-            "message": "Booking creation Success"
+            "message": "Deletion Success"
         }
 
 
@@ -199,7 +200,7 @@ def processDeleteBooking(deleteBooking):
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for creating a booking...")
-    app.run(host="0.0.0.0", port=5006, debug=True)
+    app.run(host="0.0.0.0", port=5007, debug=True)
     # Notes for the parameters:
     # - debug=True will reload the program automatically if a change is detected;
     #   -- it in fact starts two instances of the same flask program,

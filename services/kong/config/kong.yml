@@ -1,125 +1,167 @@
 _format_version: "3.0"
 
 services:
+# - name: create_blocked_slots
+#   url: http://createblockedslots:50000
+#   routes:
+#   - name: complex_blockedslots
+#     paths:
+#       - /createblockedslots
+
 - name: blocked_slots
-  url: http://localhost:5001
+  url: http://blocked_slots:5000
   routes:
-  - name: blockedslots_read
+  - name: view_blockedslots
     methods:
       - GET
     paths:
-      - /
-  - name: blockedslots_post
+      - /blockedslots/view
+  - name: create_blockedslots
     methods:
       - POST
     paths:
-      - /
+      - /blockedslots/new
 
 - name: clinic
-  url: http://localhost:5002
+  url: http://clinic:5000
   routes:
-  - name: clinic_read
+  - name: view_clinic
     methods:
       - GET
     paths:
-      - /clinics
-  - name: clinic_edit
+      - /clinic/view
+  - name: create_clinic
     methods:
       - POST
-      - PUT
     paths:
-      - /clinics/all
-      - /clinics
-
-- name: profile
-  url: http://localhost:5003
-  routes:
-  - name: profile_read
-    methods:
-      - GET
-    paths:
-      - /patients
-      - /doctors
-  - name: profile_edit
+      - /clinic/new
+  - name: edit_clinic
     methods:
       - PUT
     paths:
-      - /patients
-  - name: profile_create
+      - /clinic/edit
+
+- name: patient_login
+  url: http://profile:5000/patients/login
+  routes:
+  - name: patient_login
     methods:
       - POST
     paths:
-      - /doctors
-      - /patients
+      - /patient/login
 
-- name: rating
-  url: http://localhost:5004
+- name: doctor_login
+  url: http://profile:5000/doctors/login
   routes:
-  - name: rating_read
+  - name: doctor_login
+    methods:
+      - POST
+    paths:
+      - /doctor/login
+
+- name: patient_profile
+  url: http://profile:5000/patients
+  routes:
+  - name: view_patient
     methods:
       - GET
     paths:
-      - /clinics
-      - /doctors
-  - name: rating_post
+      - /profile/patient/view
+  - name: edit_patient
+    methods:
+      - PUT
+    paths:
+      - /profile/patient/edit
+  - name: create_patient
     methods:
       - POST
     paths:
-      - /clinics
-      - /doctors
+      - /profile/patient/new
+
+- name: doctors_profile
+  url: http://profile:5000/doctors
+  routes:
+  - name: view_doc
+    methods:
+      - GET
+    paths:
+      - /profile/doctor/view
+  - name: edit_doctor
+    methods:
+      - PUT
+    paths:
+      - /profile/doctor/edit
+  - name: create_doc
+    methods:
+      - POST
+    paths:
+      - /profile/doctor/new
+
+- name: doctor_rating
+  url: http://rating:5000
+  routes:
+  - name: view_rating_doc
+    methods:
+      - GET
+    paths:
+      - /rating
+  - name: create_rating_doc
+    methods:
+      - POST
+    paths:
+      - /rating/new
 
 - name: booking
-  url: http://localhost:5005
+  url: http://booking:5000
   routes:
-  - name: booking_read
+  - name: view_booking
     methods:
       - GET
     paths:
-      - /bookings
-  - name: booking_edit
+      - /booking/view
+  - name: edit_booking
+    methods:
+      - PUT
+    paths:
+      - /booking/edit
+  - name: create_booking
     methods:
       - POST
-      - PUT
+    paths:
+      - /booking/new
+  - name: delete_booking
+    methods:
       - DELETE
     paths:
-      - /bookings
+      - /booking/delete
 
-consumers:
-- username: admin
-  keyauth_credentials:
-  - key: admin
-
-- username: patient
-  keyauth_credentials:
-    - key: patient
-
-- username: doctor
-  keyauth_credentials:
-  - key: doctor
 
 # global plugins
 plugins:
-- name: key-auth
+
+- name: cors
   config:
-    key_names:
-    - apikey
-    key_in_body: false
-    key_in_header: true
-    key_in_query: true
-    hide_credentials: false
-    run_on_preflight: true
+    origins:
+    - "*"
+    methods:
+    - GET
+    - POST
+    headers:
+    - Accept
+    - Accept-Version
+    - Content-Length
+    - Content-MD5
+    - Content-Type
+    - Date
+    - X-Auth-Token
+    exposed_headers:
+    - X-Auth-Token
+    credentials: true
+    max_age: 3600
 
-# - name: acl
-#   route: ROUTE_NAME|ID
-#   config:
-#     allow:
-#     - group1
-#     - group2
-#     hide_groups_header: true
-
-# - name: rate-limiting
-#   config:
-#     second: 2
-#     hour: 10
-#     policy: local
+- name: rate-limiting
+  config:
+    second: 50
+    hour: 10000
+    policy: local
 

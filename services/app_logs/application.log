@@ -1,0 +1,192 @@
+2024-03-28 13:16:53,246 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:21:11,048 - INFO - This is an info message
+2024-03-28 13:21:11,049 - INFO - This is an info message
+2024-03-28 13:21:11,049 - WARNING - This is a warning message
+2024-03-28 13:21:11,049 - ERROR - This is an error message
+2024-03-28 13:21:11,049 - CRITICAL - This is a critical message
+2024-03-28 13:21:11,049 - INFO - Log microservice: Getting Connection
+2024-03-28 13:21:11,056 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:21:11,056 - INFO - Socket connected: <socket.socket fd=10, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 61878, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:21:11,057 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0304073d0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0304073d0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:21:11,082 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0304073d0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:21:11,082 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0304073d0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:21:11,083 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0304073d0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:21:11,083 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:21:11,083 - INFO - Created channel=1
+2024-03-28 13:21:11,087 - INFO - Log microservice: Consuming from queue:All_Logs
+2024-03-28 13:26:05,313 - INFO - amqp_setup: create_connection
+2024-03-28 13:26:05,313 - INFO - amqp_setup: Trying connection
+2024-03-28 13:26:05,319 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:26:05,319 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 61954, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:26:05,320 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fe8503008b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fe8503008b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:26:05,333 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fe8503008b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:26:05,333 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fe8503008b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:26:05,333 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fe8503008b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:26:05,333 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:26:05,333 - INFO - amqp_setup:create_channel
+2024-03-28 13:26:05,333 - INFO - Created channel=1
+2024-03-28 13:26:05,335 - INFO - amqp_setup:create exchange
+2024-03-28 13:26:05,337 - INFO - amqp_setup:create queues
+2024-03-28 13:26:05,337 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:26:16,569 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:27:20,002 - INFO - This is an info message
+2024-03-28 13:27:20,002 - INFO - This is an info message
+2024-03-28 13:27:20,002 - WARNING - This is a warning message
+2024-03-28 13:27:20,002 - ERROR - This is an error message
+2024-03-28 13:27:20,002 - CRITICAL - This is a critical message
+2024-03-28 13:27:20,002 - INFO - Log microservice: Getting Connection
+2024-03-28 13:27:20,019 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:27:20,022 - INFO - Log microservice: Consuming from queue:All_Logs 
+2024-03-28 13:27:32,869 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:27:34,147 - INFO - Log microservice: Getting Connection
+2024-03-28 13:27:34,158 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:27:34,161 - INFO - Log microservice: Consuming from queue:All_Logs 
+2024-03-28 13:27:59,281 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:28:04,638 - INFO - Log microservice: Getting Connection
+2024-03-28 13:28:04,673 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:28:04,682 - INFO - Log microservice: Consuming from queue: All_Logs
+2024-03-28 13:32:14,516 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:34:34,688 - INFO - amqp_setup: create_connection
+2024-03-28 13:34:34,689 - INFO - amqp_setup: Trying connection
+2024-03-28 13:34:34,696 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:34:34,696 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62072, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:34:34,697 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f7e802508b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f7e802508b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:34:34,707 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f7e802508b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:34,707 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f7e802508b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:34,707 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f7e802508b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:34,708 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:34:34,708 - INFO - amqp_setup:create_channel
+2024-03-28 13:34:34,708 - INFO - Created channel=1
+2024-03-28 13:34:34,710 - INFO - amqp_setup:create exchange
+2024-03-28 13:34:34,713 - INFO - amqp_setup:create queues
+2024-03-28 13:34:34,713 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:34:38,109 - INFO - amqp_setup: create_connection
+2024-03-28 13:34:38,109 - INFO - amqp_setup: Trying connection
+2024-03-28 13:34:38,114 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:34:38,115 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62076, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:34:38,115 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f8b383e78b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f8b383e78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:34:38,123 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f8b383e78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:38,123 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f8b383e78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:38,123 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f8b383e78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:34:38,123 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:34:38,123 - INFO - amqp_setup:create_channel
+2024-03-28 13:34:38,123 - INFO - Created channel=1
+2024-03-28 13:34:38,125 - INFO - amqp_setup:create exchange
+2024-03-28 13:34:38,126 - INFO - amqp_setup:create queues
+2024-03-28 13:34:38,126 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:36:40,319 - INFO - amqp_setup: create_connection
+2024-03-28 13:36:40,319 - INFO - amqp_setup: Trying connection
+2024-03-28 13:36:40,327 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:36:40,327 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:36:40,328 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0001908b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb0001908b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:36:40,328 - ERROR - Socket EOF; <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0)>
+2024-03-28 13:36:40,329 - ERROR - Transport indicated EOF.
+2024-03-28 13:36:40,329 - INFO - protocol.eof_received() elected to close: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0)>
+2024-03-28 13:36:40,329 - INFO - _AsyncTransportBase._initate_abort(): Initiating abrupt asynchronous transport shutdown: state=1; error=None; <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0)>
+2024-03-28 13:36:40,329 - INFO - Deactivating transport: state=1; <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0)>
+2024-03-28 13:36:40,329 - ERROR - connection_lost: StreamLostError: ('Transport indicated EOF',)
+2024-03-28 13:36:40,329 - INFO - AMQP stack terminated, failed to connect, or aborted: opened=False, error-arg=StreamLostError: ('Transport indicated EOF',); pending-error=None
+2024-03-28 13:36:40,329 - ERROR - Probably incompatible Protocol Versions
+2024-03-28 13:36:40,329 - INFO - Connection setup terminated due to IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,329 - ERROR - AMQPConnector - reporting failure: AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,329 - INFO - Pika version 1.3.2 connecting to ('127.0.0.1', 5672)
+2024-03-28 13:36:40,330 - INFO - Closing transport socket and unlinking: state=3; <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62138, 0, 0)>
+2024-03-28 13:36:40,330 - INFO - Socket connected: <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139), raddr=('127.0.0.1', 5672)>
+2024-03-28 13:36:40,330 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb000190dc0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb000190dc0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:36:40,330 - ERROR - Socket EOF; <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139)>
+2024-03-28 13:36:40,330 - ERROR - Transport indicated EOF.
+2024-03-28 13:36:40,330 - INFO - protocol.eof_received() elected to close: <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139)>
+2024-03-28 13:36:40,330 - INFO - _AsyncTransportBase._initate_abort(): Initiating abrupt asynchronous transport shutdown: state=1; error=None; <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139)>
+2024-03-28 13:36:40,330 - INFO - Deactivating transport: state=1; <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139)>
+2024-03-28 13:36:40,330 - ERROR - connection_lost: StreamLostError: ('Transport indicated EOF',)
+2024-03-28 13:36:40,330 - INFO - AMQP stack terminated, failed to connect, or aborted: opened=False, error-arg=StreamLostError: ('Transport indicated EOF',); pending-error=None
+2024-03-28 13:36:40,331 - ERROR - Probably incompatible Protocol Versions
+2024-03-28 13:36:40,331 - INFO - Connection setup terminated due to IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,331 - ERROR - AMQPConnector - reporting failure: AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,331 - ERROR - AMQP connection workflow failed: AMQPConnectionWorkflowFailed: 2 exceptions in all; last exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",); first exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",).
+2024-03-28 13:36:40,331 - ERROR - AMQPConnectionWorkflow - reporting failure: AMQPConnectionWorkflowFailed: 2 exceptions in all; last exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",); first exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,331 - INFO - Closing transport socket and unlinking: state=3; <socket.socket fd=10, family=AddressFamily.AF_INET, type=SocketKind.SOCK_STREAM, proto=6, laddr=('127.0.0.1', 62139)>
+2024-03-28 13:36:40,331 - ERROR - Connection workflow failed: AMQPConnectionWorkflowFailed: 2 exceptions in all; last exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",); first exception - AMQPConnectorAMQPHandshakeError: IncompatibleProtocolError: The protocol returned by the server is not supported: ("StreamLostError: ('Transport indicated EOF',)",)
+2024-03-28 13:36:40,331 - ERROR - Error in _create_connection().
+Traceback (most recent call last):
+  File "/Users/liyunling/opt/anaconda3/lib/python3.9/site-packages/pika/adapters/blocking_connection.py", line 451, in _create_connection
+    raise self._reap_last_connection_workflow_error(error)
+pika.exceptions.IncompatibleProtocolError: StreamLostError: ('Transport indicated EOF',)
+2024-03-28 13:36:40,332 - ERROR - amqp_setup: Failed to connect: StreamLostError: ('Transport indicated EOF',)
+2024-03-28 13:36:40,332 - ERROR - amqp_setup: Retrying in 5 seconds...
+2024-03-28 13:36:45,335 - INFO - amqp_setup: Trying connection
+2024-03-28 13:36:45,337 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:36:45,338 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62144, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:36:45,338 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb00019fd30>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb00019fd30> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:36:45,344 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb00019fd30> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:36:45,344 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb00019fd30> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:36:45,344 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fb00019fd30> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:36:45,345 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:36:45,345 - INFO - amqp_setup:create_channel
+2024-03-28 13:36:45,345 - INFO - Created channel=1
+2024-03-28 13:36:45,347 - INFO - amqp_setup:create exchange
+2024-03-28 13:36:45,351 - INFO - amqp_setup:create queues
+2024-03-28 13:36:45,351 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:49:23,436 - INFO - Log microservice: Getting Connection
+2024-03-28 13:49:38,609 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:49:38,622 - ERROR - Log microservice: Failed to connect: %s (404, "NOT_FOUND - no queue 'All_Logs' in vhost '/'")
+2024-03-28 13:50:17,726 - INFO - amqp_setup: create_connection
+2024-03-28 13:50:17,726 - INFO - amqp_setup: Trying connection
+2024-03-28 13:50:17,732 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:50:17,732 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62318, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:50:17,733 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fecc81f78b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fecc81f78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:50:17,742 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fecc81f78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:50:17,742 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fecc81f78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:50:17,742 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fecc81f78b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:50:17,743 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:50:17,743 - INFO - amqp_setup:create_channel
+2024-03-28 13:50:17,743 - INFO - Created channel=1
+2024-03-28 13:50:17,744 - INFO - amqp_setup:create exchange
+2024-03-28 13:50:17,751 - INFO - amqp_setup:create queues
+2024-03-28 13:50:17,751 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:50:22,767 - INFO - Log microservice: Getting Connection
+2024-03-28 13:50:22,782 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:50:22,786 - INFO - Log microservice: Consuming from queue: All_Logs
+2024-03-28 13:52:39,408 - ERROR - Log microservice: Program interrupted by user.
+2024-03-28 13:53:31,174 - INFO - Log microservice: Getting Connection
+2024-03-28 13:53:31,175 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 13:53:31,175 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 13:53:31,181 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:53:31,182 - INFO - Socket connected: <socket.socket fd=11, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62374, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:53:31,185 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:53:31,188 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:31,188 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:31,188 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:31,188 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 13:53:31,188 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:53:31,189 - INFO - Created channel=1
+2024-03-28 13:53:31,190 - WARNING - Received remote Channel.Close (404): "NOT_FOUND - no queue 'All_Logs' in vhost '/'" on <Channel number=1 OPEN conn=<SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f9ff8489160> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>>
+2024-03-28 13:53:31,191 - ERROR - Log microservice: Failed to connect: %s (404, "NOT_FOUND - no queue 'All_Logs' in vhost '/'")
+2024-03-28 13:53:39,902 - INFO - amqp_setup: create_connection
+2024-03-28 13:53:39,902 - INFO - amqp_setup: Trying connection
+2024-03-28 13:53:39,907 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:53:39,908 - INFO - Socket connected: <socket.socket fd=9, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62382, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:53:39,909 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fd7603688b0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fd7603688b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:53:39,917 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fd7603688b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:39,917 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fd7603688b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:39,917 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7fd7603688b0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:39,917 - INFO - amqp_setup: Connection established successfully
+2024-03-28 13:53:39,917 - INFO - amqp_setup:create_channel
+2024-03-28 13:53:39,917 - INFO - Created channel=1
+2024-03-28 13:53:39,919 - INFO - amqp_setup:create exchange
+2024-03-28 13:53:39,923 - INFO - amqp_setup:create queues
+2024-03-28 13:53:39,923 - INFO - amqp_setup:create_activity_log_queue
+2024-03-28 13:53:44,201 - INFO - Log microservice: Getting Connection
+2024-03-28 13:53:44,201 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 13:53:44,201 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 13:53:44,206 - INFO - Pika version 1.3.2 connecting to ('::1', 5672, 0, 0)
+2024-03-28 13:53:44,206 - INFO - Socket connected: <socket.socket fd=11, family=AddressFamily.AF_INET6, type=SocketKind.SOCK_STREAM, proto=6, laddr=('::1', 62385, 0, 0), raddr=('::1', 5672, 0, 0)>
+2024-03-28 13:53:44,207 - INFO - Streaming transport linked up: (<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f96284908e0>, _StreamingProtocolShim: <SelectConnection PROTOCOL transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f96284908e0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>).
+2024-03-28 13:53:44,215 - INFO - AMQPConnector - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f96284908e0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:44,215 - INFO - AMQPConnectionWorkflow - reporting success: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f96284908e0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:44,215 - INFO - Connection workflow succeeded: <SelectConnection OPEN transport=<pika.adapters.utils.io_services_utils._AsyncPlaintextTransport object at 0x7f96284908e0> params=<ConnectionParameters host=localhost port=5672 virtual_host=/ ssl=False>>
+2024-03-28 13:53:44,215 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 13:53:44,215 - INFO - Log microservice: Connection established successfully
+2024-03-28 13:53:44,216 - INFO - Created channel=1
+2024-03-28 13:53:44,218 - INFO - Log microservice: Consuming from queue: All_Logs
+2024-03-28 13:54:01,594 - ERROR - Log microservice: Program interrupted by user.

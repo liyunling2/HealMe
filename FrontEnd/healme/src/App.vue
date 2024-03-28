@@ -61,9 +61,4 @@
 </script>
 
 <style>
-    .main-content {
-        min-height: calc(
-            100vh - 300px
-        ); /* Adjust the 300px to account for your header and footer */
-    }
 </style>

@@ -41,9 +41,9 @@ const appointmentModule = {
     },
     actions: {
         async getAllClinics({commit}, payload) {
+            commit("notificationModule/setLoading", true,{ root: true });
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('http://localhost:8100/clinic/view')
+                await axios.get('api/clinic/view')
                     .then(response => {
                         commit("setClinics", response.data.data);
                     })
@@ -57,11 +57,11 @@ const appointmentModule = {
             }
         },
         async getAllDoctorsInClinic({commit}, payload) {
+            commit("notificationModule/setLoading", false, { root: true });
             try {
-                commit("notificationModule/setLoading", true, { root: true });
                 // Extract clinicID from the payload
                 const clinicID = payload.clinicID;
-                axios.get(`http://localhost:8100/profile/doctor/view?clinicID=${clinicID}`)
+                await axios.get(`api/profile/doctor/view?clinicID=${clinicID}`)
                     .then(response => {
                         commit("setDoctors", response.data.data);
                     })
@@ -73,34 +73,36 @@ const appointmentModule = {
                 commit("notificationModule/setLoading", false, { root: true });
             }
         },
-        async getBookedSlots({commit}, payload){
+        async getDoctorAvailableSlots({commit}, payload){
+            commit("notificationModule/setLoading", false, { root: true });
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('http://localhost:8100/blockedslots/view')
+                await axios.get(`http://localhost:9999?doctorID=${payload.doctorID}&clinicID=${payload.clinicID}&date=${payload.date}`)
                     .then(response => {
-                        console.log(payload)
-                        commit("setBookedSlots", response.data.data);
+                        console.log(response.data.data)
+                        // commit("setBookedSlots", response.data.data);
                     })
                     .catch(error => {
-                        console.error(error);
                         // Handle login failure here (e.g., show error message)
                     });
                 } 
             finally {
-                commit("notificationModule/setLoading", false, { root: true });
+                commit("notificationModule/setLoading", false,{ root: true });
             }
         },
         async createAppointment({commit}, payload) {
+            commit("notificationModule/setLoading", true, { root: true });
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                await axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
                     .then(response => {
                         console.log(response)
                         //commit("setDoctors", response.data);
+                        commit("notificationModule/setLoading", false, { root: true });
+
                     })
                     .catch(error => {
                         console.error(error);
                         // Handle login failure here (e.g., show error message)
+                        
                     });
                 }     
             finally {

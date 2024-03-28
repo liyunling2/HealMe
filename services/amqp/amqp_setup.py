@@ -13,7 +13,6 @@ hostname = environ.get('hostname') or "localhost"
 port = environ.get('port')  or 5672
 exchangename = "log_fanout"
 exchangetype = "fanout"
- 
 
 def create_connection(max_retries=12, retry_interval=5):
     logging.info('amqp_setup: create_connection')

@@ -69,24 +69,6 @@ def create_booking():
 
 
 def processCreateBooking(createBooking):
-<<<<<<< Updated upstream
-    print('\n-----Invoking booking microservice-----')
-    booking_result = invoke_http(booking_URL, method='POST', json=createBooking)
-    print("hello")
-    print('booking_result:', booking_result)
-
-    # Check booking, if not send to log microservice
-    code = booking_result["code"]
-    message = json.dumps(booking_result)
-    if code not in range(200, 300):
-        # Inform the log microservice NOT DONE YET
-        print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-        channel.basic_publish(exchange=exchangename, routing_key="#", 
-            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-            code), booking_result)
-=======
     global blocked_slots_URL
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
@@ -136,56 +118,11 @@ def processCreateBooking(createBooking):
                      "booking_result": booking_result},
             "message": "Booking creation Success"
         }
->>>>>>> Stashed changes
-        
-        #return error
-        return {
-            "code": 500,
-            "data": {"booking_result": booking_result},
-            "message": "Booking creation failure sent for error handling."
-        }
     
-<<<<<<< Updated upstream
-    print('\n\n-----Invoking blocked_slots microservice-----')
-    booked_slots_result = invoke_http(
-        blocked_slots_URL, method="POST", json=booking_result['data'])
-    print("shipping_result:", booked_slots_result, '\n')
-    # Check the booked_slots result;
-    # if a failure, send it to log microservice.
-    code = booked_slots_result["code"]
-    if code not in range(200, 300):
-
-        # Inform the log microservice
-        print('\n\n-----Invoking error microservice as shipping fails-----')
-        invoke_http(log_URL, method="POST", json=booked_slots_result)
-        print("Shipping status ({:d}) sent to the error microservice:".format(
-            code), booked_slots_result)
-
-    # 7. Return error
-        return {
-            "code": 400,
-            "data": {
-                "order_result": booking_result,
-                "shipping_result": booked_slots_result
-            },
-            "message": "Simulated booked_slots record error sent for error handling."
-        }
-
-
-    # 7. Return created booking, booked_slots record
-    return {"code": 201,
-        "data": {
-            "order_result": booking_result,
-            "shipping_result": booked_slots_result
-        }
-    
-}
-=======
 @app.route("/deleteBooking", methods=["DELETE"])
 def delete_booking():
     deleteBooking = request.args.get('patientID')
     # Simple check of input format and data of the request are JSON
->>>>>>> Stashed changes
     
     print("\nReceived a delete booking request in URL:", deleteBooking)
 

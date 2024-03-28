@@ -125,18 +125,20 @@ def delete_booking():
     deleteBooking = request.args.get('bookingID')
     
     print("\nReceived a delete booking request in URL:", deleteBooking)
-    print("result")
     result = processDeleteBooking(deleteBooking)
-    #if result['code'] == 200:
-        #processed_result = []
-        #processed_result['doctorEmail'] = result['doctorEmail']
-        #processed_result['doctorName'] = result['doctorName']
-        #processed_result['patientEmail'] = result['patientEmail']
-        #processed_result['patientName'] = result['patientName']
-        #processed_result['code'] = result['code']
-        #result = processed_result
-        #print("NEW RESULT IS")
-        #print(result)
+    print(result)
+    if result['code'] == 200:
+        processed_result = {}
+        print("LALALALALALAL")
+        print(result['data']['retrieve_booking_result']['data'][0]['doctorEmail'])
+        processed_result['doctorEmail'] = result['data']['retrieve_booking_result']['data'][0]['doctorEmail']
+        processed_result['doctorName'] = result['data']['retrieve_booking_result']['data'][0]['doctorName']
+        processed_result['patientEmail'] = result['data']['retrieve_booking_result']['data'][0]['patientEmail']
+        processed_result['patientName'] = result['data']['retrieve_booking_result']['data'][0]['patientName']
+        processed_result['code'] = result['code']
+        result = processed_result
+        print("NEW RESULT IS")
+        print(result)
     print('\n------------------------')
     print('\nresult: ', result)
     return jsonify(result), result["code"]

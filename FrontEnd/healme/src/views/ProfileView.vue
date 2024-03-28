@@ -1,17 +1,17 @@
 <template>
     <v-container max-width="1000">
-        <v-card class="ma-7 pa-2 mx-auto" elevation="3" max-width="1000">
+        <v-card class="ma-7 pa-2 mx-auto" elevation="3" max-width="800">
             <v-card-title class="justify-center align-center">
                 <v-row class="fill-height" align="center" justify="center">
                     <v-col class="text-center">
                         <h1 class="font-weight-bold text-h3">Welcome Back</h1>
-                        <h1 class="font-weight-bold text-h3 text-red-darken-1">
-                            {{ this.userDetails.patientId }}
+                        <h1 class="font-weight-bold text-h3 text-blue-lighten-1">
+                            {{ this.userDetails.patientName }}
                         </h1>
                     </v-col>
                 </v-row>
             </v-card-title>
-            <v-tabs v-model="tab" color="red-darken-1" grow>
+            <v-tabs v-model="tab" color="blue-lighten-1" grow>
                 <v-tab value="upcomingAppointments">
                     <v-icon start> mdi-domain </v-icon> Upcoming Appointments
                 </v-tab>
@@ -26,11 +26,11 @@
                 <v-window-item value="upcomingAppointments">
                     <v-container>
                         <v-text-field v-model="searchUpcomingAppointmentByLocation" append-icon="mdi-magnify" label="Search" single-line hide-details ></v-text-field>
-                        <v-tabs color="red-darken-1" v-model="currentFilter" centered grow>
+                        <v-tabs color="blue-lighten-1" v-model="currentFilter" centered grow>
                             <v-tab value="Upcoming">All</v-tab>
                         </v-tabs>
                         <br />
-                        <h2 class="text-red-darken-1 centered" align="center">
+                        <h2 class="text-blue-darken-1 centered" align="center">
                             Showing: {{ filteredUpcomingAppointment.length }} created appointments
                         </h2>
                         <br />
@@ -54,7 +54,7 @@
                                     <v-row class="justify-space-between">
                                         <v-col cols="8" lg="8" md="8" sm="6" xs="6" >
                                             <div>
-                                                <v-card-title class="text-h5 text-red-darken-1" >
+                                                <v-card-title class="text-h5 text-blue-lighten-1" >
                                                     Appointment Date: {{ appointment.date }}
                                                 </v-card-title>
                                                 <v-card-subtitle>
@@ -65,7 +65,7 @@
                                                     Doctor:
                                                     {{ appointment.doctorName }}
                                                 <v-card-actions>
-                                                    <v-btn color="red-darken-1" @click.prevent @click.stop="CancelAppointment(appointment)">Button</v-btn >
+                                                    <v-btn color="blue-lighten-1" @click.prevent @click.stop="CancelAppointment(appointment)">Button</v-btn >
                                                 </v-card-actions>
                                             </div>
                                         </v-col>

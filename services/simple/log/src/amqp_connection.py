@@ -23,7 +23,7 @@ port = environ.get('port') or 5672
 def create_connection(max_retries=12, retry_interval=5):
     logging.info('Log microservice amqp_connection: Create_connection')
     
-    retries = 0
+    max_retries = 0
     connection = None
 
     while retries < max_retries:

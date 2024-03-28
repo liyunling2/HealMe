@@ -7,6 +7,7 @@ const authModule = {
     state: {
         currentUser: [],
         auth: false,
+        doctor: false,
     },
     getters: {
         getUserDetails(state) {
@@ -18,11 +19,19 @@ const authModule = {
             }
             return false;
         },
+        ifDoctor(state){
+            return state.doctor
+        }
     },
     mutations: {
         setUser(state, payload) {
             state.user = payload
             state.auth = true;
+        },
+        setDoctor(state, payload) {
+            state.user = payload
+            state.auth = true;
+            state.doctor = true;
         },
         clearUser(state) {
             state.user = {
@@ -52,41 +61,28 @@ const authModule = {
                 msgError(commit);
             }
         },
-        async signIn({commit}, payload) {
+        async signIn({ commit }, payload) {
+            console.log(payload);
+            commit("notificationModule/setLoading", true, { root: true });
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                // axios.post('http://127.0.0.1:5006/login', {
-                //         email: payload.email,
-                //         password: payload.password
-                //     })
-
-                axios.get('https://catfact.ninja/fact')
-                    .then(response => {
-                        // const userData = {
-                        //     contactNum: response.data.contactNum,
-                        //     email: response.data.contactEmail,
-                        //     patientID: response.data.contactID,
-                        //     patientName: response.data.patientName,
-                        // }
-                        const userData = {
-                            contactNum: 12345,
-                            email: "jialeso1227@gmail.com",
-                            patientID: 123456,
-                            patientName: "Jialeso",
-                        }
-                        localStorage.setItem('userData', JSON.stringify(userData));
-                        commit("setUser", userData);
-                        msgSuccess(commit, "Successfully logged in");
-                        router.push("/")
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } finally {
-                    commit("notificationModule/setLoading", false, { root: true });
-                }
-        },
+              const response = await axios.post('api/patient/login', payload);
+              console.log(response.data.data);
+              const userData = {
+                contactNum: response.data.data.contactNum,
+                email: response.data.data.contactEmail,
+                patientID: response.data.data.patientID,
+                patientName: response.data.data.patientName,
+              };
+              localStorage.setItem('userData', JSON.stringify(userData));
+            commit("setUser", userData);
+            msgSuccess(commit, "Successfully logged in");
+            router.push("/");
+            } catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+          },
         async signUp({commit}, payload) {
             try {
                 commit("notificationModule/setLoading", true, { root: true });

@@ -41,6 +41,23 @@ services:
     paths:
       - /clinic/edit
 
+- name: patient_login
+  url: http://profile:5000/patients/login
+  routes:
+  - name: patient_login
+    methods:
+      - POST
+    paths:
+      - /patient/login
+
+- name: doctor_login
+  url: http://profile:5000/doctors/login
+  routes:
+  - name: doctor_login
+    methods:
+      - POST
+    paths:
+      - /doctor/login
 
 - name: patient_profile
   url: http://profile:5000/patients
@@ -119,7 +136,6 @@ services:
       - /booking/delete
 
 
-
 # global plugins
 plugins:
 
@@ -145,7 +161,7 @@ plugins:
 
 - name: rate-limiting
   config:
-    second: 10
+    second: 50
     hour: 10000
     policy: local
 

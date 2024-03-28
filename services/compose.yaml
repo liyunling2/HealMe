@@ -1,9 +1,5 @@
 include:
-<<<<<<< Updated upstream
-  - ./kong/compose.yml
-=======
   #- ./kong/compose.yml
->>>>>>> Stashed changes
   - ./amqp/compose.yml
   - ./complex/compose.yml
 

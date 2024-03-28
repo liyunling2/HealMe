@@ -1,103 +1,181 @@
 from flask import Blueprint, request, jsonify
+from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from models import Booking
 from db import db
-import json
-import uuid
+import traceback
 
 routes = Blueprint("booking", __name__)
 
-@routes.route("/")
-def index():
-    return "Booking service is running"
+# @routes.route("/bookings", methods=["GET"])
+# def get_bookings():
+#     try:
+#         bookings = Booking.query.filter_by(**request.args).all()
 
-#booking routes
+#     except Exception as e:
+#         return jsonify({"message": str(e)}), 400
+    
+#     return jsonify({ "data": [booking.json() for booking in bookings] }), 200
 
-#EXTRACT BOOKING, CAN FILTER AS SUCH http://127.0.0.1:5005/bookings?patientID=101&dateOfBooking=2024-03-01
-@routes.route("/bookings", methods=["GET"])
+# #EDIT A BOOKING BY BOOKINGID
+# @routes.route("/bookings/<string:bookingID>", methods=["PUT"])
+# def edit_booking(bookingID):
+#     booking = Booking.query.get(bookingID)
+#     if booking:
+#         data = request.get_json()
+#         booking.patientID = data.get('patientID', booking.patientID)
+#         booking.doctorID = data.get('doctorID', booking.doctorID)
+#         booking.clinicID = data.get('clinicID', booking.clinicID)
+#         booking.date = data.get('date', booking.date)
+#         booking.bookingStatus = data.get('bookingStatus', booking.bookingStatus)
+#         db.session.commit()
+#         return jsonify(booking.json()), 200
+#     return jsonify({"message": "Booking not found"}), 404
+
+# #ADD A BOOKING
+# @routes.route("/bookings", methods=["POST"])
+# def add_booking():
+#     try: 
+#         data = request.get_json()
+
+#         if data.get("bookingID"):
+#             del data["bookingID"]
+
+#         new_booking = Booking(**data)
+
+    
+#     except Exception as e:
+#         return jsonify({"message": str(e)}), 400
+
+#     try:
+#         db.session.add(new_booking)
+#         db.session.commit()
+
+#     except IntegrityError as e:
+#         return jsonify({"message": "Booking Slot already taken"}), 400
+
+#     except Exception as e:
+#         print(e.with_traceback(None))
+#         return jsonify({"message": "An error occurred creating the booking."}), 500
+    
+#     return jsonify(new_booking.json()), 201
+
+@routes.route("/", methods=["GET"])
 def get_bookings():
-    # Extract parameters from the request
-    clinic_id = request.args.get('clinicID')
-    doctor_id = request.args.get('doctorID')
-    patient_id = request.args.get('patientID')
-    date_of_booking = request.args.get('dateOfBooking')
-    booking_status = request.args.get('bookingStatus')
-    booking_id = request.args.get('bookingID')
+    try:
+        bookings = Booking.query.filter_by(**request.args).all()
+        if not bookings:
+            return jsonify({"data": [], "message": "No bookings found."}), 200
+        else:
+            return jsonify({"data": [booking.json() for booking in bookings], "message": "Bookings retrieved successfully."}), 200
 
-    # Define filter conditions based on the provided parameters
-    filters = []
-    if clinic_id:
-        filters.append(Booking.clinicID == clinic_id)
-    if doctor_id:
-        filters.append(Booking.doctorID == doctor_id)
-    if patient_id:
-        filters.append(Booking.patientID == patient_id)
-    if date_of_booking:
-        filters.append(Booking.dateOfBooking == date_of_booking)
-    if booking_status:
-        filters.append(Booking.bookingStatus == booking_status)
-    if booking_id:
-        filters.append(Booking.bookingID == booking_id)
+    except InvalidRequestError as e:
+        return jsonify({"data": None, "message": "Invalid query parameters."}), 400
 
-    # Apply filters to the query
-    if filters:
-        bookings = Booking.query.filter(*filters).all()
-    else:
-        bookings = Booking.query.all()
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred retrieving the bookings."}), 500
+    
+@routes.route("/<string:bookingID>", methods=["GET"])
+def get_bookings_by_ID(bookingID):
+    try:
+        booking = Booking.query.get(bookingID)
+        if booking:
+            return jsonify({"data": booking.json(), "message": "Booking retrieved successfully."}), 200
+        else:
+            return jsonify({"data": None, "message": "Booking not found"}), 404
+        
+    except InvalidRequestError as e:
+        return jsonify({"data": None, "message": "Invalid request." + str(e)}), 400
+    
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred retrieving the booking."}), 500
 
-    # Return the result with appropriate HTTP status code
-    if bookings:
-        return jsonify([booking.json() for booking in bookings]), 200
-    else:
-        return jsonify({"message": "Booking not found"}), 404
-
-#EDIT A BOOKING BY BOOKINGID
-@routes.route("/bookings/<string:bookingID>", methods=["PUT"])
+@routes.route("/<string:bookingID>", methods=["PUT"])
 def edit_booking(bookingID):
-    booking = Booking.query.get(bookingID)
-    if booking:
-        data = request.get_json()
-        booking.patientID = data.get('patientID', booking.patientID)
-        booking.doctorID = data.get('doctorID', booking.doctorID)
-        booking.clinicID = data.get('clinicID', booking.clinicID)
-        booking.dateOfBooking = data.get('dateOfBooking', booking.dateOfBooking)
-        booking.bookingStatus = data.get('bookingStatus', booking.bookingStatus)
-        db.session.commit()
-        return jsonify(booking.json()), 200
-    return jsonify({"message": "Booking not found"}), 404
+    try:
+        booking = Booking.query.get(bookingID)
 
-#ADD A BOOKING
-@routes.route("/bookings", methods=["POST"])
+        if booking:
+            data = request.get_json()
+            try:
+                for key, value in data.items():
+                    setattr(booking, key, value if value is not None else getattr(booking, key))
+                db.session.commit()
+                return jsonify({"data": booking.json(), "message": "Booking updated successfully."}), 200
+            
+            except IntegrityError:
+                db.session.rollback()
+                return jsonify({"data": None, "message": "Update failed due to a data conflict."}), 400
+        else:
+            return jsonify({"data": None, "message": "Booking not found"}), 404
+    
+    except InvalidRequestError as e:
+        return jsonify({"data": None, "message": "Invalid request data."}), 400
+
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred updating the booking."}), 500
+
+@routes.route("/", methods=["POST"])
 def add_booking():
-    data = request.get_json()
-    new_booking = Booking(bookingID=str(uuid.uuid4()), 
-        patientID=data.get('patientID'), 
-        doctorID=data.get('doctorID'), 
-        clinicID=data.get('clinicID'),
-        dateOfBooking=data.get('dateOfBooking'),
-        bookingStatus=data.get('bookingStatus'),
-        )
-    db.session.add(new_booking)
-    db.session.commit()
-    return jsonify(new_booking.json()), 201
+    try: 
+        data = request.get_json()
 
-#DELETE BOOKING BY BOOKINGID
-@routes.route("/bookings/<string:bookingID>", methods=["DELETE"])
-def delete_booking(bookingID):
-    booking = Booking.query.get(bookingID)
-    if booking:
-        db.session.delete(booking)
+        if data.get("bookingID"):
+            del data["bookingID"]
+
+        new_booking = Booking(**data)
+        db.session.add(new_booking)
         db.session.commit()
-        return jsonify({"message": "Booking deleted successfully"}), 200
-    return jsonify({"message": "Booking not found"}), 404
 
+    except IntegrityError:
+        return jsonify({"data": None, "message": "Booking Slot already taken"}), 400
+
+    except Exception as e:
+        traceback.print_exception(type(e), e, e.__traceback__)
+        return jsonify({"data": None, "message": "An error occurred creating the booking."}), 500
+    
+    return jsonify({"data": new_booking.json(), "message": "Booking created successfully."}), 201
+
+@routes.route("/<string:bookingID>", methods=["DELETE"])
+def delete_booking(bookingID):
+    try:
+        booking = Booking.query.get(bookingID)
+        if booking:
+            db.session.delete(booking)
+            db.session.commit()
+            return jsonify({"data": None, "message": "Booking deleted successfully"}), 200
+        else:
+            return jsonify({"data": None, "message": "Booking not found"}), 404
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"data": None, "message": "An error occurred deleting the booking."}), 500
+
+@routes.route("/", methods=["DELETE"])
+def delete_booking_by_param():
+    try:
+        num_deleted = db.session.query(Booking).filter_by(**request.args).delete()
+        db.session.commit()
+        message = "Successfully deleted {} booking(s)." if num_deleted else "No bookings found matching criteria."
+        return jsonify({"data": None, "message": message.format(num_deleted)}), 200 if num_deleted else 404
+    
+    except InvalidRequestError as e:
+        db.session.rollback()
+        return jsonify({"message": "Invalid deletion request."}), 400
+    
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({"data": None, "message": "An error occurred during the delete operation."}), 500
 
 #FOR TESTING PURPOSES
-@routes.route("/bookings/all", methods=["DELETE"])
+@routes.route("/all", methods=["DELETE"])
 def delete_all_bookings():
     try:
         num_deleted = db.session.query(Booking).delete()
         db.session.commit()
-        return jsonify({"message": f"Successfully deleted {num_deleted} patient(s)."}), 200
+        return jsonify({"data": None, "message": f"Successfully deleted {num_deleted} bookings."}), 200
     except Exception as e:
         db.session.rollback()
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"data": None, "message": "An error occurred deleting all bookings."}), 500

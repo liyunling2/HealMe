@@ -1,0 +1,70 @@
+2024-03-28 17:02:56,816 - INFO - Log microservice: Getting Connection
+2024-03-28 17:02:56,819 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 17:02:56,821 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:02:56,849 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:02:56,854 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:03:01,861 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:03:01,886 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:03:01,887 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:03:06,892 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:03:06,918 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:03:06,919 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:03:11,925 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:03:11,949 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 17:03:11,950 - INFO - Log microservice: Connection established successfully
+2024-03-28 17:03:11,953 - INFO - Log microservice: Consuming from queue: All_Logs
+2024-03-28 17:04:23,515 - INFO - ------------Received Log------------
+2024-03-28 17:04:23,518 - ERROR - Error processing log message: Expecting value: line 1 column 1 (char 0)
+2024-03-28 17:04:58,841 - ERROR - Log microservice: Failed to connect: %s (320, "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'")
+2024-03-28 17:06:07,151 - INFO - Log microservice: Getting Connection
+2024-03-28 17:06:07,152 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 17:06:07,152 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:06:07,158 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:06:07,159 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:06:12,162 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:06:12,167 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:06:12,168 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:06:17,173 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:06:17,186 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 17:06:17,186 - INFO - Log microservice: Connection established successfully
+2024-03-28 17:06:17,189 - INFO - Log microservice ready to consume from All_Logs
+2024-03-28 17:06:36,554 - INFO - ------------Receiving Log------------
+2024-03-28 17:06:36,557 - ERROR - Error processing log message: Expecting value: line 1 column 1 (char 0)
+2024-03-28 17:06:39,134 - INFO - ------------Receiving Log------------
+2024-03-28 17:06:39,134 - ERROR - Error processing log message: Expecting value: line 1 column 1 (char 0)
+2024-03-28 17:08:42,344 - INFO - ------------Receiving Log------------
+2024-03-28 17:08:42,347 - INFO - Message Received: {"message_id": 12345, "timestamp": "2024-03-29T12:00:00", "user": "example_user", "action": "example_action", "data": {"key1": "value1", "key2": "value2"}}
+2024-03-28 17:09:04,912 - ERROR - Log microservice: Failed to connect: %s (320, "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'")
+2024-03-28 17:09:24,209 - INFO - Log microservice: Getting Connection
+2024-03-28 17:09:24,210 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 17:09:24,210 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:09:24,216 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:09:24,216 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:09:29,218 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:09:29,231 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 17:09:29,231 - INFO - Log microservice: Connection established successfully
+2024-03-28 17:09:29,233 - INFO - Log microservice ready to consume from All_Logs
+2024-03-28 17:09:34,656 - INFO - ------------Receiving Log------------
+2024-03-28 17:09:34,657 - INFO - Message Received: {'message_id': 12345, 'timestamp': '2024-03-29T12:00:00', 'user': 'example_user', 'action': 'example_action', 'data': {'key1': 'value1', 'key2': 'value2'}}
+2024-03-28 17:10:09,527 - ERROR - Log microservice: Failed to connect: %s (320, "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'")
+2024-03-28 17:10:28,550 - INFO - Log microservice: Getting Connection
+2024-03-28 17:10:28,551 - INFO - Log microservice amqp_connection: Create_connection
+2024-03-28 17:10:28,551 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:10:28,560 - WARNING - Log microservice amqp_connection: Failed to connect: 
+2024-03-28 17:10:28,569 - WARNING - Log microservice amqp_connection: Retrying in 5 seconds...
+2024-03-28 17:10:33,575 - INFO - Log microservice amqp_connection: Trying connection
+2024-03-28 17:10:33,583 - INFO - Log microservice amqp_connection: Connection established successfully
+2024-03-28 17:10:33,583 - INFO - Log microservice: Connection established successfully
+2024-03-28 17:10:33,584 - INFO - Log microservice ready to consume from All_Logs
+2024-03-28 17:10:41,533 - INFO - ------------Receiving Log------------
+2024-03-28 17:10:41,535 - INFO - Message Received: {
+    "message_id": 12345,
+    "timestamp": "2024-03-29T12:00:00",
+    "user": "example_user",
+    "action": "example_action",
+    "data": {
+        "key1": "value1",
+        "key2": "value2"
+    }
+}
+2024-03-28 17:10:56,146 - ERROR - Log microservice: Failed to connect: %s (320, "CONNECTION_FORCED - broker forced connection closure with reason 'shutdown'")

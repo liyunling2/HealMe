@@ -4,6 +4,7 @@ import uuid
 
 class Booking(db.Model):
     __tablename__ = "booking"
+    
     bookingID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     patientID = db.Column(db.String(36))
     patientName = db.Column(db.String(36))

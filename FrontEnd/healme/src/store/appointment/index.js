@@ -1,6 +1,8 @@
 import axios from 'axios';
 import router from "../../router";
 import { msgError, msgSuccess } from "../../Tools/tools";
+import Vue from 'vue';
+import { nextTick } from 'vue';
 
 const appointmentModule = {
     namespaced: true,
@@ -9,7 +11,7 @@ const appointmentModule = {
         appointment: [],
         userAppointments: [],
         clinicDoctors: [],
-        bookedSlots: []
+        bookedSlots: null,
     },
     getters: {
         getClinics(state) {
@@ -41,7 +43,6 @@ const appointmentModule = {
     },
     actions: {
         async getAllClinics({commit}, payload) {
-            commit("notificationModule/setLoading", true,{ root: true });
             try {
                 await axios.get('api/clinic/view')
                     .then(response => {
@@ -53,40 +54,62 @@ const appointmentModule = {
                     });
                 } 
             finally {
-                commit("notificationModule/setLoading", false, { root: true });
             }
         },
-        async getAllDoctorsInClinic({commit}, payload) {
-            commit("notificationModule/setLoading", false, { root: true });
+        async getAllDoctorsInClinic({ commit }, payload) {
             try {
-                // Extract clinicID from the payload
                 const clinicID = payload.clinicID;
+                const response = await axios.get(`api/profile/doctor/view?clinicID=${clinicID}`);
+                commit("setDoctors", response.data.data);
+                msgSuccess(commit, "Successfully retrieved doctors");
+            } catch (error) {
+                msgError(commit, error.response ? error.response.data.message : error.message);
+            } finally {
+            }
+        },        
+        async getDoctorAvailableSlots({commit}, payload){
+            const clinicID = payload.clinicID;
+            const data = {
+                "clinicID": "clinic1",
+                "date": "2024-03-29",
+                "doctorDesc": "Experienced General Practitioner",
+                "doctorEmail": "doc1@example.com",
+                "doctorID": "doctor1",
+                "doctorName": "Dr. Alice Jones",
+                "password": "pass1",
+                "schedule": [
+                    {
+                        "clinicID": "clinic1",
+                        "date": "Fri, 29 Mar 2024 00:00:00 GMT",
+                        "doctorID": "doctor1",
+                        "id": "84c7486d-0329-4565-8a13-6391e1b41d5c",
+                        "reason": "leave",
+                        "slotNo": 1
+                    },
+                    {
+                        "bookingID": "156f66ab-4ac3-492f-b86c-3bbcd81e69c2",
+                        "bookingStatus": "confirmed",
+                        "clinicID": "clinic1",
+                        "date": "Fri, 29 Mar 2024 00:00:00 GMT",
+                        "doctorID": "doctor1",
+                        "patientID": "123",
+                        "slotNo": 2
+                    }
+                ],
+                "specialty": "General Practice"
+            }
+            const url = "`http://localhost:9999?doctorID=${payload.doctorID}&clinicID=${payload.clinicID}&date=${payload.date}`"
+            try {
                 await axios.get(`api/profile/doctor/view?clinicID=${clinicID}`)
                     .then(response => {
-                        commit("setDoctors", response.data.data);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-            } finally {
-                commit("notificationModule/setLoading", false, { root: true });
-            }
-        },
-        async getDoctorAvailableSlots({commit}, payload){
-            commit("notificationModule/setLoading", false, { root: true });
-            try {
-                await axios.get(`http://localhost:9999?doctorID=${payload.doctorID}&clinicID=${payload.clinicID}&date=${payload.date}`)
-                    .then(response => {
-                        console.log(response.data.data)
-                        // commit("setBookedSlots", response.data.data);
+                        commit("setBookedSlots", data);
+                        msgSuccess(commit, "Successfully retrieved doctor's appointment");
                     })
                     .catch(error => {
                         // Handle login failure here (e.g., show error message)
                     });
                 } 
             finally {
-                commit("notificationModule/setLoading", false,{ root: true });
             }
         },
         async createAppointment({commit}, payload) {
@@ -97,7 +120,6 @@ const appointmentModule = {
                         console.log(response)
                         //commit("setDoctors", response.data);
                         commit("notificationModule/setLoading", false, { root: true });
-
                     })
                     .catch(error => {
                         console.error(error);

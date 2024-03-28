@@ -6,7 +6,7 @@
             class="mx-auto pa-6 elevated-3"
             style="border-radius: 20px"
         >
-            <div class="text-center text-h3 text-red-darken-1 font-weight-bold">
+            <div class="text-center text-h3 text-blue-lighten-1 font-weight-bold">
                 Login
             </div>
             <v-card-text class="text-center text-h6 font-weight-light">
@@ -19,7 +19,7 @@
                     <br />
                     <v-card-actions>
                         <v-spacer></v-spacer>
-                        <v-btn :disabled="!valid" color="red" type="submit" variant="elevated" > Sign In </v-btn>
+                        <v-btn :disabled="!valid" color="blue-lighten-1" type="submit" variant="elevated" > Sign In </v-btn>
                     </v-card-actions>
                 </v-form>
             </v-card-text>

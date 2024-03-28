@@ -1,7 +1,7 @@
 <template>
     <v-container class="fill-height" fluid>
         <v-card width="500px" max-width="550px" class="mx-auto pa-6 elevated-3" style="border-radius: 20px" >
-            <div class="text-center text-h3 text-red-darken-1 font-weight-bold">
+            <div class="text-center text-h3 text-blue-lighten-1 font-weight-bold">
                 Sign up
             </div>
             <v-card-text class="text-center text-h6 font-weight-light">
@@ -9,24 +9,12 @@
             </v-card-text>
             <v-card-text>
                 <v-form @submit.prevent="onSubmit" ref="form" v-model="formValid" >
-                    <v-row>
-                        <v-col cols="12" md="6">
-                            <v-text-field
-                                v-model="firstName"
-                                :rules="[required]"
-                                label="First Name"
-                                placeholder="Enter your first name"
-                            ></v-text-field>
-                        </v-col>
-                        <v-col cols="12" md="6">
-                            <v-text-field
-                                v-model="lastName"
-                                :rules="[required]"
-                                label="Last Name"
-                                placeholder="Enter your last name"
-                            ></v-text-field>
-                        </v-col>
-                    </v-row>
+                    <v-text-field
+                        v-model="name"
+                        :rules="[required]"
+                        label="name"
+                        placeholder="Enter your name"
+                    ></v-text-field>
                     <v-text-field
                         v-model="email"
                         :rules="[required, emailCheck]"
@@ -48,7 +36,7 @@
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn
-                            color="red"
+                            color="blue-lighten-1"
                             :disabled="!formValid"
                             type="submit"
                             variant="elevated"
@@ -60,7 +48,7 @@
             </v-card-text>
             <v-card-subtitle>
                 Have an account?
-                <router-link style="color: red" to="/login">
+                <router-link style="color: text-blue-lighten-1" to="/login">
                     Sign in Instead
                 </router-link>
             </v-card-subtitle>
@@ -77,14 +65,10 @@
     export default {
         data() {
             return {
-                firstName: "",
-                lastName: "",
+                name: "",
                 email: "",
                 password: "",
-                picture: null,
                 formValid: false,
-                imageFile: null,
-                imageUrl: null
             };
         },
         methods: {
@@ -94,9 +78,7 @@
                 const dataPayload = {
                     email: this.email,
                     password: this.password,
-                    firstName: this.firstName,
-                    lastName: this.lastName,
-                    displayPicturePath: imageStore.imageUrlPath
+                    patientName: this.name,
                 };
                 this.$store.dispatch("authModule/signUp", dataPayload);
             },

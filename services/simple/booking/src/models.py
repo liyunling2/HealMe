@@ -25,5 +25,4 @@ class Booking(db.Model):
             "date": self.date,
             "slotNo": self.slotNo,
             "bookingStatus": self.bookingStatus,
-            
         }

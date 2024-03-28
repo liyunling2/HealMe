@@ -184,8 +184,8 @@
               <v-col
                 cols="12"
                 md="6"
-                v-for="timeslot in filteredTimeslots"
-                :key="timeslot.id"
+                v-for="timeslot in availableTimeslots"
+                :key="timeslot.slotNo"
               >
                 <v-list-item
                   @click="selectTimeslot(timeslot)"
@@ -299,7 +299,16 @@
       </template>
     </v-stepper>
   </v-container>
+  <div v-if="isDataRetrieving" class="overlay">
+      <v-progress-circular
+        color="primary"
+        indeterminate
+        size="64"
+        class="loader"
+      ></v-progress-circular>
+    </div>
 </template>
+
 
 <script>
 import moment from "moment";
@@ -307,6 +316,7 @@ import { useStore, mapGetters, mapActions, mapState } from "vuex";
 
 export default {
   data: () => ({
+    isDataRetrieving:false,
     moment,
     shipping: 0,
     selectedClinic: null,
@@ -339,31 +349,32 @@ export default {
       "Select Timing",
       "Review Appointment",
     ],
-    timeslots: [],
+    timeslots: null,
   }),
   created() {
     this.generateTimeslotDictionary();
   },
   methods: {
-    selectClinic(clinic) {
+    async selectClinic(clinic) {
       this.selectedClinic = clinic;
-      this.step++;
-      this.$store.dispatch("appointmentModule/getAllDoctorsInClinic", {
+      this.isDataRetrieving = true;
+      await this.$store.dispatch("appointmentModule/getAllDoctorsInClinic", {
         clinicID: this.selectedClinic.clinicID,
       });
+      this.isDataRetrieving = false;
+      this.step++;
     },
-    selectDoctor(doctor) {
+    async selectDoctor(doctor) {
       this.selectedDoctor = doctor;
-      this.step++;
-      this.$store.dispatch("appointmentModule/getAllDoctorsInClinic", {
-        clinicID: this.selectedClinic.clinicID,
-      });
-      this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", {
+      this.isDataRetrieving = true;
+      await this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", {
           clinicID: this.selectedClinic.clinicID,
           doctorID: this.selectedDoctor.doctorID,
           date: moment(new Date()).format("YYYY-MM-DD"),
         }
       );
+      this.isDataRetrieving = false;
+      this.step++;
     },
     selectTimeslot(timeslot) {
       this.selectedTimeslot = timeslot;
@@ -382,7 +393,7 @@ export default {
           const formattedMinute = minute.toString().padStart(2, "0");
           const timeslotString = `${formattedHour}:${formattedMinute}`;
           timeslots.push({
-            id: slotId,
+            slotNo: slotId,
             timeslot: timeslotString,
             // date: new Date(today), // Clone today's date for each timeslot
           });
@@ -414,13 +425,20 @@ export default {
     },
   },
   watch: {
-    selectedDate(newDate, oldDate) {
+    async selectedDate(newDate, oldDate) {
       const payload = {
         clinicID: this.selectedClinic.clinicID,
         doctorID: this.selectedDoctor.doctorID,
         date: moment(newDate).format("YYYY-MM-DD"),
       };
-      this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", payload);
+      this.isDataRetrieving = true;
+      await this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", {
+          clinicID: this.selectedClinic.clinicID,
+          doctorID: this.selectedDoctor.doctorID,
+          date: moment(new Date()).format("YYYY-MM-DD"),
+        }
+      );
+      this.isDataRetrieving = false;
     },
   },
   computed: {
@@ -430,17 +448,15 @@ export default {
       clinicDoctorsDetails: "appointmentModule/getDoctorsClinics",
       bookedSlots: "appointmentModule/getBookedSlots",
     }),
-    filteredTimeslots() {
-      // Filter out the slots that are booked
-      // const bookedSlots = this.bookedSlots
-      // const availableTimeslots = { ...timeslotDictionary };
-      // bookedSlots.forEach(booking => {
-      //     if (availableTimeslots[booking.slot]) {
-      //         delete availableTimeslots[booking.slot];
-      //     }
-      // });
-      const availableTimeslots = this.timeslots;
-      return availableTimeslots;
+    availableTimeslots() {
+      let result = this.timeslots
+      if (this.bookedSlots) {
+        const bookedSlotNumbers = this.bookedSlots.schedule.map(slot => slot.slotNo);
+        result = result.filter(timeslot => 
+          !bookedSlotNumbers.includes(timeslot.slotNo)
+        );
+      } 
+      return result
     },
     filteredClinics() {
       let result = this.clinicsDetails;
@@ -483,5 +499,24 @@ export default {
 <style>
 .padded-list-item {
   margin: 10px 0; /* You can adjust the value to suit your needs */
+}
+.loader-position {
+  position: fixed;
+  left: 20px;
+  bottom: 20px;
+  z-index: 1000; /* Ensure it's above other content */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(255, 255, 255, 0.5); /* Semi-transparent white background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Ensure it's above other content */
 }
 </style>

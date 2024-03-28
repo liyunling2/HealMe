@@ -18,7 +18,7 @@ const routes = [
   { path: '/about', name: 'about', component: function () { return import(/* webpackChunkName: "about" */ '../views/AboutView.vue') } },
   { path: "/login", name: "login", component: LoginView, },
   { path: "/signup", name: "signup", component: SignupView, },
-  { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, },
+  { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, meta: { auth: true }},
   { path: "/appointment/:id", name: "appointment", component: AppointmentView, meta: { auth: true }, props: true },
   { path: "/profile", name: "profile", component: ProfileView, meta: { auth: true } },
   { path: "/:catchAll(.*)", component: NotFoundView }

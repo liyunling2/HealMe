@@ -62,11 +62,9 @@ const authModule = {
             }
         },
         async signIn({ commit }, payload) {
-            console.log(payload);
             commit("notificationModule/setLoading", true, { root: true });
             try {
               const response = await axios.post('api/patient/login', payload);
-              console.log(response.data.data);
               const userData = {
                 contactNum: response.data.data.contactNum,
                 email: response.data.data.contactEmail,
@@ -76,34 +74,31 @@ const authModule = {
               localStorage.setItem('userData', JSON.stringify(userData));
             commit("setUser", userData);
             msgSuccess(commit, "Successfully logged in");
-            router.push("/");
+            router.push("/profile");
             } catch (error) {
                 msgError(commit, error.response.data.message);
             } finally {
                 commit("notificationModule/setLoading", false, { root: true });
             }
-          },
+        },
         async signUp({commit}, payload) {
             try {
                 commit("notificationModule/setLoading", true, { root: true });
-                axios.post('http://127.0.0.1:5006/login', {
-                    email: payload.email,
-                    password: payload.password
-                    })
+                await axios.post('/api/profile/patient/new', payload)
                     .then(response => {
                         const userData = {
-                            contactNum: response.data.contactNum,
-                            email: response.data.contactEmail,
-                            patientID: response.data.contactID,
-                            patientName: response.data.patientName,
+                            contactNum: response.data.data.contactNum,
+                            email: response.data.data.contactEmail,
+                            patientID: response.data.data.contactID,
+                            patientName: response.data.data.patientName,
                         }
                         commit("setUser", userData);
-                        msgSuccess(commit, "Successfully logged in");
-                        router.push("/")
+                        msgSuccess(commit, "Successfully created account");
+                        router.push("/profile")
                     })
                     .catch(error => {
                         console.error(error);
-                        // Handle login failure here (e.g., show error message)
+                        msgError(commit, error.response.data.message);
                     });
                 } finally {
                     commit("notificationModule/setLoading", false, { root: true });

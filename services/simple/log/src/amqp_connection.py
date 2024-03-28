@@ -17,7 +17,7 @@ handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)
 logging.basicConfig(level=logging.INFO, handlers=[handler])
 handler.addFilter(LibraryLogFilter())
 
-hostname = environ.get('hostname') or "localhost"
+hostname = environ.get('hostname') or "rabbitmq"
 port = environ.get('port') or 5672
 
 def create_connection(max_retries=12, retry_interval=5):

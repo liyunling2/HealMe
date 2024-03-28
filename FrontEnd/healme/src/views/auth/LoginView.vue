@@ -40,8 +40,8 @@
     export default {
         data() {
             return {
-                email: "user@example.com",
-                password: "password123",
+                email: "marcusyap@gmail.coy",
+                password: "password",
                 valid: false, // This will be our form validity flag
                 emailRules: [
                     // Email validation rules

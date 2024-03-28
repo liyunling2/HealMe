@@ -2,11 +2,29 @@ _format_version: "3.0"
 
 services:
 # - name: create_blocked_slots
-#   url: http://createblockedslots:50000
+#   url: http://blocked_slots:5000
 #   routes:
 #   - name: complex_blockedslots
 #     paths:
 #       - /createblockedslots
+
+- name: doctor_schedule
+  url: http://doctor_schedule:5000
+  routes:
+  - name: doctor_schedule
+    methods:
+      - GET
+    paths:
+      - /profile/doctor/schedule
+
+- name: doctor_profile_with_rating
+  url: http://doctor_profile_rating:5000
+  routes:
+  - name: doctor_rating
+    methods:
+      - GET
+    paths:
+      - /profile/doctor/rating
 
 - name: blocked_slots
   url: http://blocked_slots:5000

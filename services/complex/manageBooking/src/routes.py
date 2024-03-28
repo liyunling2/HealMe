@@ -135,10 +135,10 @@ def delete_booking():
         processed_result['doctorName'] = result['data']['retrieve_booking_result']['data'][0]['doctorName']
         processed_result['patientEmail'] = result['data']['retrieve_booking_result']['data'][0]['patientEmail']
         processed_result['patientName'] = result['data']['retrieve_booking_result']['data'][0]['patientName']
+        processed_result['date'] = result['data']['retrieve_booking_result']['data'][0]['date']
+        processed_result['slotNo'] = result['data']['retrieve_booking_result']['data'][0]['slotNo']
         processed_result['code'] = result['code']
         result = processed_result
-        print("NEW RESULT IS")
-        print(result)
     print('\n------------------------')
     print('\nresult: ', result)
     return jsonify(result), result["code"]

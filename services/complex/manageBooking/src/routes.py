@@ -26,7 +26,7 @@ booking_URL = "http://localhost:5005/"
 #if the exchange is not yet created, exit the program
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
     print("\nCreate the 'Exchange' before running this microservice. \nExiting the program.")
-    #sys.exit(0)  # Exit with a success status
+    sys.exit(0)  # Exit with a success status
 
 @app.route("/createBooking")
 def index():

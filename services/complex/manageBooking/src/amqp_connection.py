@@ -16,6 +16,7 @@ handler = RotatingFileHandler(filename='../../../app_logs/application.log', maxB
 handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
 logging.basicConfig(level=logging.INFO, handlers=[handler])
 handler.addFilter(LibraryLogFilter())
+logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 hostname = environ.get('hostname') or "rabbitmq"
 port = environ.get('port') or 5672

@@ -35,5 +35,5 @@ def invoke_http(url, method='GET', json=None, **kwargs):
         code = 500
         result = {"code": code, "message": "Invalid JSON output from service: " + url + ". " + str(e)}
 
-    return result
+    return result, r.status_code
 

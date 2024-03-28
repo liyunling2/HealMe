@@ -1,5 +1,5 @@
 include:
-  #- ./kong/compose.yml
+  - ./kong/compose.yml
   - ./amqp/compose.yml
   - ./complex/compose.yml
 

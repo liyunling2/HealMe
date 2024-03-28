@@ -128,8 +128,8 @@ def delete_booking():
 
     result = processDeleteBooking(deleteBooking)
 
-    if result['code'] == 200:
-        processed_result[] = result[]
+    #if result['code'] == 200:
+        #processed_result[] = result[]
     print('\n------------------------')
     print('\nresult: ', result)
     return jsonify(result), result["code"]

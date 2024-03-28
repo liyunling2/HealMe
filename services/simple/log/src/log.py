@@ -19,11 +19,12 @@ logging.basicConfig(level=logging.INFO, handlers=[handler])
 handler.addFilter(LibraryLogFilter())
 
 log_queue_name = 'All_Logs' 
+channel = None
 
 def receiveLog(channel):
     try:
         channel.basic_consume(queue=log_queue_name, on_message_callback=callback, auto_ack=True)
-        logging.info('Log microservice: Consuming from queue: %s', log_queue_name)
+        logging.info('Log microservice ready to consume from %s', log_queue_name)
         channel.start_consuming() 
     
     except pika.exceptions.AMQPError as e:
@@ -34,13 +35,17 @@ def receiveLog(channel):
         
 
 def callback(channel, method, properties, body): 
-    logging.info("Received Log From:%s" + __file__)
-    data = json.loads(body)
-    logging.info(f"%s {data}")
-    print()
+    logging.info("------------Receiving Log------------")
+    try:
+        data = json.loads(body)
+        logging.info("Message Received: %s", json.dumps(data, indent=4))
+        print()
+    except Exception as e:
+        # Log any errors that occur during processing
+        logging.error("Error processing log message: %s", e)
 
 
-if __name__ == "__main__":     
+if __name__ == "__main__" and channel == None:     
     logging.info("Log microservice: Getting Connection")
     connection = amqp_connection.create_connection() 
     logging.info("Log microservice: Connection established successfully")

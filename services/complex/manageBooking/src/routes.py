@@ -34,7 +34,6 @@ def index():
 
 #booking routes
 
-#EXTRACT BOOKING, CAN FILTER AS SUCH http://127.0.0.1:5005/bookings?patientID=101&dateOfBooking=2024-03-01
 @app.route("/createBooking", methods=["POST"])
 def create_booking():
     # Simple check of input format and data of the request are JSON
@@ -45,6 +44,9 @@ def create_booking():
 
             # create booking
             result = processCreateBooking(createBooking)
+            
+            print('\n------------------------')
+            print('\nresult: ', result)
             return jsonify(result), result["code"]
 
         except Exception as e:
@@ -65,7 +67,9 @@ def create_booking():
         "message": "Invalid JSON input: " + str(request.get_data())
     }), 400
 
+
 def processCreateBooking(createBooking):
+<<<<<<< Updated upstream
     print('\n-----Invoking booking microservice-----')
     booking_result = invoke_http(booking_URL, method='POST', json=createBooking)
     print("hello")
@@ -82,6 +86,57 @@ def processCreateBooking(createBooking):
      
         print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
             code), booking_result)
+=======
+    global blocked_slots_URL
+    print('\n\n-----Invoking blocked_slots microservice-----')
+    blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
+    blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
+    print('blocked_slots_results', blocked_slots_result)
+    if blocked_slots_result['message'] != "No slots found.":
+        print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+        channel.basic_publish(exchange=exchangename, routing_key="#", 
+                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+                blocked_slots_response_code), blocked_slots_result)
+        return {
+            "code": 500,
+            "data": {"blocked_slots_result": blocked_slots_result},
+            "message": "Booking creation failure sent for error handling. Because blocked_slots are found"
+        }
+
+    if blocked_slots_result['message'] == "No slots found.":
+        print('\n-----Invoking booking microservice-----')
+        booking_result, booking_response_code = invoke_http(booking_URL, method='POST', json=createBooking)
+        print('booking_result:', booking_result)
+        message = json.dumps(booking_result)
+        if booking_response_code not in range(200, 300):
+            # Inform the log microservice NOT DONE YET
+            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+                booking_response_code), booking_result)
+            return {
+            "code": 500,
+            "data": {"blocked_slots_result": blocked_slots_result,
+                     "booking_result": booking_result},
+            "message": "Booking creation failure sent for error handling. Because of booking_result failure"
+        }
+        else:
+            print('\n\n-----Publishing the (Log) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+            booking_response_code), booking_result)
+            return {
+            "code": 200,
+            "data": {"blocked_slots_result": blocked_slots_result,
+                     "booking_result": booking_result},
+            "message": "Booking creation Success"
+        }
+>>>>>>> Stashed changes
         
         #return error
         return {
@@ -90,6 +145,7 @@ def processCreateBooking(createBooking):
             "message": "Booking creation failure sent for error handling."
         }
     
+<<<<<<< Updated upstream
     print('\n\n-----Invoking blocked_slots microservice-----')
     booked_slots_result = invoke_http(
         blocked_slots_URL, method="POST", json=booking_result['data'])
@@ -124,12 +180,82 @@ def processCreateBooking(createBooking):
         }
     
 }
+=======
+@app.route("/deleteBooking", methods=["DELETE"])
+def delete_booking():
+    deleteBooking = request.args.get('patientID')
+    # Simple check of input format and data of the request are JSON
+>>>>>>> Stashed changes
     
-# @app.route("/deleteBooking", methods=["POST"])
-# def delete_booking():
- 
+    print("\nReceived a delete booking request in URL:", deleteBooking)
 
-# def processDeleteBooking(deleteBooking):
+    result = processDeleteBooking(deleteBooking)
+
+    if result['code'] == 200:
+        processed_result[] = result[]
+    print('\n------------------------')
+    print('\nresult: ', result)
+    return jsonify(result), result["code"]
+
+
+def processDeleteBooking(deleteBooking):
+    global booking_URL
+    print('\n-----Invoking booking microservice-----')
+    retrieve_booking_result, retrieve_booking_response_code = invoke_http(booking_URL, method="GET", json=deleteBooking)
+    print('retrieve_booking_result', retrieve_booking_result)
+    message = json.dumps(retrieve_booking_result)
+    if retrieve_booking_response_code not in range(200, 300):
+            # Inform the log microservice NOT DONE YET
+            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+                retrieve_booking_response_code), retrieve_booking_result)
+            return {
+            "code": 500,
+            "data": {"retrieve_booking_result": retrieve_booking_result,
+                     },
+            "message": "Cannot find booking."
+        }
+    else:
+        print('\n\n-----Publishing the (Log) message with routing_key=#-----')
+        channel.basic_publish(exchange=exchangename, routing_key="#", 
+        body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(retrieve_booking_response_code), retrieve_booking_result)
+        delete_booking_result, delete_booking_response_code = invoke_http(booking_URL, method="DELETE", json=deleteBooking)
+        print('delete_booking_result', delete_booking_result)
+        if delete_booking_response_code not in range(200, 300):
+            # Inform the log microservice NOT DONE YET
+            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+                delete_booking_response_code), delete_booking_result)
+            return {
+            "code": 500,
+            "data": {"retrieve_booking_result": retrieve_booking_result,
+                     "delete_booking_result": delete_booking_result},
+            "message": "Cannot delete booking."
+        }
+        else:
+            print('\n\n-----Publishing the (Log) message with routing_key=#-----')
+            channel.basic_publish(exchange=exchangename, routing_key="#", 
+            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
+     
+            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
+            delete_booking_response_code), delete_booking_result)
+            return {
+            "code": 200,
+            "data": {"retrieve_booking_result": retrieve_booking_result,
+                     "delete_booking_result": delete_booking_result},
+            "message": "Booking creation Success"
+        }
+
+
+
    
 
 # Execute this program if it is run as a main script (not by 'import')
@@ -145,3 +271,5 @@ if __name__ == "__main__":
     #   -- i.e., it gives permissions to hosts with any IP to access the flask program,
     #   -- as long as the hosts can already reach the machine running the flask program along the network;
     #   -- it doesn't mean to use http://0.0.0.0 to access the flask program.
+
+

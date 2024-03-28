@@ -13,7 +13,8 @@ class Booking(db.Model):
     bookingStatus = db.Column(db.VARCHAR(255))
 
     __table_args__ = (db.CheckConstraint('slotNo >= 1 and slotNo <= 24', name='slotNo_check'),
-                      db.UniqueConstraint('doctorID', 'date', 'slotNo', name='doctorID_date_slotNo'),)
+                      db.UniqueConstraint('doctorID', 'date', 'slotNo', name='doctorID_date_slotNo'), 
+                      db.UniqueConstraint('patientID', 'date', 'slotNo'))
 
     def json(self):
         return {

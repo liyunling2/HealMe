@@ -82,6 +82,7 @@ services:
     restart: on-failure
     volumes:
       - ./simple/log/src:/src
+      - ./app_logs:/app_logs
     environment:
       # DB_URI: ${BOOKING_DB_URI}
       PORT: 5000

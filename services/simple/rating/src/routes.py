@@ -77,8 +77,12 @@ def rate_doctor(doctorID):
             ratingID=str(uuid.uuid4()),
             clinicID=data['clinicID'],
             doctorID=doctorID,
+            doctorName=data['doctorName'],
             bookingID=data['bookingID'],
+            clinicName=data['clinicName'],
             patientID=data['patientID'],
+            patientName=data['patientName'],
+            bookingDate=data['bookingDate'],
             ratingGiven=data['ratingGiven'],
             comments=data['comments']
             )

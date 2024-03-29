@@ -1,4 +1,5 @@
 import requests
+import os
 
 SUPPORTED_HTTP_METHODS = set([
     "GET", "OPTIONS", "HEAD", "POST", "PUT", "PATCH", "DELETE"
@@ -37,3 +38,20 @@ def invoke_http(url, method='GET', json=None, **kwargs):
 
     return result, r.status_code
 
+notification_url = os.getenv("NOTIFICATION_URL")
+
+def send_notification(title, message, to_email):
+    url = f"{notification_url}/notification"
+    data = {
+        "from": "healmeesd@gmail.com",
+        "to": to_email,
+        "subject": title,
+        "content": {
+            "title": title,
+            "message": message
+        }
+    }
+    
+    response, code = invoke_http(url, method="POST", json=data)
+
+    return response, code

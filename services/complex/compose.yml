@@ -49,3 +49,4 @@ services:
     environment:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       BOOKING_URL: ${BOOKING_URL}
+      NOTIFICATION_URL: ${NOTIFICATION_URL}

@@ -1,13 +1,17 @@
-from flask import Flask, Blueprint, request, jsonify
 import json
+from utils import get_log_message_dict
+import os
+import sys
 import uuid
-from flask_cors import CORS
-import os, sys
-import requests
-from invokes import invoke_http
-import pika
-import json
+
 import amqp_connection
+import pika
+import requests
+from flask import Blueprint, Flask, jsonify, request
+from flask_cors import CORS
+from invokes import invoke_http
+
+from functools import wraps
 
 app = Flask(__name__)
 CORS(app)
@@ -18,8 +22,20 @@ exchangetype= "fanout"
 connection = amqp_connection.create_connection() 
 channel = connection.channel()
 
+def with_logging(route_handler_fn):
+    @wraps(route_handler_fn)
+    def with_log_fn(*args, **kwargs):
+        response, code = route_handler_fn(*args, **kwargs)
+
+        body = get_log_message_dict((response, code))
+        
+        channel.basic_publish(exchange=exchangename, routing_key="#",
+                              body=json.dumps(body), properties=pika.BasicProperties(delivery_mode=2))
+        return response
+    
+    return with_log_fn
+
 BLOCKED_SLOTS_URL = os.environ.get("BLOCKED_SLOTS_URL")
-# log_URL = 
 # noti_URL =
 BOOKING_URL = os.environ.get("BOOKING_URL")
 
@@ -35,6 +51,7 @@ def index():
 #booking routes
 
 @app.route("/createBooking", methods=["POST"])
+@with_logging
 def create_booking():
     # Simple check of input format and data of the request are JSON
     if request.is_json:
@@ -47,7 +64,7 @@ def create_booking():
             
             print('\n------------------------')
             print('\nresult: ', result)
-            return jsonify(result), result["code"]
+            return result, result["code"]
 
         except Exception as e:
             # Unexpected error in code
@@ -56,16 +73,16 @@ def create_booking():
             ex_str = str(e) + " at " + str(exc_type) + ": " + fname + ": line " + str(exc_tb.tb_lineno)
             print(ex_str)
 
-            return jsonify({
+            return {
                 "code": 500,
                 "message": "booking.py internal error: " + ex_str
-            }), 500
+            }, 500
 
     # if reached here, not a JSON request.
-    return jsonify({
+    return {
         "code": 400,
         "message": "Invalid JSON input: " + str(request.get_data())
-    }), 400
+    }, 400
 
 
 def processCreateBooking(createBooking):
@@ -75,50 +92,33 @@ def processCreateBooking(createBooking):
     blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
     message = json.dumps(blocked_slots_result)
     print('blocked_slots_results', blocked_slots_result)
-    if blocked_slots_result['message'] != "No slots found.":
-        print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-        channel.basic_publish(exchange=exchangename, routing_key="#", 
-                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-                blocked_slots_response_code), blocked_slots_result)
+
+    if len(blocked_slots_result['data']) != 0:
         return {
             "code": 500,
             "data": {"blocked_slots_result": blocked_slots_result},
             "message": "Booking creation failure sent for error handling. Because blocked_slots are found"
         }
 
-    if blocked_slots_result['message'] == "No slots found.":
-        print('\n-----Invoking booking microservice-----')
-        booking_result, booking_response_code = invoke_http(BOOKING_URL, method='POST', json=createBooking)
-        print('booking_result:', booking_result)
-        message = json.dumps(booking_result)
-        if booking_response_code not in range(200, 300):
-            # Inform the log microservice NOT DONE YET
-            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-            channel.basic_publish(exchange=exchangename, routing_key="#", 
-                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-                booking_response_code), booking_result)
-            return {
-            "code": 500,
-            "data": {"blocked_slots_result": blocked_slots_result,
-                     "booking_result": booking_result},
-            "message": "Booking creation failure sent for error handling. Because of booking_result failure"
-        }
-        else:
-            print('\n\n-----Publishing the (Log) message with routing_key=#-----')
-            channel.basic_publish(exchange=exchangename, routing_key="#", 
-            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-            booking_response_code), booking_result)
-            return {
-            "code": 200,
-            "data": {"blocked_slots_result": blocked_slots_result,
-                     "booking_result": booking_result},
-            "message": "Booking creation Success"
-        }
+    print('\n-----Invoking booking microservice-----')
+    booking_result, booking_response_code = invoke_http(BOOKING_URL, method='POST', json=createBooking)
+    print('booking_result:', booking_result)
+    message = json.dumps(booking_result)
+    if booking_response_code not in range(200, 300):
+        # Inform the log microservice NOT DONE YET
+        return {
+        "code": 500,
+        "data": {"blocked_slots_result": blocked_slots_result,
+                    "booking_result": booking_result},
+        "message": "Booking creation failure sent for error handling. Because of booking_result failure"
+    }
+    else:
+        return {
+        "code": 200,
+        "data": {"blocked_slots_result": blocked_slots_result,
+                    "booking_result": booking_result},
+        "message": "Booking creation Success"
+    }
     
 @app.route("/deleteBooking", methods=["DELETE"])
 def delete_booking():
@@ -141,7 +141,8 @@ def delete_booking():
         result = processed_result
     print('\n------------------------')
     print('\nresult: ', result)
-    return jsonify(result), result["code"]
+
+    return result, result["code"]
 
 
 def processDeleteBooking(deleteBooking):
@@ -154,12 +155,6 @@ def processDeleteBooking(deleteBooking):
     message = json.dumps(retrieve_booking_result)
     if retrieve_booking_response_code not in range(200, 300):
             # Inform the log microservice NOT DONE YET
-            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-            channel.basic_publish(exchange=exchangename, routing_key="#", 
-                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-                retrieve_booking_response_code), retrieve_booking_result)
             return {
             "code": 500,
             "data": {"retrieve_booking_result": retrieve_booking_result,
@@ -167,21 +162,10 @@ def processDeleteBooking(deleteBooking):
             "message": "Cannot find booking."
         }
     else:
-        print('\n\n-----Publishing the (Log) message with routing_key=#-----')
-        channel.basic_publish(exchange=exchangename, routing_key="#", 
-        body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-        print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(retrieve_booking_response_code), retrieve_booking_result)
         delete_booking_result, delete_booking_response_code = invoke_http(booking_URL, method="DELETE", json=deleteBooking)
         print('delete_booking_result', delete_booking_result)
         if delete_booking_response_code not in range(200, 300):
             # Inform the log microservice NOT DONE YET
-            print('\n\n-----Publishing the (log error) message with routing_key=#-----')
-            channel.basic_publish(exchange=exchangename, routing_key="#", 
-                body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-                delete_booking_response_code), delete_booking_result)
             return {
             "code": 500,
             "data": {"retrieve_booking_result": retrieve_booking_result,
@@ -189,12 +173,6 @@ def processDeleteBooking(deleteBooking):
             "message": "Cannot delete booking."
         }
         else:
-            print('\n\n-----Publishing the (Log) message with routing_key=#-----')
-            channel.basic_publish(exchange=exchangename, routing_key="#", 
-            body=message, properties=pika.BasicProperties(delivery_mode = 2)) 
-     
-            print("\nCreate Booking status ({:d}) published to the RabbitMQ Exchange:".format(
-            delete_booking_response_code), delete_booking_result)
             return {
             "code": 200,
             "data": {"retrieve_booking_result": retrieve_booking_result,
@@ -203,8 +181,21 @@ def processDeleteBooking(deleteBooking):
         }
 
 
+@app.route("/complete", methods=["PATCH"])
+@with_logging
+def complete_booking():
+    # Change booking status to completed
+    # Send notification
+    
+    return {
+        "message": "Booking completed successfully",
+        "data": {
+            "retrieve_booking_result": json.dumps({
+                "message": "Booking completed successfully."
+            })
+        }
+    }, 200
 
-   
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":

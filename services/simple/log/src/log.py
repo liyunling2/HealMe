@@ -1,38 +1,53 @@
-import sys
-sys.path.append("/services/ampq")
-import services.ampq.amqp_connection as amqp_connection
 import json
 import pika
-# from os import environ
+from flask import jsonify
+import amqp_connection
+import logging
+from logging.handlers import RotatingFileHandler
+
+class LibraryLogFilter(logging.Filter):
+    def filter(self, record):
+        # Filter out log records
+        if record.name.startswith('pika.') or record.name == 'AMQP':
+            return False
+        return True
+    
+# 1 MB max size, keep 5 backups
+handler = RotatingFileHandler(filename='../../../app_logs/application.log', maxBytes=1024*1024, backupCount=5) 
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+logging.basicConfig(level=logging.INFO, handlers=[handler])
+handler.addFilter(LibraryLogFilter())
 
 log_queue_name = 'All_Logs' 
+channel = None
 
 def receiveLog(channel):
     try:
         channel.basic_consume(queue=log_queue_name, on_message_callback=callback, auto_ack=True)
-        print('error microservice: Consuming from queue:', log_queue_name)
+        logging.info('Log microservice ready to consume from %s', log_queue_name)
         channel.start_consuming() 
     
     except pika.exceptions.AMQPError as e:
-        print(f"error microservice: Failed to connect: {e}") 
+        logging.error(f"Log microservice: Failed to connect: %s {e}")
 
     except KeyboardInterrupt:
-        print("error microservice: Program interrupted by user.")
-
+        logging.error("Log microservice: Program interrupted by user.")
+        
 
 def callback(channel, method, properties, body): 
-    print("Received Log From:" + __file__)
-    print(json.loads(body))
-    print()
+    logging.info("------------Receiving Log------------")
+    try:
+        data = json.loads(body)
+        logging.info("Message Received: %s", json.dumps(data, indent=4))
+        print()
+    except Exception as e:
+        # Log any errors that occur during processing
+        logging.error("Error processing log message: %s", e)
 
-# define error and success logs?
-# def processSuccess(Msg): 
-# def processError(Msg):
 
-
-if __name__ == "__main__":     
-    print("error microservice: Getting Connection")
+if __name__ == "__main__" and channel == None:     
+    logging.info("Log microservice: Getting Connection")
     connection = amqp_connection.create_connection() 
-    print("error microservice: Connection established successfully")
+    logging.info("Log microservice: Connection established successfully")
     channel = connection.channel()
     receiveLog(channel)

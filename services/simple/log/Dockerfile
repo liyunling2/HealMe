@@ -2,4 +2,4 @@ FROM python:3-slim
 WORKDIR /src
 COPY requirements.txt .
 RUN python3 -m pip install -r requirements.txt
-CMD ["python", "run.py"]
+CMD ["python", "log.py"]

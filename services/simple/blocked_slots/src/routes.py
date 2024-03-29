@@ -14,7 +14,8 @@ def add_blocked_slot():
 
         if slot.slotNo < 1 or slot.slotNo > 24:
             return {
-                "message": "Invalid slot no. Only slot nos betweeen 1 and 24 are allowed."
+                "data": None,
+                "message": "Invalid slot no. Only slot nos betweeen 1 and 24 are allowed.",
             }, 400
     
         db.session.add(slot)
@@ -22,23 +23,26 @@ def add_blocked_slot():
 
     except IntegrityError:
         return {
-            "message": "Slot already blocked"
+            "data": None,
+            "message": "Slot already blocked",
         }, 400
 
     except TypeError as e:
         return {
-            "message": str(e)
+            "data": None,
+            "message": str(e),
         }, 400
 
     except Exception as e:
         traceback.print_exception(e)
         return {
-            "message": str(e)
+            "data": None,
+            "message": "An unexpected error occurred.",
         }, 500
     
     return {
-        "message": "Slot created",
-        "data": slot.json()
+        "data": slot.json(),
+        "message": "Slot created successfully.",
     }, 201
 
 @routes.route("/", methods=["GET"])
@@ -49,9 +53,18 @@ def get_blocked_slots():
 
     except InvalidRequestError as e:
         return {
-            "message": "Bad request: " + str(e)
+            "data": None,
+            "message": "Bad request: " + str(e),
         }, 400
 
-    return {
-        "data": [slot.json() for slot in slots]
-    }
+    if slots:
+        return {
+            "data": [slot.json() for slot in slots],
+            "message": "Slots retrieved successfully.",
+        }, 200
+    
+    else:
+        return {
+            "data": [],
+            "message": "No slots found.",
+        }, 200

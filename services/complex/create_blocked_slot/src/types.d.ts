@@ -10,4 +10,4 @@ type BlockedSlotType = {
 // any number of function args
 type FetcherFn = (params: URLSearchParams) => Promise<Object>
 
-type CheckRulePassedFn = (data: Object) => boolean;
+type CheckRulePassedFn = (data: Object, params: URLSearchParams) => boolean;

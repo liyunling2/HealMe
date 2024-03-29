@@ -12,10 +12,10 @@ class LibraryLogFilter(logging.Filter):
         return True
     
 # 1 MB max size, keep 5 backups
-handler = RotatingFileHandler(filename='../../../app_logs/application.log', maxBytes=1024*1024, backupCount=5) 
-handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
-logging.basicConfig(level=logging.INFO, handlers=[handler])
-handler.addFilter(LibraryLogFilter())
+#handler = RotatingFileHandler(filename='../../../app_logs/application.log', maxBytes=1024*1024, backupCount=5) 
+#handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+#logging.basicConfig(level=logging.INFO, handlers=[handler])
+#handler.addFilter(LibraryLogFilter())
 logging.getLogger('werkzeug').setLevel(logging.ERROR)
 
 hostname = environ.get('hostname') or "rabbitmq"

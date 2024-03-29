@@ -210,7 +210,7 @@ def processDeleteBooking(deleteBooking):
 if __name__ == "__main__":
     print("This is flask " + os.path.basename(__file__) +
           " for creating a booking...")
-    app.run(host="0.0.0.0", port=5007, debug=True)
+    app.run(host="0.0.0.0", port=5000, debug=True)
     # Notes for the parameters:
     # - debug=True will reload the program automatically if a change is detected;
     #   -- it in fact starts two instances of the same flask program,

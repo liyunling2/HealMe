@@ -38,18 +38,26 @@ class DoctorRating(db.Model):
     ratingID = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     clinicID = db.Column(db.String(36))
     doctorID = db.Column(db.String(36))
+    doctorName = db.Column(db.VARCHAR(255))
     bookingID = db.Column(db.String(36))
+    clinicName = db.Column(db.VARCHAR(255))
     patientID = db.Column(db.String(36))
+    patientName = db.Column(db.VARCHAR(255))
+    bookingDate = db.Column(db.DateTime)
     timeStamp = db.Column(db.DateTime, default=func.now(), onupdate=func.now())
     ratingGiven = db.Column(db.Float)
     comments = db.Column(db.VARCHAR(255))
 
-    def __init__(self, ratingID, clinicID, doctorID, bookingID, patientID, ratingGiven, comments):
+    def __init__(self, ratingID, clinicID, doctorID, doctorName, bookingID, clinicName, patientID, patientName, bookingDate, ratingGiven, comments):
         self.ratingID = ratingID
         self.clinicID = clinicID
         self.doctorID = doctorID
+        self.doctorName = doctorName
         self.bookingID = bookingID
+        self.clinicName = clinicName
         self.patientID = patientID
+        self.patientName = patientName
+        self.bookingDate = bookingDate
         self.ratingGiven = ratingGiven
         self.comments = comments
 
@@ -60,8 +68,12 @@ class DoctorRating(db.Model):
             "ratingID": self.ratingID,
             "clinicID": self.clinicID,
             "doctorID": self.doctorID,
+            "doctorName": self.doctorName,
             "bookingID": self.bookingID,
+            "clinicName": self.clinicName,
             "patientID": self.patientID,
+            "patientName": self.patientName,
+            "bookingDate": self.bookingDate,
             "timeStamp": self.timeStamp,
             "ratingGiven": self.ratingGiven,
             "comments": self.comments,

@@ -1,5 +1,5 @@
 include:
-  #- ./kong/compose.yml
+  - ./kong/compose.yml
   - ./amqp/compose.yml
   - ./complex/compose.yml
 
@@ -79,6 +79,7 @@ services:
       context: ./simple/notification
     volumes:
       - ./simple/notification/src:/src
+    restart: always
     environment:
       PORT: 5000
     ports:

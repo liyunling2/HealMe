@@ -3,6 +3,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 import os
 from dotenv import load_dotenv
+from templates import create_html_email
 load_dotenv()
 routes = Blueprint("notification", __name__)
 
@@ -19,7 +20,7 @@ def send_email():
             from_email=data['from'],
             to_emails=data['to'],
             subject=data['subject'],
-            plain_text_content=data['content']
+            html_content=create_html_email(**data['content'])
         )
         sg = SendGridAPIClient(os.getenv('SENDGRID_API_KEY'))
         response = sg.send(message)

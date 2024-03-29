@@ -3,7 +3,7 @@ from typing import List
 import httpx
 import os
 import asyncio
-from utils import create_schedule, deep_mask
+from utils import create_schedule, create_full_schedule
 
 routes = Blueprint("get_doctor_schedule", __name__)
 
@@ -31,7 +31,7 @@ async def get_doctor_schedule():
         response_data = [response.raise_for_status().json() for response in responses]
 
         # return response_data
-        return format_response(request.args, response_data), 200
+        return format_response(request.args, response_data, args.get("full", False)), 200
 
     except httpx.HTTPStatusError as err:
         print("HTTP STATUS ERROR: ", err)
@@ -78,10 +78,9 @@ def get_data_from_url(client, url, args):
 def format_query_params(args):
     return "&".join([f"{key}={value}" for key, value in args.items()])
 
-def format_response(args, response_data: List[dict]):
+def format_response(args, response_data: List[dict], full=False):
     print("Response data: ", response_data)
-    doctor_profile, blocked_slots, bookings = (res["data"] for res in response_data)
-    
+    doctor_profile, blocked_slots, bookings = (res["data"] for res in response_data) 
     # Join responses
     response_data = {
         "date": args.get("date"),
@@ -89,7 +88,7 @@ def format_response(args, response_data: List[dict]):
         "clinicID": args.get("clinicID")
     } \
     | format_doctor_profile(doctor_profile) \
-    | {"schedule": create_schedule(blocked_slots, bookings)}
+    | {"schedule": create_schedule(blocked_slots, bookings) if full else create_full_schedule(blocked_slots, bookings)}
     
     return response_data
 

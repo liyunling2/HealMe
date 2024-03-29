@@ -14,11 +14,11 @@ export function createNormalErrorResponse(c: Context, error: Error, code: Status
         const errors = error.errors;
 
         return c.json({
-            errors: [errors.map(e => e.message)]
+            message: errors.join(", "),
         }, code);
     }
 
-    return c.json({ errors: [error.message]}, code);
+    return c.json({ message: error.message }, code);
 }
 
 export function createSlotSuccessResponse(c: Context, blockedSlot: BlockedSlotType) {

@@ -1,3 +1,4 @@
-FROM python:3-slim
-WORKDIR /src
-CMD ["python", "amqp_setup.py"]
+FROM rabbitmq:3-management
+
+COPY rabbitmq_definitions.json /etc/rabbitmq/rabbitmq_definitions.json
+COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf

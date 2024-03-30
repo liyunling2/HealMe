@@ -1,3 +1,7 @@
+volumes:
+  prometheusdata:
+  grafanadata:
+
 services:
   kong:
     image: kong
@@ -5,8 +9,6 @@ services:
       - type: bind
         source: ./config
         target: /opt/kong
-    # networks:
-    #   - kong-net
     environment:
       KONG_DATABASE: "off"
       KONG_DECLARATIVE_CONFIG: "/opt/kong/kong.yml"
@@ -28,3 +30,20 @@ services:
       - "8004:8004" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
       - "8447:8447" # Dev Portal /files traffic over HTTPS, assuming the Dev Portal is enabled.
 
+  prometheus:
+    image: prom/prometheus:v2.49.1
+    restart: always
+    ports:
+      - "9090:9090"
+    volumes:
+      - prometheusdata:/etc/prometheus
+      - ./config/prometheus.yml:/etc/prometheus/prometheus.yml
+
+# view dashboard at http://localhost:3000/
+  grafana:
+    image: grafana/grafana-oss:10.2.3
+    restart: always
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafanadata:/var/lib/grafana

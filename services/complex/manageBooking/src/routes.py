@@ -223,7 +223,7 @@ def processDeleteBooking(deleteBooking):
         }
 
 
-@app.route("/<string:booking_id>/complete", methods=["PATCH"])
+@app.route("/complete/<string:booking_id>", methods=["PUT"])
 @with_logging
 @with_notification("completed. Please rate the doctor.")
 def complete_booking(booking_id):

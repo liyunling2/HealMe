@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify
 from invokes import get_doctor_profile, get_doctor_ratings
 
-routes = Blueprint("get-doctor-profile-with-rating", __name__)
+routes = Blueprint("get_doctor_profile_with_rating", __name__)
 
 @routes.route("/<string:doctor_id>", methods=["GET"])
 def get_doctor_profile_with_ratings(doctor_id):

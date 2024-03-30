@@ -18,6 +18,6 @@ def get_doctor_profile_with_ratings(doctor_id):
     ratings = [float(rating["ratingGiven"]) for rating in doctor_ratings]
     average_rating = sum(ratings) / len(ratings) if ratings else 0
 
-    doctor_profile_with_ratings = {**doctor_profile, "averageRating": average_rating}
+    doctor_profile_with_ratings = {**doctor_profile, "averageRating": average_rating, "ratingCount": len(ratings)}
 
     return jsonify({"data": doctor_profile_with_ratings, "message": "Doctor profile with ratings retrieved successfully."}), 200

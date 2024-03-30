@@ -223,21 +223,19 @@ def processDeleteBooking(deleteBooking):
         }
 
 
-@app.route("/complete", methods=["PATCH"])
+@app.route("/<string:booking_id>/complete", methods=["PATCH"])
 @with_logging
-def complete_booking():
+@with_notification("completed. Please rate the doctor.")
+def complete_booking(booking_id):
     # Change booking status to completed
-    # Send notification
-    
-    return {
-        "message": "Booking completed successfully",
-        "data": {
-            "retrieve_booking_result": json.dumps({
-                "message": "Booking completed successfully."
-            })
-        }
-    }, 200
+    try:
+        response, code = invoke_http(BOOKING_URL + f"/{booking_id}", method="PATCH", json={"bookingStatus": "Completed"})
+        return response, code
 
+    except Exception as e:
+        return {
+            "message": "An error occurred updating the booking."
+        }, 500
 
 # Execute this program if it is run as a main script (not by 'import')
 if __name__ == "__main__":

@@ -210,3 +210,10 @@ plugins:
     hour: 10000
     policy: local
 
+- name: prometheus
+  config:
+    status_code_metrics: true
+    bandwidth_metrics: true
+    upstream_health_metrics: true
+    latency_metrics: true
+

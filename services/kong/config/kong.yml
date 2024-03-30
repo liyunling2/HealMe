@@ -1,26 +1,53 @@
 _format_version: "3.0"
 
 services:
-- name: create_blocked_slots
-  url: http://create_blockedslots:5000
+- name: complex_complete_booking
+  url: http://manage_booking:5000/complete
+  routes:
+  - name: complex_complete_booking
+    methods:
+      - PUT
+    paths:
+      - /booking/complete
+
+- name: complex_create_booking
+  url: http://manage_booking:5000/createBooking
+  routes:
+  - name: complex_create_booking
+    methods:
+      - POST
+    paths:
+      - /createBooking
+
+- name: complex_delete_booking
+  url: http://manage_booking:5000/deleteBooking
+  routes:
+  - name: complex_delete_booking
+    methods:
+      - DELETE
+    paths:
+      - /deleteBooking
+
+- name: complex_create_blocked_slots
+  url: http://create_blocked_slot:50000
   routes:
   - name: complex_blockedslots
     paths:
       - /createblockedslots
 
-- name: doctor_schedule
-  url: http://doctor_schedule:5000
+- name: complex_doctor_schedule
+  url: http://get_doctor_schedule:5000
   routes:
-  - name: doctor_schedule
+  - name: complex_doctor_schedule
     methods:
       - GET
     paths:
       - /profile/doctor/schedule
 
-- name: doctor_profile_with_rating
-  url: http://doctor_profile_rating:5000
+- name: complex_doctor_profile_with_rating
+  url: http://get_doctor_profile_with_rating:5000
   routes:
-  - name: doctor_rating
+  - name: complex_doctor_rating
     methods:
       - GET
     paths:

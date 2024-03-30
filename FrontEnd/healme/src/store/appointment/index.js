@@ -11,7 +11,8 @@ const appointmentModule = {
         appointment: [],
         userAppointments: [],
         clinicDoctors: [],
-        bookedSlots: null,
+        bookedSlots: [],
+        ratings: []
     },
     getters: {
         getClinics(state) {
@@ -25,7 +26,13 @@ const appointmentModule = {
         },
         getBookedSlots(state){
             return state.bookedSlots
-        }
+        },
+        getUserAppointments(state){
+            return state.userAppointments
+        },
+        getRatings(state) {
+            return state.ratings;
+        },
     },
     mutations: {
         setClinics(state, payload) {
@@ -34,170 +41,167 @@ const appointmentModule = {
         setDoctors(state,payload) {
             state.clinicDoctors = payload
         },
-        setAppointments(state,payload) {
-            state.availableAppointment = payload
+        setUserAppointments(state,payload) {
+            state.userAppointments = payload
         },
         setBookedSlots(state, payload) {
             state.bookedSlots = payload
         },
+        setRatings(state,payload) {
+            state.ratings = payload
+        }
     },
     actions: {
         async getAllClinics({commit}, payload) {
             try {
-                await axios.get('api/clinic/view')
+                await axios.get('/api/clinic/view')
                     .then(response => {
                         commit("setClinics", response.data.data);
+                        msgSuccess(commit, "Successfully retrieved all clinics");
                     })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } 
-            finally {
+            }
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+                commit("notificationModule/setLoading", false, { root: true });
             }
         },
         async getAllDoctorsInClinic({ commit }, payload) {
             try {
                 const clinicID = payload.clinicID;
-                const response = await axios.get(`api/profile/doctor/view?clinicID=${clinicID}`);
-                commit("setDoctors", response.data.data);
-                msgSuccess(commit, "Successfully retrieved doctors");
+                const response = await axios.get(`/api/profile/doctor/view?clinicID=${clinicID}`);
+                var doctors = response.data.data
+                var doctorsWithRating = []
+                for (let i = 0; i < doctors.length; i++) {
+                    var newDoctorProfile = doctors[i]
+                    const newreponse = await axios.get(`/api/profile/doctor/rating/${newDoctorProfile.doctorID}`)
+                    newDoctorProfile.ratings = newreponse.data.data.averageRating
+                    doctorsWithRating.push(newDoctorProfile)
+                }
+                await commit("setDoctors", doctorsWithRating);
+                msgSuccess(commit, response.data.message);
             } catch (error) {
-                msgError(commit, error.response ? error.response.data.message : error.message);
+                msgError(commit, error.response.data.message);
             } finally {
+                commit("notificationModule/setLoading", false, { root: true });
             }
         },        
         async getDoctorAvailableSlots({commit}, payload){
             const clinicID = payload.clinicID;
-            const data = {
-                "clinicID": "clinic1",
-                "date": "2024-03-29",
-                "doctorDesc": "Experienced General Practitioner",
-                "doctorEmail": "doc1@example.com",
-                "doctorID": "doctor1",
-                "doctorName": "Dr. Alice Jones",
-                "password": "pass1",
-                "schedule": [
-                    {
-                        "clinicID": "clinic1",
-                        "date": "Fri, 29 Mar 2024 00:00:00 GMT",
-                        "doctorID": "doctor1",
-                        "id": "84c7486d-0329-4565-8a13-6391e1b41d5c",
-                        "reason": "leave",
-                        "slotNo": 1
-                    },
-                    {
-                        "bookingID": "156f66ab-4ac3-492f-b86c-3bbcd81e69c2",
-                        "bookingStatus": "confirmed",
-                        "clinicID": "clinic1",
-                        "date": "Fri, 29 Mar 2024 00:00:00 GMT",
-                        "doctorID": "doctor1",
-                        "patientID": "123",
-                        "slotNo": 2
-                    }
-                ],
-                "specialty": "General Practice"
-            }
-            const url = "`http://localhost:9999?doctorID=${payload.doctorID}&clinicID=${payload.clinicID}&date=${payload.date}`"
+            const url = `/api/profile/doctor/schedule?date=${payload.date}&doctorID=${payload.doctorID}&clinicID=${payload.clinicID}`
             try {
-                await axios.get(`api/profile/doctor/view?clinicID=${clinicID}`)
+                await axios.get(url)
                     .then(response => {
-                        commit("setBookedSlots", data);
+                        commit("setBookedSlots", response.data.schedule);
                         msgSuccess(commit, "Successfully retrieved doctor's appointment");
                     })
-                    .catch(error => {
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } 
-            finally {
+            } 
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
             }
         },
         async createAppointment({commit}, payload) {
-            commit("notificationModule/setLoading", true, { root: true });
             try {
-                await axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                await axios.post('api/createBooking', payload)
                     .then(response => {
-                        console.log(response)
-                        //commit("setDoctors", response.data);
-                        commit("notificationModule/setLoading", false, { root: true });
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                        
-                    });
-                }     
+                        msgSuccess(commit, response.data.message);
+                        router.push("/profile");
+                    })  
+                }  
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } 
             finally {
                 commit("notificationModule/setLoading", false, { root: true });
             }
         },
         async getAllUserAppointments({commit}, payload) {
-            try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
-                    .then(response => {
-                        console.log(response)
-                        //commit("setDoctors", response.data);
-                    })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } 
-            finally {
-                commit("notificationModule/setLoading", false, { root: true });
+            var url 
+            if (payload.request == "patient") {
+                url = `api/booking/view/?patientID=${payload.data.givenId}`
+            } else if (payload.request == "doctor") {
+                url = `/api/booking/view/?doctorID=${payload.data.givenId}`
             }
-        },
-        async getAppointmentDetails({commit}, payload) {
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                await axios.get(url)
                     .then(response => {
-                        console.log(response)
-                        //commit("setDoctors", response.data);
+                        commit("setUserAppointments", response.data.data);
+                        msgSuccess(commit, "Retrieved user's appointment");
                     })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } finally {
-                    commit("notificationModule/setLoading", false, { root: true });
-                }
+                    
+                } 
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+
+            }
         },
         async editAppointment({commit}, payload) {
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                await axios.put(`/api/booking/complete/${payload.bookingID}`)
                     .then(response => {
-                        console.log(response)
+                        msgSuccess(commit, response.data.message);
                         //commit("setDoctors", response.data);
                     })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                }     
-            finally {
-                commit("notificationModule/setLoading", false, { root: true });
+            }     
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+
             }
         },
         async deleteAppointment({commit}, payload) {
+            var url = `/api/booking/delete/?bookingID=${payload.data.appointmentID}`
             try {
-                commit("notificationModule/setLoading", true, { root: true });
-                axios.get('https://5sv31llj-5002.asse.devtunnels.ms/')
+                await axios.delete(url)
                     .then(response => {
-                        console.log(response)
-                        //commit("setDoctors", response.data);
+                        msgSuccess(commit, response.data.message);
                     })
-                    .catch(error => {
-                        console.error(error);
-                        // Handle login failure here (e.g., show error message)
-                    });
-                } 
+                }
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+                
+            }
+        },
+        async getAllUserReview({commit}, payload) {
+            var url 
+            if (payload.request == "patient") {
+                url = `/api/rating?patientID=${payload.data.givenId}`
+            } else if (payload.request == "doctor") {
+                url = `/api/rating?doctorID=${payload.data.givenId}`
+            }
+            try {
+                axios.get(url)
+                    .then(response => {
+                        commit("setRatings", response.data.data);
+                        msgSuccess(commit, "Retrieve User's Rating Given");
+                    })
+            }
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+                
+            }
+        },
+        async createReview({commit}, payload) {
+            const url = `/api/rating/new/${payload.doctorID}`
+            try {
+                await axios.post(url, payload)
+                    .then(response => {
+                        msgSuccess(commit, response.data.message);
+                    })  
+                }  
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } 
             finally {
                 commit("notificationModule/setLoading", false, { root: true });
             }
-        },
+        }
+
+        
     }
 };
 

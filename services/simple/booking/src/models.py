@@ -12,6 +12,7 @@ class Booking(db.Model):
     doctorID = db.Column(db.String(36))
     doctorName = db.Column(db.VARCHAR(255))
     doctorEmail = db.Column(db.VARCHAR(255))
+    doctorSpecialty = db.Column(db.VARCHAR(255))
     clinicID = db.Column(db.String(36))
     clinicName = db.Column(db.VARCHAR(255))
     clinicLocation = db.Column(db.VARCHAR(255))
@@ -32,6 +33,7 @@ class Booking(db.Model):
             "doctorID": self.doctorID,
             "doctorName": self.doctorName,
             "doctorEmail": self.doctorEmail,
+            "doctorSpecialty":self.doctorSpecialty,
             "clinicID": self.clinicID,
             "clinicName": self.clinicName,
             "clinicLocation": self.clinicLocation,

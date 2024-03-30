@@ -14,7 +14,7 @@ import AppointmentView from "../views/appointments/ViewAppointment.vue"
 
 
 const routes = [
-  { path: "/", name: "home", component: HomeView, meta: { auth:true }},
+  { path: "/", name: "home", component: ProfileView, meta: { auth: true }},
   { path: '/about', name: 'about', component: function () { return import(/* webpackChunkName: "about" */ '../views/AboutView.vue') } },
   { path: "/login", name: "login", component: LoginView, },
   { path: "/signup", name: "signup", component: SignupView, },

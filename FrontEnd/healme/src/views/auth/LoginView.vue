@@ -10,13 +10,13 @@
                 Login
             </div>
             <v-card-text class="text-center text-h6 font-weight-light">
-                Login to your communissue account
+                Login to your HealMe account
             </v-card-text>
             <v-card-text>
                 <v-form @submit.prevent="onSubmit" ref="form" v-model="valid">
                     <v-text-field v-model="email" :rules="emailRules" label="Email" placeholder="Enter your Email" class="mb-2" clearable required > </v-text-field>
                     <v-text-field v-model="password" :rules="passwordRules" label="Password" placeholder="Enter your password" type="password" class="mb-2" clearable required > </v-text-field>
-                    <br />
+                    <v-checkbox v-model="doctorCheck" :label="`Are you a doctor?`"></v-checkbox>
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn :disabled="!valid" color="blue-lighten-1" type="submit" variant="elevated" > Sign In </v-btn>
@@ -40,8 +40,11 @@
     export default {
         data() {
             return {
-                email: "marcusyap@gmail.coy",
+                doctorCheck: false,
+                email: "eileen@gmail.com",
+                // email: huiling@healthfirstclinic.sg
                 password: "password",
+                // password: "securepassword123",
                 valid: false, // This will be our form validity flag
                 emailRules: [
                     // Email validation rules
@@ -59,10 +62,18 @@
         },
         methods: {
             onSubmit() {
-                this.$store.dispatch("authModule/signIn", {
-                    email: this.email,
-                    password: this.password
-                });
+                if (this.doctorCheck) {
+                        this.$store.dispatch("authModule/doctorSignIn", {
+                        email: this.email,
+                        password: this.password
+                    });
+                } else {
+                    this.$store.dispatch("authModule/userSignIn", {
+                        email: this.email,
+                        password: this.password
+                    });
+                }
+                
             }
         }
     };

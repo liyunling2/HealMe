@@ -6,7 +6,6 @@
     <br />
     <v-stepper v-model="step" :items="items" :hide-actions="true">
       <template v-slot:item.1>
-        <v-stepper-step step="1">
           <h3 class="text-h6">Select Your Clinic</h3>
           <v-text-field
             v-model="searchClinic"
@@ -20,8 +19,7 @@
           <h2 class="text-blue-lighten-1 text-center">
             Showing: {{ filteredClinics.length }} Clinics
           </h2>
-          <v-list-item-group v-model="selectedClinic" color="primary">
-            <v-list-item
+            <v-list-item v-model="selectedClinic"
               v-for="clinic in filteredClinics"
               :key="clinic.id"
               @click="selectClinic(clinic)"
@@ -61,12 +59,9 @@
                 </v-col>
               </v-row>
             </v-container>
-          </v-list-item-group>
-        </v-stepper-step>
       </template>
 
       <template v-slot:item.2>
-        <v-stepper-step>
           <h3 class="text-h6">Select Your Doctor</h3>
           <br />
           <v-text-field
@@ -93,9 +88,7 @@
             Showing: {{ filteredDoctors.length }} doctor
           </h2>
           <br />
-        </v-stepper-step>
         <v-card>
-          <v-list-item-group v-model="selectedDoctor" color="primary">
             <v-container
               fill-height
               fluid
@@ -130,12 +123,12 @@
               <v-list-item-subtitle
                 >Specialty: {{ doctor.specialty }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle> Rating: </v-list-item-subtitle>
+              <v-list-item-subtitle> Rating: {{ doctor.ratings }} </v-list-item-subtitle>
+              <v-list-item-subtitle> Description: {{ doctor.doctorDesc }} </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon>mdi-arrow-right</v-icon>
               </template>
             </v-list-item>
-          </v-list-item-group>
           <br />
           <v-card-actions>
             <v-btn
@@ -153,7 +146,6 @@
         </v-card>
       </template>
       <template v-slot:item.3>
-        <v-stepper-step> </v-stepper-step>
         <h3 class="text-h6">
           Showing Dr {{ selectedDoctor.doctorName }} availability
         </h3>
@@ -179,7 +171,6 @@
             {{ moment(selectedDate).format("DD-MM-YYYY") }} available timeslots
           </h2>
           <br />
-          <v-list-item-group v-model="selectedTimeslot" color="primary">
             <v-row>
               <v-col
                 cols="12"
@@ -199,7 +190,6 @@
                 </v-list-item>
               </v-col>
             </v-row>
-          </v-list-item-group>
           <v-card-actions>
             <v-btn
               class="text-none"
@@ -217,7 +207,6 @@
 
       <template v-slot:item.4>
         <h3 class="text-h6">Review your appointment</h3>
-        <v-stepper-step> </v-stepper-step>
         <br />
         <v-card>
           <v-list dense class="pa-0">
@@ -227,71 +216,55 @@
                 <v-list-item-title>Clinic Details</v-list-item-title>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-map-marker</v-icon>
-                  Clinic: Healing Hands
+                  Clinic: {{ selectedClinic.clinicName }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-city</v-icon>
-                  Location: New York
+                  Location: {{ selectedClinic.location }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
-            <v-divider inset></v-divider>
-
+            <v-divider></v-divider>
             <!-- Doctor Details -->
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title>Doctor Details</v-list-item-title>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-account</v-icon>
-                  Selected Doctor: Dr. Alice Jones
+                  Selected Doctor: {{ selectedDoctor.doctorName }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-stethoscope</v-icon>
-                  Doctor Specialty: General Practice
+                  Doctor Specialty:  {{ selectedDoctor.specialty }}
                 </v-list-item-subtitle>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-star</v-icon>
-                  Doctor Rating:
+                  Doctor Description: {{ selectedDoctor.doctorDesc }}
+                </v-list-item-subtitle> 
+                <v-list-item-subtitle>
+                  <v-icon small class="mr-2">mdi-star</v-icon>
+                  Doctor Rating: {{ selectedDoctor.ratings }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
-
-            <v-divider inset></v-divider>
-
+            <v-divider></v-divider>
             <!-- Appointment Timing -->
             <v-list-item two-line>
               <v-list-item-content>
                 <v-list-item-title>Timing Details</v-list-item-title>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-calendar</v-icon>
-                  Appointment Date: Mar 28th 2024
-                </v-list-item-subtitle>
-                <v-list-item-subtitle>
-                  <v-icon small class="mr-2">mdi-clock</v-icon>
-                  Time Slot: 07:30
+                  Appointment Date: {{ moment(this.selectedDate).format("YYYY-MMM-DD") }}{{ getTimeFromSlotNo(selectedTimeslot.slotNo) }}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>
           </v-list>
-
           <v-card-actions>
-            <v-btn
-              class="text-none"
-              prepend-icon="mdi-arrow-left"
-              variant="text"
-              border
-              @click="goBack()"
-            >
+            <v-btn class="text-none" prepend-icon="mdi-arrow-left" variant="text" border @click="goBack()" >
               Previous
             </v-btn>
             <v-spacer> </v-spacer>
-            <v-btn
-              color="blue-lighten-1"
-              variant="flat"
-              prepend-icon="mdi-calendar-check"
-              @click="makeAnAppointment()"
-            >
+            <v-btn color="blue-lighten-1" variant="flat" prepend-icon="mdi-calendar-check" @click="makeAnAppointment()" >
               Make An Appointment!
             </v-btn>
           </v-card-actions>
@@ -351,10 +324,31 @@ export default {
     ],
     timeslots: null,
   }),
-  created() {
+  async created() {
+    this.isDataRetrieving = true;
+    await this.$store.dispatch("appointmentModule/getAllClinics");
+    this.isDataRetrieving = false;
     this.generateTimeslotDictionary();
   },
   methods: {
+    getTimeFromSlotNo(slotNo) {
+        const baseTime = new Date('2024-01-20T07:00:00');
+        baseTime.setMinutes(baseTime.getMinutes() + (slotNo - 1) * 30);
+        const hours = baseTime.getHours();
+        const minutes = baseTime.getMinutes();
+        const isPM = hours >= 12;
+        const isNoon = hours === 12 && minutes === 0;
+        let formattedTime = "";
+        if (isNoon) { // Special case for exactly 12:00
+            formattedTime = "12:00 PMP";
+        } else if (isPM) {
+            const adjustedHours = hours > 12 ? hours - 12 : hours; // Convert 24h to 12h format
+            formattedTime = `${adjustedHours}:${minutes.toString().padStart(2, '0')} PM`;
+        } else {
+            formattedTime = `${hours}:${minutes.toString().padStart(2, '0')} AM`;
+        }
+        return formattedTime;
+    },
     async selectClinic(clinic) {
       this.selectedClinic = clinic;
       this.isDataRetrieving = true;
@@ -405,23 +399,25 @@ export default {
     goBack() {
       this.step--;
     },
-    makeAnAppointment() {
+    async makeAnAppointment() {
       const payload = {
-        patientID: this.userDetails.patientID,
+        bookingStatus:"Confirm",
+        clinicID: this.selectedClinic.clinicID,
+        clinicLocation: this.selectedClinic.location,
+        clinicName: this.selectedClinic.clinicName,
+        date: moment(this.selectedDate).format("YYYY-MM-DD"),
+        doctorEmail: this.selectedDoctor.email,
         doctorID: this.selectedDoctor.doctorID,
         doctorName: this.selectedDoctor.doctorName,
+        doctorSpecialty: this.selectedDoctor.specialty,
         patientEmail: this.userDetails.email,
-        doctorEmail: this.selectedDoctor.email,
-        patientID: this.userDetails.patientName,
-        clinicID: this.selectedClinic.clinicID,
-        clinicName: this.selectedClinic.clinicName,
-        clinicLocation: this.selectedClinic.location,
-        date: new Date(),
-        slotNo: this.selectedTimeslot.id,
-        bookingStatus: "confirmed",
-      };
-      console.log(payload);
-      this.$store.dispatch("appointmentModule/createAppointment", payload);
+        patientID: this.userDetails.id,
+        patientName: this.userDetails.name,
+        slotNo: this.selectedTimeslot.slotNo
+      }
+      this.isDataRetrieving = true;
+      await this.$store.dispatch("appointmentModule/createAppointment", payload);
+      this.isDataRetrieving = false;
     },
   },
   watch: {
@@ -432,12 +428,7 @@ export default {
         date: moment(newDate).format("YYYY-MM-DD"),
       };
       this.isDataRetrieving = true;
-      await this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", {
-          clinicID: this.selectedClinic.clinicID,
-          doctorID: this.selectedDoctor.doctorID,
-          date: moment(new Date()).format("YYYY-MM-DD"),
-        }
-      );
+      await this.$store.dispatch("appointmentModule/getDoctorAvailableSlots", payload);
       this.isDataRetrieving = false;
     },
   },
@@ -450,8 +441,8 @@ export default {
     }),
     availableTimeslots() {
       let result = this.timeslots
-      if (this.bookedSlots) {
-        const bookedSlotNumbers = this.bookedSlots.schedule.map(slot => slot.slotNo);
+      if (this.bookedSlots.length >= 1) {
+        const bookedSlotNumbers = this.bookedSlots.map(slot => slot.slotNo);
         result = result.filter(timeslot => 
           !bookedSlotNumbers.includes(timeslot.slotNo)
         );
@@ -506,7 +497,6 @@ export default {
   bottom: 20px;
   z-index: 1000; /* Ensure it's above other content */
 }
-
 .overlay {
   position: fixed;
   top: 0;

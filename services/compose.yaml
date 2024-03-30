@@ -90,6 +90,7 @@ services:
       context: ./simple/log
     depends_on:
       - db
+      - rabbitmq
     restart: always
     volumes:
       - ./simple/log/src:/src

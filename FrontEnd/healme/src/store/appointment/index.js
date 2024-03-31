@@ -76,6 +76,8 @@ const appointmentModule = {
                     var newDoctorProfile = doctors[i]
                     const newreponse = await axios.get(`/api/profile/doctor/rating/${newDoctorProfile.doctorID}`)
                     newDoctorProfile.ratings = newreponse.data.data.averageRating
+                    newDoctorProfile.ratingCount = newreponse.data.data.ratingCount
+
                     doctorsWithRating.push(newDoctorProfile)
                 }
                 await commit("setDoctors", doctorsWithRating);

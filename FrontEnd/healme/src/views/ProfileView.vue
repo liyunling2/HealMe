@@ -447,7 +447,7 @@
                 updateDialogVisible: false,
                 reviewDialog: false,
                 isDataRetrieving:true,
-                tab: "upcomingAppointments",
+                tab: "option-1",
                 currentFilter: "all",
                 moment,
                 searchCompletedAppointment: "",
@@ -515,7 +515,6 @@
             }
         },
         async mounted() {
-            await this.getAppointments()
         },
         methods: {
             onDateChange() {

@@ -113,7 +113,7 @@
               <v-list-item-subtitle
                 >Specialty: {{ doctor.specialty }}</v-list-item-subtitle
               >
-              <v-list-item-subtitle> Rating: {{ doctor.ratings }} </v-list-item-subtitle>
+              <v-list-item-subtitle> Rating: {{ doctor.ratings }} ({{ doctor.ratingCount}} reviews) </v-list-item-subtitle>
               <v-list-item-subtitle> Description: {{ doctor.doctorDesc }} </v-list-item-subtitle>
               <template v-slot:append>
                 <v-icon>mdi-arrow-right</v-icon>

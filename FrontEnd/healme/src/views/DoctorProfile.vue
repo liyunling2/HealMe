@@ -1,16 +1,11 @@
 <template>
-  {{this.id}}
 </template>
 
 <script>
 
-// Components
-
 export default {
-
+  props: ["id"],
   components: {
-    props: ["id"],
-
   },
 };
 </script>

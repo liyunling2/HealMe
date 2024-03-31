@@ -14,7 +14,6 @@ const routes = [
   { path: "/", name: "home", component: ProfileView, meta: { auth: true }},
   { path: "/login", name: "login", component: LoginView, },
   { path: "/signup", name: "signup", component: SignupView, },
-  { path: "/DoctorProfile/:id", name: "doctorProfile", component: DoctorView, },
   { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, meta: { auth: true }},
   { path: "/createBlockSlot", name: "createBlockSlot", component: CreateBlockSlot, meta: { auth: true, doctor: true }},
   { path: "/profile", name: "profile", component: ProfileView, meta: { auth: true } },

@@ -7,11 +7,11 @@ routes = Blueprint("get_doctor_profile_with_rating", __name__)
 def get_doctor_profile_with_ratings(doctor_id):
     doctor_profile = get_doctor_profile(doctor_id)
     if doctor_profile is None:
-        return jsonify({"message": "Error fetching doctor profile."}), 500
+        return jsonify({"data": None, "message": "Error fetching doctor profile."}), 500
         
     doctor_ratings_response = get_doctor_ratings(doctor_id)
     if doctor_ratings_response is None or 'data' not in doctor_ratings_response:
-        return jsonify({"message": "Error fetching doctor ratings."}), 500
+        return jsonify({"data": None, "message": "Error fetching doctor ratings."}), 500
     
     doctor_ratings = doctor_ratings_response['data']
 

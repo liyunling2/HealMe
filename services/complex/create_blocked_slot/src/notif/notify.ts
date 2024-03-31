@@ -13,7 +13,7 @@ export default async function notify(context: { data: BlockedSlotType, status: n
   
     try {
       // doctorEmail = await fetchDoctorWithParams(new URLSearchParams({ doctorID })).then(data => (data as { email: string }).email);
-      doctorEmail = "seanlim2@gmail.com"
+      doctorEmail = data.email
     }
     catch (error) {
       console.error(error);

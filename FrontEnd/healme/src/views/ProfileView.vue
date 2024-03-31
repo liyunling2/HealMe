@@ -50,14 +50,14 @@
                         <v-container fill-height fluid lign-center v-if="filteredUpcomingAppointment.length == 0 && isPatient">
                             <v-row align="center" justify="center">
                                 <v-col cols="12" class="text-center">
-                                    <h3 class="mb-4" style="color: red">
+                                    <h3 class="mb-4" style="color: black">
                                         Wow no appointment found
                                     </h3>
                                     <p class="subtitle-1" style="color: grey">
                                         Maybe you would like to create an appointment?
                                     </p>
                                     <v-img class="mx-auto" cover :width="500" src="../assets/appointmentImages/noEvent.jpg" ></v-img>
-                                    <v-btn class="mt-4" large color="red lighten-1" dark to="/bookAppointment" >Create Appointment</v-btn >
+                                    <v-btn class="mt-4" large color="blue lighten-1" dark to="/bookAppointment" >Create Appointment</v-btn >
                                 </v-col>
                             </v-row>
                         </v-container>

@@ -3,6 +3,7 @@ type BlockedSlotType = {
     doctorID: string;
     clinicID: string;
     date: string;
+    email: string;
     slotNo: number;
     reason: string;
 }

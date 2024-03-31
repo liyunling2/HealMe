@@ -27,7 +27,7 @@ app.post("/", async (c) => {
     const body = await createBlockedSlot(blockedSlot);
 
     // @ts-expect-error
-    notify({ data: body?.data, status: 201 }).then(() => console.log("Notification requested"));
+    notify({ data: body?.data, status: 201 }, mqConnection).then(() => console.log("Notification requested"));
 
     return c.json(body);
   }

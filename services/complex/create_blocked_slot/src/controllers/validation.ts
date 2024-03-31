@@ -17,6 +17,10 @@ const blockedSlotSchema = {
             "type": "string",
             "format": "date"
         },
+        "email": {
+            "type": "string",
+            // "format": "string"
+        },
         "slotNo": {
             "type": "integer",
             "minimum": 1,

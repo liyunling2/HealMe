@@ -10,6 +10,9 @@ routes = Blueprint("blocked-slots", __name__)
 def add_blocked_slot():
     try:
         data = request.get_json()
+        if "email" in data:
+            del data["email"]
+
         slot = BlockedSlot(**data)
 
         if slot.slotNo < 1 or slot.slotNo > 24:

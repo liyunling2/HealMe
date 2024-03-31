@@ -6,6 +6,7 @@ import LoginView from "../views/auth/LoginView.vue";
 import SignupView from "../views/auth/SignupView.vue";
 import ProfileView from "../views/ProfileView.vue";
 import NotFoundView from "../views/PageNotFound.vue";
+import DoctorView from "@/views/DoctorProfile.vue";
 import BookAnAppointmentView from '@/views/appointments/BookAnAppointmentView';
 import CreateBlockSlot from '@/views/appointments/CreateBlockSlotView'
 
@@ -13,6 +14,7 @@ const routes = [
   { path: "/", name: "home", component: ProfileView, meta: { auth: true }},
   { path: "/login", name: "login", component: LoginView, },
   { path: "/signup", name: "signup", component: SignupView, },
+  { path: "/DoctorProfile/:id", name: "doctorProfile", component: DoctorView, },
   { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, meta: { auth: true }},
   { path: "/createBlockSlot", name: "createBlockSlot", component: CreateBlockSlot, meta: { auth: true, doctor: true }},
   { path: "/profile", name: "profile", component: ProfileView, meta: { auth: true } },

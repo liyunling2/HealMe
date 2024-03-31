@@ -239,6 +239,7 @@
                     "doctorID": this.userDetails.id,
                     "clinicID": this.userDetails.clinicID,
                     "date": moment(this.selectedDate).format("YYYY-MM-DD"),
+                    "email": this.userDetails.email,
                     "slotNo": this.selectedTimeslot.slotNo,
                     "reason": this.reasonGiven
                 }

@@ -23,6 +23,7 @@ export default async function notify(context: { data: BlockedSlotType, status: n
     const timeNum =  7 + (slotNo - 1) * 0.5;
     const toTimeStr = (timeNum: number) => `${Math.floor(timeNum)}:${timeNum % 1 == 0 ? "00" : "30"}`;
   
+    console.log("sending to ", doctorEmail);
     await mqConnection.connect();
     await mqConnection.channel.basicPublish(
       'direct_exchange',

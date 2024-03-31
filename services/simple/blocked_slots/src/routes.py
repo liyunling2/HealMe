@@ -18,7 +18,7 @@ def add_blocked_slot():
         if slot.slotNo < 1 or slot.slotNo > 24:
             return {
                 "data": None,
-                "message": "Invalid slot no. Only slot nos betweeen 1 and 24 are allowed.",
+                "message": "Invalid slot no. Only slot nos between 1 and 24 are allowed.",
             }, 400
     
         db.session.add(slot)

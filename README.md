@@ -5,6 +5,20 @@ Accessing healthcare services in Singapore can be challenging due to long waitin
 - Rating a doctor after completing an appointment  
 - A doctor canceling a scheduled appointment 
 
+## Folder structure (important folders)
+```
+├── Frontend (client source code)
+└── services
+    ├── complex (complex microservices source code)
+    ├── simple (simple microservices source code)
+    ├── amqp (amqp configuration)
+    ├── app_logs (log files)
+    ├── db (mysql image configuration)
+    ├── kong (kong configuration)
+    └── seed.sql (dummy data seed file)
+```
+
+
 ## Running the Project
 
 Navigate to the services directory
@@ -17,6 +31,11 @@ Run the following command to start the services
 ```bash
 docker compose up --build
 ```
+Seed data in the database
+
+```bash
+docker exec -i services-db-1  mysql -u root --password=root < seed.sql
+``` 
 
 In a separate terminal, navigate to the frontend directory
 

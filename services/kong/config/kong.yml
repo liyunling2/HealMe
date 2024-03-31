@@ -66,6 +66,11 @@ services:
       - POST
     paths:
       - /blockedslots/new
+  - name: delete_blockedslots
+    methods:
+      - DELETE
+    paths:
+      - /blockedslots/delete
 
 - name: clinic
   url: http://clinic:5000

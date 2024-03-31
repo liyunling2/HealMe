@@ -25,8 +25,8 @@
         height: 64px;
         margin: 8px;
         border-radius: 50%;
-        border: 6px solid #f00; /* Red color */
-        border-color: #f00 transparent #f00 transparent; /* Red and transparent sections */
+        border: 6px solid #29B6F6; /* Red color */
+        border-color: #29B6F6 transparent #29B6F6 transparent; /* Red and transparent sections */
         animation: lds-dual-ring 1.2s linear infinite;
     }
 

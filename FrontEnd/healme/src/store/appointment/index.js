@@ -103,6 +103,7 @@ const appointmentModule = {
             }
         },
         async createAppointment({commit}, payload) {
+            console.log(payload)
             try {
                 await axios.post('api/createBooking', payload)
                     .then(response => {
@@ -133,6 +134,7 @@ const appointmentModule = {
                     
                 } 
             catch (error) {
+                console.log(error)
                 msgError(commit, error.response.data.message);
             } finally {
 
@@ -143,7 +145,6 @@ const appointmentModule = {
                 await axios.put(`/api/booking/complete/${payload.bookingID}`)
                     .then(response => {
                         msgSuccess(commit, response.data.message);
-                        //commit("setDoctors", response.data);
                     })
             }     
             catch (error) {
@@ -153,7 +154,8 @@ const appointmentModule = {
             }
         },
         async deleteAppointment({commit}, payload) {
-            var url = `/api/booking/delete/?bookingID=${payload.data.appointmentID}`
+            var url = `/api/deleteBooking?bookingID=${payload.data.appointmentID}`
+            console.log(url)
             try {
                 await axios.delete(url)
                     .then(response => {
@@ -202,7 +204,8 @@ const appointmentModule = {
             }
         },
         async createBookedSlot({commit}, payload) {
-            const url = `/api/blockedslots/new`
+            console.log(payload)
+            const url = `/api/createblockedslots`
             try {
                 await axios.post(url, payload)
                     .then(response => {
@@ -218,12 +221,9 @@ const appointmentModule = {
         },
         async getAllUserBookSlot({commit}, payload) {
             var url = `api/blockedslots/view?doctorID=${payload}`
-            console.log(url)
-            console.log("this works")
             try {
                 await axios.get(url)
                     .then(response => {
-                        console.log(response.data)
                         commit("setBookedSlots", response.data.data);
                         msgSuccess(commit, response.data.message);
                     })
@@ -234,8 +234,20 @@ const appointmentModule = {
 
             }
         },
-
-        
+        async deleteBlockSlot({commit}, payload) {
+            var url = `/api/blockedslots/delete?id=${payload}`
+            try {
+                await axios.delete(url)
+                    .then(response => {
+                        msgSuccess(commit, response.data.message);
+                    })
+                }
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+                
+            }
+        },
     }
 };
 

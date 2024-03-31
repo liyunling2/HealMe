@@ -93,7 +93,7 @@
               <v-row align="center" justify="center">
                 <v-col cols="12" class="text-center">
                   <h3 class="mb-4 text-blue-lighten-1">Wow no doctors found</h3>
-                  <p class="subtitle-1" style="color: grey">
+                  <p cl ass="subtitle-1" style="color: grey">
                     Maybe you would like to switch your search fitlers..?
                   </p>
                   <v-img
@@ -157,7 +157,7 @@
           </v-container>
           <br />
           <h2 class="text-blue-lighten-1 text-center">
-            Showing Dr {{ selectedDoctor.doctorName }}'s
+            Showing Dr. {{ selectedDoctor.doctorName }}'s
             {{ moment(selectedDate).format("DD-MM-YYYY") }} available timeslots
           </h2>
           <br />
@@ -181,13 +181,7 @@
               </v-col>
             </v-row>
           <v-card-actions>
-            <v-btn
-              class="text-none"
-              prepend-icon="mdi-arrow-left"
-              variant="text"
-              border
-              @click="goBack()"
-            >
+            <v-btn class="text-none" prepend-icon="mdi-arrow-left" variant="text" border @click="goBack()" >
               Previous
             </v-btn>
             <v-spacer> </v-spacer>
@@ -244,7 +238,7 @@
                 <v-list-item-title>Timing Details</v-list-item-title>
                 <v-list-item-subtitle>
                   <v-icon small class="mr-2">mdi-calendar</v-icon>
-                  Appointment Date: {{ moment(this.selectedDate).format("YYYY-MMM-DD") }}{{ getTimeFromSlotNo(selectedTimeslot.slotNo) }}
+                  Appointment Date: {{ moment(this.selectedDate).format("YYYY-MMM-DD") }} {{ getTimeFromSlotNo(selectedTimeslot.slotNo)}}
                 </v-list-item-subtitle>
               </v-list-item-content>
             </v-list-item>

@@ -59,7 +59,7 @@ def with_notification(action="confirmed", accessor=lambda x: x, channel=channel)
                     # queue_notification(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email, channel)
                     data = format_notification_data(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email)
 
-                    logging.info("Sending notification request to the queue")
+                    print("Sending notification request to the queue")
                     channel.basic_publish(exchange="direct_exchange", routing_key="email.notification.request",
                                     body=json.dumps(data), properties=pika.BasicProperties(delivery_mode=2))
 
@@ -75,7 +75,7 @@ def with_notification(action="confirmed", accessor=lambda x: x, channel=channel)
 
                 
             except Exception as e:
-                logging.error(str(e))
+                print(str(e))
             
             return response, code
 

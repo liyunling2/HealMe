@@ -79,6 +79,7 @@ services:
       context: ./simple/notification
     volumes:
       - ./simple/notification/src:/src
+      - ./app_logs:/app_logs
     restart: always
     environment:
       PORT: 5000

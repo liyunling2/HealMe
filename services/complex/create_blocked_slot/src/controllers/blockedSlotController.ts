@@ -4,7 +4,7 @@ import { saveBlockedSlot } from "../data/dataSavers";
 import Rule from "../common/Rule";
 import AllowedSlotsChecker from "../common/AllowedSlotsChecker";
 
-export default async function createBlockedSlot(blockedSlot: BlockedSlotType) {
+export default async function createBlockedSlot(blockedSlot: BlockedSlotType): Promise<Object | undefined>{
     const isValidBlockedSlot = checkValidBlockedSlot(blockedSlot);
     const isBlockedSlotAllowed = await checkAllowedBlockedSlot(blockedSlot);
     

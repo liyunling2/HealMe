@@ -21,7 +21,7 @@ docker compose up --build
 In a separate terminal, navigate to the frontend directory
 
 ```bash
-cd FrontEnd
+cd FrontEnd/healme
 ```
 
 Install dependencies

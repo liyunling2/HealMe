@@ -1,17 +1,9 @@
-import { Context } from "hono";
 import { RabbitMQConnection } from "./amqp";
 
-export function loggingHandlerFactory(mqConnection: RabbitMQConnection) {
-    return async function loggingHandler(c: Context, next: Function){
-        console.log("Running logging handler")
-        await next();
-        log(c.res, mqConnection);
-    }
-}
 
-async function log(res: Response, mqConnection: RabbitMQConnection) {
-    
-    const message = getLogMessageObj(await res.json(), res.status);
+export async function log(obj: { data: any, message: any, status: number }, mqConnection: RabbitMQConnection) {
+    console.log("Creating log")
+    const message = getLogMessageObj(obj);
     await mqConnection.connect();
     const channel = await mqConnection.channel;
 
@@ -22,14 +14,14 @@ async function log(res: Response, mqConnection: RabbitMQConnection) {
     )
 }
 
-function getLogMessageObj(body: { data: any, message: any}, code: number): LogMessage {
+function getLogMessageObj(body: { data: any, message: any, status: number }): LogMessage {
     const message = body.message || "";
     const details = body.data || {};
-    const level = getLogLevel(code);
+    const level = getLogLevel(body.status);
 
     return {
         message,
-        source: "manageBooking complex service",
+        source: "createBlockedSlot complex service",
         timestamp: new Date().toISOString(),
         details,
         level
@@ -45,7 +37,6 @@ interface LogMessage {
 }
 
 function getLogLevel(code: number): string {
-    if (code >= 500) return "ERROR";
     if (code >= 400) return "WARN";
     return "INFO";
 }

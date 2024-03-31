@@ -14,7 +14,6 @@ load_dotenv()
 hostname = os.getenv('AMQP_HOST') or "rabbitmq"
 port = os.getenv('AMQP_PORT') or 5672
 
-
 def get_amqp_connection(max_retries=12, retry_interval=5):
     logging.info('Complex Manage Booking amqp_connection: Create_connection')
     

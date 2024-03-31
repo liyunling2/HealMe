@@ -16,7 +16,7 @@
                 <v-form @submit.prevent="onSubmit" ref="form" v-model="valid">
                     <v-text-field v-model="email" :rules="emailRules" label="Email" placeholder="Enter your Email" class="mb-2" clearable required > </v-text-field>
                     <v-text-field v-model="password" :rules="passwordRules" label="Password" placeholder="Enter your password" type="password" class="mb-2" clearable required > </v-text-field>
-                    <v-checkbox v-model="doctorCheck" :label="`Are you a doctor?`"></v-checkbox>
+                    <v-checkbox v-model="doctorCheck" :label="`Sign in as a doctor.`"></v-checkbox>
                     <v-card-actions>
                         <v-spacer></v-spacer>
                         <v-btn :disabled="!valid" color="blue-lighten-1" type="submit" variant="elevated" > Sign In </v-btn>
@@ -41,9 +41,9 @@
         data() {
             return {
                 doctorCheck: false,
-                // email: "eileen@gmail.com",
-                email: 'huiling@healthfirstclinic.sg',
-                // password: "password",
+                //email: "eileen@gmail.com",
+                email: 'huimin@familycareclinic.sg',
+                //password: "password",
                 password: "securepassword123",
                 valid: false, // This will be our form validity flag
                 emailRules: [

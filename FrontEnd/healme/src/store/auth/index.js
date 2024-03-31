@@ -73,13 +73,11 @@ const authModule = {
             }
         },
         async userSignIn({ commit }, payload) {
-            console.log(payload)
             commit("notificationModule/setLoading", true, { root: true });
             try {
               const response = await axios.post('api/patient/login', payload);
               console.log(response)
               const userData = {
-                contactNum: response.data.data.contactNum,
                 email: response.data.data.email,
                 id: response.data.data.patientID,
                 name: response.data.data.patientName,
@@ -124,6 +122,7 @@ const authModule = {
                 commit("notificationModule/setLoading", true, { root: true });
                 await axios.post('/api/profile/patient/new', payload)
                     .then(response => {
+                        console.log(response)
                         const userData = {
                             contactNum: response.data.data.contactNum,
                             email: response.data.data.email,
@@ -132,6 +131,8 @@ const authModule = {
                             authType: "user",
                         }
                         commit("setUser", userData);
+                        commit("setPatientAuth", true);
+                        localStorage.setItem('userData', JSON.stringify(userData));
                         msgSuccess(commit, "Successfully created account");
                         router.push("/profile")
                     })

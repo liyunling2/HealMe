@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request,jsonify
 from sqlalchemy.exc import IntegrityError, InvalidRequestError
 from models import BlockedSlot
 from db import db
@@ -68,3 +68,20 @@ def get_blocked_slots():
             "data": [],
             "message": "No slots found.",
         }, 200
+    
+@routes.route("/", methods=["DELETE"])
+def delete_blocked_slot():
+    slot_id = request.args.get('id')  # Get 'id' from query parameters
+    if not slot_id:
+        return jsonify({"message": "Slot ID is required."}), 400
+    try:
+        slot = BlockedSlot.query.get(slot_id)  # Retrieve the slot by id
+        if slot:
+            db.session.delete(slot)  # Delete the slot
+            db.session.commit()  # Commit the changes
+            return jsonify({"message": "Slot deleted successfully."}), 200
+        else:
+            return jsonify({"message": "Slot not found."}), 404
+    except InvalidRequestError as e:
+        db.session.rollback()  # Rollback in case of exception
+        return jsonify({"message": "Bad request: " + str(e)}), 400

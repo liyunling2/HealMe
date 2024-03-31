@@ -1,9 +1,6 @@
 import { createRouter, createWebHistory, START_LOCATION } from 'vue-router'
 import store from '../store/index'; // Import your Vuex store
 
-
-import HomeView from '../views/HomeView.vue'
-
 // Views Auth
 import LoginView from "../views/auth/LoginView.vue";
 import SignupView from "../views/auth/SignupView.vue";
@@ -16,7 +13,7 @@ const routes = [
   { path: "/", name: "home", component: ProfileView, meta: { auth: true }},
   { path: "/login", name: "login", component: LoginView, },
   { path: "/signup", name: "signup", component: SignupView, },
-  { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, meta: { auth: true, patient: true}},
+  { path: "/bookAppointment", name: "bookAppointment", component: BookAnAppointmentView, meta: { auth: true }},
   { path: "/createBlockSlot", name: "createBlockSlot", component: CreateBlockSlot, meta: { auth: true, doctor: true }},
   { path: "/profile", name: "profile", component: ProfileView, meta: { auth: true } },
   { path: "/:catchAll(.*)", component: NotFoundView }
@@ -37,6 +34,7 @@ router.beforeEach((to, from, next) => {
   const requiresAuth = to.matched.some(record => record.meta.auth);
   const requiresPatient = to.matched.some(record => record.meta.patient);
 
+  
   if (requiresAuth && !isAuth) {
     // If the route requires authentication and the user is not authenticated,
     // redirect to the login page.
@@ -45,12 +43,12 @@ router.beforeEach((to, from, next) => {
     // If the user is already authenticated and tries to visit the login or signup page,
     // redirect them to the home page as a default action.
     next({ name: 'home' });
-  } else if (requiresPatient && !isPatient) {
+  } else if (requiresPatient && isPatient) {
     // If the route requires the user to be a patient and they are not,
     // redirect to the home page or an appropriate page.
     next({ name: 'home' });
   } else if (requiresPatient && !isDoctor) {
-    // If the route requires the user to be a patient and they are not,
+    // If the route requires the user to be a doctor and they are not,
     // redirect to the home page or an appropriate page.
     next({ name: 'home' });
   }  else {

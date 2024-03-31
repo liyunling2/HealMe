@@ -1,10 +1,12 @@
 <template>
       <v-container style="max-width: 800px" class="mt-8">
+        <p class="font-weight-bold text-h3 text-blue-lighten-1 text-center">
+            Let's Block an appointment slot
+        </p>
+        <br />
         <v-stepper v-model="step" :items="items" :hide-actions="true">
             <template v-slot:item.1>
                 <v-card>
-                    <h3 class="text-h6"></h3>
-                    <br />
                         <v-container>
                             <v-row justify="center">
                             <v-date-picker
@@ -42,41 +44,45 @@
                                 </v-list-item>
                             </v-col>
                             </v-row>
-                        <v-card-actions>
-                            <v-btn
-                            class="text-none"
-                            prepend-icon="mdi-arrow-left"
-                            variant="text"
-                            border
-                            >
-                            submit
-                            </v-btn>
-                            <v-spacer> </v-spacer>
-                        </v-card-actions>
                 </v-card>
             </template>
             <template v-slot:item.2>
                 <v-card>
+                    <h3 class="text-h6 text-blue-lighten-1">Give a reason for absence!</h3>
+                    <br />
+                    <v-form ref="form" v-model="formValid">
+                        
                     <v-textarea
                         v-model="reasonGiven"
+                        :rules="reasonRules"
                         label="Reason"
-                        append-icon="mdi-magnify"
                         clearable
                     ></v-textarea>
                     <v-card-actions>
-                        <v-btn class="text-none" prepend-icon="mdi-arrow-left" variant="text" border @click="goBack()" >
-                          Previous
+                        <v-btn class="text-none" prepend-icon="mdi-arrow-left" variant="text" border @click="goBack()">
+                        Previous
                         </v-btn>
-                        <v-spacer> </v-spacer>
-                        <v-btn color="blue-lighten-1" variant="flat" prepend-icon="mdi-arrow-right" @click="goNext()" >
-                          Next 
+                        <v-spacer></v-spacer>
+                        <!-- Disable the Next button if the form is not valid -->
+                        <v-btn color="blue lighten-1" variant="flat" prepend-icon="mdi-arrow-right" @click="goNext()" :disabled="!formValid">
+                        Next 
                         </v-btn>
-                      </v-card-actions>
-                    </v-card>
+                    </v-card-actions>
+                    </v-form>
+                </v-card>
             </template>
             <template v-slot:item.3>
                 <v-card>
-                    Hello
+                    <h3 class="text-h6 text-blue-lighten-1">Review your block slot</h3>
+                    <br />
+                    <v-card-text >
+                        <div class="mb-4">
+                            <div class="text-h4 mb-2 text-blue-lighten-1">{{ moment(selectedDate).format("YYYY-MMM-DD") }} {{ getTimeFromSlotNo(selectedTimeslot.slotNo) }}</div>
+                        </div>
+                        <v-subheader>Reason Given:</v-subheader>
+                        <br>
+                        <p>{{ this.reasonGiven }}</p>
+                    </v-card-text>
                     <v-card-actions>
                         <v-btn class="text-none" prepend-icon="mdi-arrow-left" variant="text" border @click="goBack()" >
                           Previous
@@ -147,6 +153,8 @@
         data() {
             return {
                 moment,
+                reasonGiven: '',
+                formValid: false, // This will track the form's validation state
                 step: 1,
                 items: [
                 "Select Timing",
@@ -159,9 +167,30 @@
                 selectedDate: new Date(),
                 minDate: new Date(Date.now() - 86400000),
                 reason: "",
+                reasonRules: [
+                    v => !!v.trim() || 'Reason is required', // Checks if the input is not empty
+                ]
             };
         },
         methods: {
+            getTimeFromSlotNo(slotNo) {
+                const baseTime = new Date('2024-01-20T07:00:00');
+                baseTime.setMinutes(baseTime.getMinutes() + (slotNo - 1) * 30);
+                const hours = baseTime.getHours();
+                const minutes = baseTime.getMinutes();
+                const isPM = hours >= 12;
+                const isNoon = hours === 12 && minutes === 0;
+                let formattedTime = "";
+                if (isNoon) { // Special case for exactly 12:00
+                    formattedTime = "12:00 PMP";
+                } else if (isPM) {
+                    const adjustedHours = hours > 12 ? hours - 12 : hours; // Convert 24h to 12h format
+                    formattedTime = `${adjustedHours}:${minutes.toString().padStart(2, '0')} PM`;
+                } else {
+                    formattedTime = `${hours}:${minutes.toString().padStart(2, '0')} AM`;
+                }
+                return formattedTime;
+            },
             async getDoctorSlots () {
                 this.isDataRetrieving = true;
                 var payload = {
@@ -211,12 +240,12 @@
                     "clinicID": this.userDetails.clinicID,
                     "date": moment(this.selectedDate).format("YYYY-MM-DD"),
                     "slotNo": this.selectedTimeslot.slotNo,
-                    "reason": this.reason
+                    "reason": this.reasonGiven
                 }
                 await this.$store.dispatch("appointmentModule/createBookedSlot", payload);
                 this.isDataRetrieving = false;
                 router.push("/profile")
-                this.reason = ""
+                this.reasonGiven = ""
             }
         }
     }

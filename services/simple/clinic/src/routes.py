@@ -8,18 +8,6 @@ import uuid
 
 routes = Blueprint("clinic", __name__)
 
-#remove after testing
-@routes.route("/all", methods=["DELETE"])
-def delete_all_clinics():
-    try:
-        num_deleted = db.session.query(Clinic).delete()
-        db.session.commit()
-        return jsonify({"data": None, "message": f"Successfully deleted {num_deleted} clinic(s)."}), 200
-    
-    except Exception as e:
-        db.session.rollback()
-        return jsonify({"data": None, "message": "An error occurred deleting the clinics."}), 500
-
 @routes.route("/", methods=["GET"])
 def get_clinics():
     try:

@@ -5,18 +5,42 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from dotenv import load_dotenv
 from templates import create_html_email  # Assuming you have this from your previous setup
+import logging
+import time
 
 load_dotenv()
 
 # Function to establish AMQP connection
-def get_amqp_connection():
-    connection_params = pika.ConnectionParameters(
-        host=os.getenv('AMQP_HOST'),
-        port=int(os.getenv('AMQP_PORT', 5672)),
-        virtual_host=os.getenv('AMQP_VHOST', '/'),
-        credentials=pika.PlainCredentials(os.getenv('AMQP_USERNAME'), os.getenv('AMQP_PASSWORD'))
-    )
-    return pika.BlockingConnection(connection_params)
+hostname = os.getenv('AMQP_HOST') or "rabbitmq"
+port = os.getenv('AMQP_PORT') or 5672
+
+
+def get_amqp_connection(max_retries=12, retry_interval=5):
+    logging.info('Complex Manage Booking amqp_connection: Create_connection')
+    
+    retries = 0
+    connection = None
+
+    while retries < max_retries:
+        try:
+            logging.info('Complex Manage Booking amqp_connection: Trying connection')
+            connection = pika.BlockingConnection(pika.ConnectionParameters
+                                (host=hostname, port=port,
+                                 heartbeat=3600, blocked_connection_timeout=3600)) 
+            logging.info("Complex Manage Booking amqp_connection: Connection established successfully")
+            break 
+
+        except pika.exceptions.AMQPConnectionError as e:
+            logging.warning(f"Complex Manage Booking amqp_connection: Failed to connect: {e}")
+            retries += 1
+            logging.warning(f"Complex Manage Booking amqp_connection: Retrying in {retry_interval} seconds...")
+            time.sleep(retry_interval)
+    
+    if connection is None:
+        raise Exception("Complex Manage Booking unable to establish a connection to RabbitMQ after multiple attempts")
+    
+    return connection
+
 
 # Callback function to process messages
 def on_message(channel, method_frame, header_frame, body):

@@ -87,6 +87,9 @@ def with_notification(action="confirmed", accessor=lambda x: x, channel=channel)
 BLOCKED_SLOTS_URL = os.environ.get("BLOCKED_SLOTS_URL")
 # noti_URL =
 BOOKING_URL = os.environ.get("BOOKING_URL")
+PROFILE_URL = os.environ.get("PROFILE_URL")
+CLINIC_URL = os.environ.get("CLINIC_URL")
+
 
 #if the exchange is not yet created, exit the program
 if not amqp_connection.check_exchange(channel, exchangename, exchangetype):
@@ -136,7 +139,32 @@ def create_booking():
 
 
 def processCreateBooking(createBooking):
+    #patient ID ensure its in patient DB
+    #clinic ID exists
+    #doctor ID exists
+    profile_URL = PROFILE_URL
     blocked_slots_URL = BLOCKED_SLOTS_URL
+    print('\n\n-----Invoking Profile for Patient microservice-----')
+    profile_URL = profile_URL + "/patients/" + createBooking['patientID'] 
+    patient_result, patient_response_code = invoke_http(profile_URL, method="GET", json=createBooking)
+    
+    if patient_response_code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"patient_result": patient_result},
+            "message": "Booking creation failure sent for error handling. Because patientID doesnt exist"
+        }
+    print('\n\n-----Invoking Profile for Doctor microservice-----')
+    profile_URL = PROFILE_URL
+    profile_URL = profile_URL + "/doctors/" + createBooking['doctorID']
+    doctor_result, doctor_response_code = invoke_http(profile_URL, method="GET", json=createBooking)
+    if doctor_response_code not in range(200, 300) or doctor_result['data']['clinicID'] != createBooking['clinicID']:
+        return {
+            "code": 500,
+            "data": {"patient_result": patient_result,
+                     "doctor_result": doctor_result},
+            "message": "Booking creation failure sent for error handling. Because doctorID doesnt exist or doctor does not belong to this clinicID"
+        }
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
     blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
@@ -146,7 +174,9 @@ def processCreateBooking(createBooking):
     if len(blocked_slots_result['data']) != 0:
         return {
             "code": 500,
-            "data": {"blocked_slots_result": blocked_slots_result},
+            "data": {"patient_result": patient_result,
+                     "doctor_result": doctor_result,
+                "blocked_slots_result": blocked_slots_result},
             "message": "Booking creation failure sent for error handling. Because blocked_slots are found"
         }
 
@@ -155,18 +185,21 @@ def processCreateBooking(createBooking):
     print('booking_result:', booking_result)
     message = json.dumps(booking_result)
     if booking_response_code not in range(200, 300):
-        # Inform the log microservice NOT DONE YET
         return {
         "code": 500,
-        "data": {"blocked_slots_result": blocked_slots_result,
-                    "booking_result": booking_result},
+        "data": {"patient_result": patient_result,
+                     "doctor_result": doctor_result,
+                "blocked_slots_result": blocked_slots_result,
+                "booking_result": booking_result},
         "message": "Booking creation failure sent for error handling. Because of booking_result failure"
     }
     else:
         return {
         "code": 200,
-        "data": {"blocked_slots_result": blocked_slots_result,
-                    "booking_result": booking_result},
+        "data": {"patient_result": patient_result,
+                     "doctor_result": doctor_result,
+                "blocked_slots_result": blocked_slots_result,
+                "booking_result": booking_result},
         "message": "Booking creation Success"
     }
     

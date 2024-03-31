@@ -13,7 +13,7 @@ class LibraryLogFilter(logging.Filter):
     
 # 1 MB max size, keep 5 backups
 handler = RotatingFileHandler(filename='../../../app_logs/application.log', maxBytes=1024*1024, backupCount=5) 
-handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s'))
+handler.setFormatter(logging.Formatter('%(asctime)s - %(levelname)s - %(message)s', "%Y-%m-%d"))
 logging.basicConfig(level=logging.INFO, handlers=[handler])
 handler.addFilter(LibraryLogFilter())
 

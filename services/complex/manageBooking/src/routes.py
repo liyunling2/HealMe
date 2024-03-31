@@ -10,7 +10,7 @@ import pika
 import requests
 from flask import Blueprint, Flask, jsonify, request
 from flask_cors import CORS
-from invokes import invoke_http, send_notification
+from invokes import invoke_http, send_notification, queue_notification, format_notification_data
 
 from functools import wraps
 
@@ -41,13 +41,12 @@ def with_logging(route_handler_fn):
 
     return with_log_fn
 
-def with_notification(action="confirmed", accessor=lambda x: x):
+def with_notification(action="confirmed", accessor=lambda x: x, channel=channel):
     def with_notification_wrapper(route_handler_fn):
         @wraps(route_handler_fn)
         def with_notification_fn(*args, **kwargs):
             response, code = route_handler_fn(*args, **kwargs)
             try:
-
                 if (code >= 200 and code < 300):
                     booking_data = accessor(response["data"])
 
@@ -57,21 +56,28 @@ def with_notification(action="confirmed", accessor=lambda x: x):
                     time_str = f"{int(time_num)}:{'00' if time_num % 1 == 0 else '30'}"
                     clinic_name = booking_data["clinicName"]
 
-                    noti_code = None
-                    tries = 0
+                    # queue_notification(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email, channel)
+                    data = format_notification_data(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email)
 
-                    while noti_code != 200 and tries < 3:
-                        noti_response, noti_code = send_notification(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email)
-                        tries += 1
+                    logging.info("Sending notification request to the queue")
+                    channel.basic_publish(exchange="direct_exchange", routing_key="email.notification.request",
+                                    body=json.dumps(data), properties=pika.BasicProperties(delivery_mode=2))
+
+                    # noti_code = None
+                    # tries = 0
+
+                    # while noti_code != 200 and tries < 3:
+                    #     noti_response, noti_code = send_notification(f"Your booking has been {action}", f"Your booking on {date}, {time_str} at {clinic_name} has been {action}", to_email)
+                    #     tries += 1
                     
-                    if noti_code != 200:
-                        raise Exception(f"Notification failed with code {noti_code}" + str(noti_response))
+                    # if noti_code != 200:
+                    #     raise Exception(f"Notification failed with code {noti_code}" + str(noti_response))
+
                 
             except Exception as e:
                 logging.error(str(e))
             
-            finally:
-                return response, code
+            return response, code
 
         return with_notification_fn
     

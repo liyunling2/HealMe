@@ -1,5 +1,8 @@
 import requests
 import os
+import json
+import pika
+import logging
 
 SUPPORTED_HTTP_METHODS = set([
     "GET", "OPTIONS", "HEAD", "POST", "PUT", "PATCH", "DELETE"
@@ -40,8 +43,17 @@ def invoke_http(url, method='GET', json=None, **kwargs):
 
 notification_url = os.getenv("NOTIFICATION_URL")
 
+
+
 def send_notification(title, message, to_email):
     url = f"{notification_url}/notification"
+    data = format_notification_data(title, message, to_email)
+    
+    response, code = invoke_http(url, method="POST", json=data)
+
+    return response, code
+
+def format_notification_data(title, message, to_email):
     data = {
         "from": "healmeesd@gmail.com",
         "to": to_email,
@@ -52,6 +64,16 @@ def send_notification(title, message, to_email):
         }
     }
     
-    response, code = invoke_http(url, method="POST", json=data)
+    return data
 
-    return response, code
+def queue_notification(title, message, to_email, channel):
+    data = format_notification_data(title, message, to_email)
+
+    try:
+        logging.info("Sending notification request to the queue")
+        channel.basic_publish(exchange="direct_exchange", routing_key="email.notification.request",
+                        body=json.dumps(data), properties=pika.BasicProperties(delivery_mode=2))
+
+    except Exception as e:
+        logging.error(str(e))
+    

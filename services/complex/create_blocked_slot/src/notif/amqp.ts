@@ -1,14 +1,11 @@
-import { Connection, Channel, ConsumeMessage } from "amqplib";
-const client = require("amqplib");
+import { AMQPChannel, AMQPClient } from "@cloudamqp/amqp-client"
+import { AMQPBaseClient } from "@cloudamqp/amqp-client/types/amqp-base-client";
 
-const rmqUser = "guest";
-const rmqPass = "guest";
-
-const rmqhost = process.env.AMQP_HOST || "rabbitmq";
+const client = new AMQPClient("amqp://guest:guest@rabbitmq:5672/");
 
 export class RabbitMQConnection {
-  connection!: Connection;
-  channel!: Channel;
+  connection!: AMQPBaseClient
+  channel!: AMQPChannel
   private connected!: Boolean;
 
   async connect() {
@@ -17,21 +14,11 @@ export class RabbitMQConnection {
 
     try {
       console.log(`⌛️ Connecting to Rabbit-MQ Server`);
-      console.log(client)
-      this.connection = await client.connect(
-        {
-          hostname: rmqhost,
-          port: 5672,
-          // vhost: '/',
-          clientProperties: {
-            connection_name: 'create_blocked_slot'
-          }
-        }
-      );
+      this.connection = await client.connect();
 
       console.log(`✅ Rabbit MQ Connection is ready`);
 
-      this.channel = await this.connection.createChannel();
+      this.channel = await this.connection.channel()
 
       console.log(`🛸 Created RabbitMQ Channel successfully`);
     } catch (error) {
@@ -40,18 +27,6 @@ export class RabbitMQConnection {
     }
   }
 
-  async sendToQueue(queue: string, message: any) {
-    try {
-      if (!this.channel) {
-        await this.connect();
-      }
-
-      this.channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
-    } catch (error) {
-      console.error(error);
-      throw error;
-    }
-  }
 }
 
 const mqConnection = new RabbitMQConnection();

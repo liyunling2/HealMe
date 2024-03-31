@@ -34,7 +34,7 @@ export default async function notify(context: { data: BlockedSlotType, status: n
         subject: "You have created a blocked slot",
         content: {
             title: "Blocked Slot Created",
-            message: `You have blocked out a slot on ${date.slice(0, -13)} from ${toTimeStr(timeNum)} to ${toTimeStr(timeNum + 0.5)}`
+            message: `You have blocked out a slot on ${date} from ${toTimeStr(timeNum)} to ${toTimeStr(timeNum + 0.5)}`
         }
       })
       ))

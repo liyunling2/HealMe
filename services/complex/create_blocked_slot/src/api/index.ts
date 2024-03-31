@@ -5,7 +5,7 @@ import SlotNotAllowedError from '../common/SlotNotAllowedError';
 import SlotInvalidError from '../common/SlotInvalidError';
 import { StatusCode } from 'hono/utils/http-status';
 import mqConnection from '../notif/amqp';
-import { loggingHandlerFactory } from '../notif/log';
+import { log } from '../notif/log';
 // import pub from '../notif/amqp';
 import notify from '../notif/notify';
 
@@ -17,8 +17,6 @@ app.get("/", (c) => {
     return c.json({ message: "Hello, World!" });
 });
 
-// app.post("/", loggingHandlerFactory(mqConnection));
-
 app.post("/", async (c) => {
   // get blocked Slot from request body
   const blockedSlot = await c.req.json();
@@ -26,7 +24,10 @@ app.post("/", async (c) => {
   try {
     const body = await createBlockedSlot(blockedSlot);
 
-    notify({ data: blockedSlot, status: 201 }, mqConnection).then(() => console.log("Notification requested"));
+    notify({ data: blockedSlot, status: 201 }, mqConnection)
+    .then(() => {
+      log({ data: blockedSlot, message: "Blocked slot created", status: 201}, mqConnection)
+    });
 
     return c.json(body);
   }

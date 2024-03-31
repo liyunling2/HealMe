@@ -49,7 +49,7 @@ Install dependencies
 npm install
 ```
 
-Run the following command to start the frontend on localhost:8080
+Run the following command to start the frontend on `localhost:8080`
 
 ```bash
 npm run serve

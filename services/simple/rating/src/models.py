@@ -61,7 +61,7 @@ class DoctorRating(db.Model):
         self.ratingGiven = ratingGiven
         self.comments = comments
 
-    __table_args__ = (db.UniqueConstraint('ratingID', 'clinicID', 'doctorID', 'bookingID', 'patientID', name='unique_doctor_rating'),)
+    __table_args__ = (db.UniqueConstraint('clinicID', 'doctorID', 'bookingID', 'patientID', name='unique_doctor_rating'),)
 
     def json(self):
         return {

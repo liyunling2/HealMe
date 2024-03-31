@@ -7,7 +7,7 @@ Accessing healthcare services in Singapore can be challenging due to long waitin
 
 ## Folder structure (important folders)
 ```
-├── Frontend
+├── FrontEnd
     └── healme (frontend client code)
 └── services
     ├── complex (complex microservices source code)

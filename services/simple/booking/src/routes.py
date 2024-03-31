@@ -29,7 +29,7 @@ def get_bookings_by_ID(bookingID):
         if booking:
             return jsonify({"data": booking.json(), "message": "Booking retrieved successfully."}), 200
         else:
-            return jsonify({"data": None, "message": "Booking not found"}), 404
+            return jsonify({"data": [], "message": "Booking not found"}), 200
         
     except InvalidRequestError as e:
         return jsonify({"data": None, "message": "Invalid request." + str(e)}), 400
@@ -49,7 +49,7 @@ def edit_booking(bookingID):
                 for key, value in data.items():
                     setattr(booking, key, value if value is not None else getattr(booking, key))
                 db.session.commit()
-                return jsonify({"data": booking.json(), "message": "Booking updated successfully."}), 200
+                return jsonify({"data": booking.json(), "message": "Booking updated successfully."}), 201
             
             except IntegrityError:
                 db.session.rollback()
@@ -77,7 +77,7 @@ def patch_booking(bookingID):
             return {
                 "data": booking.json(),
                 "message": "Booking status changed to Completed"
-            }, 200
+            }, 201
 
         return {"message": "Booking not found"}, 404
 

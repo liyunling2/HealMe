@@ -41,9 +41,9 @@
         data() {
             return {
                 doctorCheck: false,
-                email: "eileen@gmail.com",
+                email: "",
 //                email: 'huimin@familycareclinic.sg',
-                password: "password",
+                password: "",
   //              password: "securepassword123",
                 valid: false, // This will be our form validity flag
                 emailRules: [

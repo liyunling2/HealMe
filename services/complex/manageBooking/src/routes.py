@@ -147,7 +147,7 @@ def processCreateBooking(createBooking):
     
     if patient_response_code not in range(200, 300):
         return {
-            "code": 500,
+            "code": 400,
             "data": {"patient_result": patient_result},
             "message": "Booking creation failure sent for error handling. Because patientID doesnt exist"
         }
@@ -157,7 +157,7 @@ def processCreateBooking(createBooking):
     doctor_result, doctor_response_code = invoke_http(profile_URL, method="GET", json=createBooking)
     if doctor_response_code not in range(200, 300) or doctor_result['data']['clinicID'] != createBooking['clinicID']:
         return {
-            "code": 500,
+            "code": 400,
             "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result},
             "message": "Booking creation failure sent for error handling. Because doctorID doesnt exist or doctor does not belong to this clinicID"
@@ -167,7 +167,7 @@ def processCreateBooking(createBooking):
     clinic_result, clinic_response_code = invoke_http(clinic_URL, method="GET", json=createBooking)
     if clinic_response_code not in range(200, 300):
         return {
-            "code": 500,
+            "code": 400,
             "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
                      "clinic_result": clinic_result},
@@ -181,7 +181,7 @@ def processCreateBooking(createBooking):
 
     if len(blocked_slots_result['data']) != 0:
         return {
-            "code": 500,
+            "code": 400,
             "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
                      "clinic_result": clinic_result,
@@ -204,7 +204,7 @@ def processCreateBooking(createBooking):
     message = json.dumps(booking_result)
     if booking_response_code not in range(200, 300):
         return {
-        "code": 500,
+        "code": 400,
         "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
                      "clinic_result": clinic_result,
@@ -214,7 +214,7 @@ def processCreateBooking(createBooking):
     }
     else:
         return {
-        "code": 200,
+        "code": 201,
         "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
                 "blocked_slots_result": blocked_slots_result,
@@ -257,7 +257,7 @@ def processDeleteBooking(deleteBooking):
     if retrieve_booking_response_code not in range(200, 300):
             # Inform the log microservice NOT DONE YET
             return {
-            "code": 500,
+            "code": 400,
             "data": {"retrieve_booking_result": retrieve_booking_result,
                      },
             "message": "Cannot find booking."
@@ -268,7 +268,7 @@ def processDeleteBooking(deleteBooking):
         if delete_booking_response_code not in range(200, 300):
             # Inform the log microservice NOT DONE YET
             return {
-            "code": 500,
+            "code": 400,
             "data": {"retrieve_booking_result": retrieve_booking_result,
                      "delete_booking_result": delete_booking_result},
             "message": "Cannot delete booking."

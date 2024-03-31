@@ -26,7 +26,6 @@
             this.checkLogin()
         },
         mounted() {
-            this.$store.dispatch("appointmentModule/getAllClinics");
         },
         computed: {
           ...mapGetters({
@@ -51,6 +50,11 @@
                 const userData = JSON.parse(localStorage.getItem('userData'));
                 if(userData !== null) {
                     this.$store.commit("authModule/setUser", userData);
+                    if (userData.authType == "user") {
+                        this.$store.commit("authModule/setPatientAuth", true);
+                    } else if(userData.authType == "doctor") {
+                        this.$store.commit("authModule/setDoctorAuth", true);
+                    }
                     router.push('/profile');
                 }
             }

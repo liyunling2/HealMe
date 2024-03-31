@@ -7,6 +7,8 @@ services:
     ports:
       - "${CREATE_BLOCKED_SLOT_PORT-50000}:50000"
     restart: always
+    depends_on:
+      - rabbitmq
     environment:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       BOOKING_URL: ${BOOKING_URL}
@@ -20,6 +22,8 @@ services:
     ports:
       - "${GET_DOCTOR_SCHEDULE_PORT-50002}:5000"
     restart: always
+    depends_on:
+      - rabbitmq
     environment:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       PROFILE_URL: ${PROFILE_URL}
@@ -34,6 +38,8 @@ services:
     ports:
       - "${GET_DOCTOR_PROFILE_WITH_RATING_PORT-50003}:5000"
     restart: always
+    depends_on:
+      - rabbitmq
     environment:
       PROFILE_URL: ${PROFILE_URL}
       RATING_URL: ${RATING_URL}
@@ -46,6 +52,11 @@ services:
     ports:
       - "${MANAGE_BOOKING_PORT-5007}:5000"
     restart: always
+    depends_on:
+      - rabbitmq
     environment:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       BOOKING_URL: ${BOOKING_URL}
+      NOTIFICATION_URL: ${NOTIFICATION_URL}
+      AMQP_HOST: rabbitmq
+      AMQP_PORT: 5672

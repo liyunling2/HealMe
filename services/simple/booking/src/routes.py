@@ -64,6 +64,26 @@ def edit_booking(bookingID):
         traceback.print_exception(type(e), e, e.__traceback__)
         return jsonify({"data": None, "message": "An error occurred updating the booking."}), 500
 
+@routes.route("/<string:bookingID>", methods=["PATCH"])
+def patch_booking(bookingID):
+    data = request.get_json()
+    booking = Booking.query.get(bookingID)
+    
+    try: 
+        if booking:
+            for key, value in data.items():
+                setattr(booking, key, value if value is not None else getattr(booking, key))
+            db.session.commit()
+            return {
+                "data": booking.json(),
+                "message": "Booking status changed to Completed"
+            }, 200
+
+        return {"message": "Booking not found"}, 404
+
+    except Exception as e:
+        return {"message": str(e)}, 400
+
 @routes.route("/", methods=["POST"])
 def add_booking():
     try: 
@@ -71,6 +91,8 @@ def add_booking():
 
         if data.get("bookingID"):
             del data["bookingID"]
+
+        data["bookingStatus"] = "Confirmed"
 
         new_booking = Booking(**data)
         db.session.add(new_booking)

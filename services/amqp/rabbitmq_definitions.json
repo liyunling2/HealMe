@@ -44,6 +44,13 @@
         "durable": true,
         "auto_delete": false,
         "arguments": {}
+      },
+      {
+        "name": "email_requests",
+        "vhost": "/",
+        "durable": true,
+        "auto_delete": false,
+        "arguments": {}
       }
     ],
     "exchanges": [
@@ -51,6 +58,15 @@
         "name": "log_fanout",
         "vhost": "/",
         "type": "fanout",
+        "durable": true,
+        "auto_delete": false,
+        "internal": false,
+        "arguments": {}
+      },
+      {
+        "name": "direct_exchange",
+        "vhost": "/",
+        "type": "direct",
         "durable": true,
         "auto_delete": false,
         "internal": false,
@@ -64,6 +80,14 @@
         "destination": "All_Logs",
         "destination_type": "queue",
         "routing_key": "#",
+        "arguments": {}
+      },
+      {
+        "source": "direct_exchange",
+        "vhost": "/",
+        "destination": "email_requests",
+        "destination_type": "queue",
+        "routing_key": "email.notification.request",
         "arguments": {}
       }
     ]

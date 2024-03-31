@@ -85,7 +85,6 @@ def with_notification(action="confirmed", accessor=lambda x: x, channel=channel)
             
         
 BLOCKED_SLOTS_URL = os.environ.get("BLOCKED_SLOTS_URL")
-# noti_URL =
 BOOKING_URL = os.environ.get("BOOKING_URL")
 PROFILE_URL = os.environ.get("PROFILE_URL")
 CLINIC_URL = os.environ.get("CLINIC_URL")
@@ -139,11 +138,9 @@ def create_booking():
 
 
 def processCreateBooking(createBooking):
-    #patient ID ensure its in patient DB
-    #clinic ID exists
-    #doctor ID exists
     profile_URL = PROFILE_URL
     blocked_slots_URL = BLOCKED_SLOTS_URL
+    clinic_URL = CLINIC_URL
     print('\n\n-----Invoking Profile for Patient microservice-----')
     profile_URL = profile_URL + "/patients/" + createBooking['patientID'] 
     patient_result, patient_response_code = invoke_http(profile_URL, method="GET", json=createBooking)
@@ -165,6 +162,17 @@ def processCreateBooking(createBooking):
                      "doctor_result": doctor_result},
             "message": "Booking creation failure sent for error handling. Because doctorID doesnt exist or doctor does not belong to this clinicID"
         }
+    
+    clinic_URL = clinic_URL + "/" + createBooking['clinicID']
+    clinic_result, clinic_response_code = invoke_http(clinic_URL, method="GET", json=createBooking)
+    if clinic_response_code not in range(200, 300):
+        return {
+            "code": 500,
+            "data": {"patient_result": patient_result,
+                     "doctor_result": doctor_result,
+                     "clinic_result": clinic_result},
+            "message": "Booking creation failure sent for error handling. Because doctorID doesnt exist or doctor does not belong to this clinicID"
+        }
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
     blocked_slots_result, blocked_slots_response_code = invoke_http(blocked_slots_URL, method="GET", json=createBooking)
@@ -176,11 +184,21 @@ def processCreateBooking(createBooking):
             "code": 500,
             "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
+                     "clinic_result": clinic_result,
                 "blocked_slots_result": blocked_slots_result},
-            "message": "Booking creation failure sent for error handling. Because blocked_slots are found"
+            "message": "Booking creation failure sent for error handling. Because clinic not found"
         }
 
     print('\n-----Invoking booking microservice-----')
+    #clinicID doctorID, date, slot no and patientID
+
+    createBooking['clinicName'] = clinic_result['data']['clinicName']
+    createBooking['clinicLocation'] = clinic_result['data']['location']
+    createBooking['doctorName'] = doctor_result['data']['doctorName']
+    createBooking['doctorEmail'] = doctor_result['data']['email']
+    createBooking['doctorSpecialty'] = doctor_result['data']['specialty']
+    createBooking['patientName'] = patient_result['data']['patientName']
+    createBooking['patientEmail'] = patient_result['data']['email']
     booking_result, booking_response_code = invoke_http(BOOKING_URL, method='POST', json=createBooking)
     print('booking_result:', booking_result)
     message = json.dumps(booking_result)
@@ -189,6 +207,7 @@ def processCreateBooking(createBooking):
         "code": 500,
         "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
+                     "clinic_result": clinic_result,
                 "blocked_slots_result": blocked_slots_result,
                 "booking_result": booking_result},
         "message": "Booking creation failure sent for error handling. Because of booking_result failure"
@@ -199,6 +218,7 @@ def processCreateBooking(createBooking):
         "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result,
                 "blocked_slots_result": blocked_slots_result,
+                     "clinic_result": clinic_result,
                 "booking_result": booking_result},
         "message": "Booking creation Success"
     }

@@ -21,6 +21,9 @@
                 <v-tab value="reviewGiven" v-if="isPatient">
                     <v-icon start> mdi-access-point </v-icon> Review Givens
                 </v-tab>
+                <v-tab value="blockSlots" v-if="isDoctor">
+                    <v-icon start> mdi-access-point </v-icon> Block Slot Created
+                </v-tab>
                 <v-tab value="reviewReceived" v-if="isDoctor">
                     <v-icon start> mdi-access-point </v-icon> Review Received
                 </v-tab>
@@ -267,6 +270,49 @@
                         </v-container>
                     </v-container>
                 </v-window-item>
+                <v-window-item value="blockSlots" v-if="isDoctor">
+                    <v-container>
+                        <v-text-field v-model="searchReviewGiven" append-icon="mdi-magnify" label="Search Review By Date, Clinic, Location or Doctor" single-line hide-details ></v-text-field>
+                        <br />
+                        <h2 class="text-blue-darken-1 centered" align="center">
+                            Showing: {{ filterBlockSlots.length }} Block Slots
+                        </h2>
+                        <br />
+                        <v-container fill-height fluid lign-center v-if="filterBlockSlots.length == 0 & isPatient">
+                            <v-row align="center" justify="center">
+                                <v-col cols="12" class="text-center">
+                                    <h3 class="mb-4" style="color: red">
+                                        You have no blockSlots for date
+                                    </h3>
+                                    <p class="subtitle-1" style="color: grey">
+                                        Maybe you would like to give feedback to your completed appointments?
+                                    </p>
+                                    <v-img class="mx-auto" cover :width="500" src="../assets/appointmentImages/noEvent.jpg" ></v-img>
+                                    <v-btn class="mt-4" large color="red lighten-1" @click="changeCompleteTab('completedAppointments')">Clear Appointments</v-btn>
+                                </v-col>
+                            </v-row>
+                        </v-container>
+                        <v-container>
+                            <v-card v-for="blockSlots in filterBlockSlots" class="mt-2" prepend-icon="mdi-comment-text" title="Review">
+                                <v-card-item>
+                                <div>
+                                <div class="text-overline mb-1">
+                                    Block
+                                </div>
+                                <div class="text-h6 mb-1">
+                                    <v-icon small class="mr-2">mdi-calendar</v-icon>
+                                    {{ moment(appointment.date).format("YYYY-MMM-DD")}}
+                                    {{ getTimeFromSlotNo(appointment.slotNo)}}
+                                    <br>
+                                    Status: {{appointment.bookingStatus}}
+                                </div>
+                            </div>
+                            </v-card-item>
+                                
+                            </v-card>
+                        </v-container>
+                    </v-container>
+                </v-window-item>
             </v-window>
         </v-card>
     </v-container>
@@ -343,7 +389,7 @@
                 updateDialogVisible: false,
                 reviewDialog: false,
                 isDataRetrieving:true,
-                tab: "option-1",
+                tab: "upcomingAppointments",
                 currentFilter: "all",
                 moment,
                 searchCompletedAppointment: "",
@@ -358,9 +404,14 @@
                 userAppointments: "appointmentModule/getUserAppointments",
                 userDetails: "authModule/getUserDetails",
                 userRatings: "appointmentModule/getRatings",
+                userBlockSlots: "appointmentModule/getBookedSlots",
                 isDoctor: "authModule/ifDoctor",
                 isPatient: "authModule/ifPatient"
             }),
+            filterBlockSlots() {
+                let result = this.userBlockSlots
+                return result
+            },
             isReviewValid() {
                 return this.ratingGiven > 0 && this.comment.trim() !== '';
             },
@@ -404,7 +455,6 @@
         },
         async mounted() {
             await this.getAppointments()
-            await this.getReviews()
         },
         methods: {
             openDeleteDialog(appointment) {
@@ -490,6 +540,11 @@
                 await this.$store.dispatch("appointmentModule/editAppointment", appointment)
                 this.isDataRetrieving = false;
             },
+            async getBlockSlots(){
+                this.isDataRetrieving = true;
+                await this.$store.dispatch("appointmentModule/getAllUserBookSlot", this.userDetails.id)
+                this.isDataRetrieving = false;
+            },
             async submitReview(appointment) {
                 const reviewGiven = {
                     clinicID: this.reviewDoc.clinicID,
@@ -514,8 +569,13 @@
         },
         watch: {
             async tab(newValue) {
-                if (newValue === 'reviewGiven') {
-                    this.getReviews()
+                if (newValue === 'reviewGiven' || newValue === 'reviewReceived') {
+                    await this.getReviews()
+                } else if (newValue === "upcomingAppointments" || newValue === 'completedAppointments'){
+                    await this.getAppointments()
+                } else if (newValue === "blockSlots") {
+                    await this.getBlockSlots()
+                    console.log("this called")
                 }
             }
         },

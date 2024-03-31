@@ -14,7 +14,7 @@
                 <v-icon left dark>mdi-calendar-plus</v-icon>
                 <span class="ms-1.5"> BOOK AN APPOINTMENT </span>
             </v-btn>
-            <v-btn to="/makeBlockSlot" v-if="isAuth && isDoctor">
+            <v-btn to="/createBlockSlot" v-if="isAuth && isDoctor">
                 <v-icon left dark>mdi-calendar-plus</v-icon>
                 <span class="ms-1.5"> CREATE BLOCKED SLOT </span>
             </v-btn>
@@ -46,7 +46,7 @@
                 <v-icon left dark>mdi-calendar-plus</v-icon>
                 <span class="ms-1.5"> BOOK AN APPOINTMENT </span>
             </v-list-item>
-            <v-list-item to="/makeBlockSlot" v-if="isAuth && isDoctor">
+            <v-list-item to="/createBlockSlot" v-if="isAuth && isDoctor">
                 <v-icon left dark>mdi-calendar-plus</v-icon>
                 <span class="ms-1.5"> CREATE A BLOCK SLOT </span>
             </v-list-item>

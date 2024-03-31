@@ -99,6 +99,7 @@ const appointmentModule = {
             catch (error) {
                 msgError(commit, error.response.data.message);
             } finally {
+
             }
         },
         async createAppointment({commit}, payload) {
@@ -199,7 +200,40 @@ const appointmentModule = {
             finally {
                 commit("notificationModule/setLoading", false, { root: true });
             }
-        }
+        },
+        async createBookedSlot({commit}, payload) {
+            const url = `/api/blockedslots/new`
+            try {
+                await axios.post(url, payload)
+                    .then(response => {
+                        msgSuccess(commit, response.data.message);
+                    })  
+                }  
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } 
+            finally {
+                commit("notificationModule/setLoading", false, { root: true });
+            }
+        },
+        async getAllUserBookSlot({commit}, payload) {
+            var url = `api/blockedslots/view?doctorID=${payload}`
+            console.log(url)
+            console.log("this works")
+            try {
+                await axios.get(url)
+                    .then(response => {
+                        console.log(response.data)
+                        commit("setBookedSlots", response.data.data);
+                        msgSuccess(commit, response.data.message);
+                    })
+                } 
+            catch (error) {
+                msgError(commit, error.response.data.message);
+            } finally {
+
+            }
+        },
 
         
     }

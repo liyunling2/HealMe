@@ -89,12 +89,7 @@
           </h2>
           <br />
         <v-card>
-            <v-container
-              fill-height
-              fluid
-              lign-center
-              v-if="filteredDoctors.length == 0"
-            >
+            <v-container fill-height fluid lign-center v-if="filteredDoctors.length == 0" >
               <v-row align="center" justify="center">
                 <v-col cols="12" class="text-center">
                   <h3 class="mb-4 text-blue-lighten-1">Wow no doctors found</h3>
@@ -110,12 +105,7 @@
                 </v-col>
               </v-row>
             </v-container>
-            <v-list-item
-              v-for="doctor in filteredDoctors"
-              :key="doctor.id"
-              @click="selectDoctor(doctor)"
-              :value="doctor"
-            >
+            <v-list-item v-for="doctor in filteredDoctors" :key="doctor.id" @click="selectDoctor(doctor)" :value="doctor" >
               <template v-slot:prepend>
                 <v-icon color="info">mdi-doctor</v-icon>
               </template>

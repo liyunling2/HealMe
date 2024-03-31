@@ -105,6 +105,7 @@ const authModule = {
                 email: response.data.data.email,
                 id: response.data.data.doctorID,
                 name: response.data.data.doctorName,
+                clinicID: response.data.data.clinicID,
                 authType: "doctor",
               };
               localStorage.setItem('userData', JSON.stringify(userData));

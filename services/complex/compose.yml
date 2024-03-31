@@ -13,6 +13,8 @@ services:
       BLOCKED_SLOTS_URL: ${BLOCKED_SLOTS_URL}
       BOOKING_URL: ${BOOKING_URL}
       PROFILE_URL: ${PROFILE_URL}
+      AMQP_HOST: ${AMQP_HOST-rabbitmq}
+      AMQP_PORT: ${AMQP_PORT-5672}
 
   get_doctor_schedule:
     build:
@@ -60,5 +62,5 @@ services:
       NOTIFICATION_URL: ${NOTIFICATION_URL}
       PROFILE_URL: ${PROFILE_URL}
       CLINIC_URL: ${CLINIC_URL}
-      AMQP_HOST: rabbitmq
-      AMQP_PORT: 5672
+      AMQP_HOST: ${AMQP_HOST-rabbitmq}
+      AMQP_PORT: ${AMQP_PORT-5672}

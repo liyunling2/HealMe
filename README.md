@@ -1,5 +1,6 @@
 # HealMe
 
+![alt text|300](image.png)
 Accessing healthcare services in Singapore can be challenging due to long waiting times, limited appointment availability, and fragmented information about clinics services and practitioners. As such, HealMe aims to be an aggregator application aiming to bridge the information gap between clinics and patients and allowing personalized bookings with specific doctors. This simplifies patients’ booking process while increasing clinic efficiency and reducing waiting times, effectively solving our problem statement. We came up with 3 scenarios that would closely demonstrate real world situations of a typical user on our application. The scenarios include: 
 - Booking an appointment with a specific doctor 
 - Rating a doctor after completing an appointment  

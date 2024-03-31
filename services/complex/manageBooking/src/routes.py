@@ -158,12 +158,12 @@ def processCreateBooking(createBooking):
     profile_URL = PROFILE_URL
     profile_URL = profile_URL + "/doctors/" + createBooking['doctorID']
     doctor_result, doctor_response_code = invoke_http(profile_URL, method="GET", json=createBooking)
-    if doctor_response_code not in range(200, 300):
+    if doctor_response_code not in range(200, 300) or doctor_result['data']['clinicID'] != createBooking['clinicID']:
         return {
             "code": 500,
             "data": {"patient_result": patient_result,
                      "doctor_result": doctor_result},
-            "message": "Booking creation failure sent for error handling. Because clinicID doesnt exist"
+            "message": "Booking creation failure sent for error handling. Because doctorID doesnt exist or doctor does not belong to this clinicID"
         }
     print('\n\n-----Invoking blocked_slots microservice-----')
     blocked_slots_URL = blocked_slots_URL + "?" + "date=" + createBooking['date'] + "&slotNo=" + str(createBooking['slotNo']) + "&doctorID=" + createBooking['doctorID'] + "clinicID=" + createBooking['clinicID']
